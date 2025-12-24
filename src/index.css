@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+
+    --primary: 0 60% 35%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 30 100% 50%;
+    --secondary-foreground: 0 0% 10%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 180 100% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 60% 35%;
+
+    --radius: 0.75rem;
+
+    /* Custom travel theme tokens */
+    --gradient-hero: linear-gradient(135deg, hsl(0 60% 25% / 0.9), hsl(0 60% 35% / 0.8));
+    --gradient-warm: linear-gradient(90deg, hsl(0 60% 35%), hsl(30 100% 50%));
+    --gradient-overlay: linear-gradient(180deg, transparent, hsl(0 60% 25% / 0.7));
+
+    --shadow-glow: 0 10px 40px hsl(180 100% 45% / 0.3);
+    --shadow-soft: 0 4px 20px hsl(0 0% 0% / 0.1);
+
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Logo colors */
+    --logo-company: 0 100% 50%;
+    --logo-tagline: 270 100% 50%;
+  }
+
+  .dark {
+    --background: 0 60% 8%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 60% 12%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 60% 12%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 60% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 30 100% 50%;
+    --secondary-foreground: 0 0% 10%;
+
+    --muted: 0 60% 15%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 180 100% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 60% 20%;
+    --input: 0 60% 20%;
+    --ring: 0 60% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .animate-fall {
+    animation: fall linear infinite;
+  }
+
+  @keyframes fall {
+    0% {
+      transform: translateY(-10vh) translateX(-10px);
+      opacity: 0;
+    }
+
+    10% {
+      opacity: 1;
+    }
+
+    100% {
+      transform: translateY(100vh) translateX(10px);
+      opacity: 0.5;
+    }
+  }
+}
