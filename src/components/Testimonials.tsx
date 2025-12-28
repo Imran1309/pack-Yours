@@ -3,7 +3,7 @@ import { Star, Quote, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import API from "@/api/api";
 
 interface Review {
   _id: string;
@@ -18,9 +18,9 @@ const Testimonials = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await axios.get("http://localhost:5001/api/reviews?type=review");
-        // Take only the latest 3 reviews
-        setReviews(response.data.slice(0, 3));
+        const response = await API.get("/reviews?type=review");
+        // Take only the latest 6 reviews
+        setReviews(response.data.slice(0, 6));
       } catch (error) {
         console.error("Error fetching reviews:", error);
       }
@@ -50,6 +50,24 @@ const Testimonials = () => {
       rating: 5,
       description: "Best travel agency we've worked with! From booking to the actual trip, everything was seamless. The local guides were fantastic and very informative.",
     },
+    {
+      _id: "4",
+      title: "Arjun Reddy",
+      rating: 5,
+      description: "The College IV trip to Goa was insane! The organization was top-notch, DJ night was lit, and the safety measures were excellent. Can't wait for the next one!",
+    },
+    {
+      _id: "5",
+      title: "Meera Iyer",
+      rating: 4,
+      description: "Our pilgrimage to Kashi was so peaceful. The VIP darshan tickets arranged by Pack Yours saved us hours of standing in line. Truly a divine experience.",
+    },
+    {
+      _id: "6",
+      title: "David John",
+      rating: 5,
+      description: "Honeymoon in Andaman was like a dream. Candlelight dinner by the beach was a surprise we didn't expect! Thank you for going the extra mile.",
+    }
   ];
 
   const displayReviews = reviews.length > 0 ? reviews : defaultTestimonials;

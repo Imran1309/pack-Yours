@@ -99,6 +99,25 @@ const Booking = () => {
         description: "We'll contact you shortly to confirm your booking.",
       });
 
+      // Construct email body
+      const emailSubject = `New Booking Request from ${formData.name}`;
+      const emailBody = `
+New Booking Details:
+--------------------
+Name: ${formData.name}
+Email: ${formData.email}
+Phone: ${formData.phone}
+Destination: ${formData.destination}
+Date: ${formData.date ? format(formData.date, "PPP") : "Not specified"}
+People: ${formData.people}
+Vacation Type: ${formData.vacationType}
+
+Sent via PackYours Web App
+      `.trim();
+
+      // Open mail client as a backup/confirmation
+      window.location.href = `mailto:dhanatrip2020@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+
       // Reset form
       setFormData({
         name: "",

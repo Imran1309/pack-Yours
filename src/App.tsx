@@ -67,6 +67,9 @@ import ShimlaWeddingDetails from "./pages/ShimlaWeddingDetails";
 import CoorgWeddingDetails from "./pages/CoorgWeddingDetails";
 import ValparaiIVDetails from "./pages/ValparaiIVDetails";
 import PondicherryIVDetails from "./pages/PondicherryIVDetails";
+import Services from "./components/Services";
+import WhyChooseUs from "./components/WhyChooseUs";
+import AdminBookings from "./pages/AdminBookings";
 
 const queryClient = new QueryClient();
 
@@ -81,11 +84,18 @@ const App = () => (
           <Route path="/booking" element={<Booking />} />
           <Route path="/memories" element={<Memories />} />
           <Route path="/states" element={<States />} />
+          <Route path="/services" element={<Services />} />
+          {/* <Route path="/contact" element={<Contact />} /> */}
+          <Route path="/why-choose-us" element={<WhyChooseUs />} />
+          <Route path="/package-details/:category" element={<PackageDetails />} />
           <Route path="/package-details" element={<PackageDetails />} />
+
           <Route path="/college-iv-details" element={<CollegeIVDetails />} />
           <Route path="/educational-trip-details" element={<EducationalTripDetails />} />
           <Route path="/all-india-trip-details" element={<AllIndiaTripDetails />} />
           <Route path="/wedding-trip-details" element={<WeddingTripDetails />} />
+
+          {/* Destination Routes */}
           <Route path="/destinations/jaipur" element={<JaipurWeddingDetails />} />
           <Route path="/destinations/jodhpur-jaisalmer" element={<JodhpurJaisalmerDetails />} />
           <Route path="/destinations/kochi-wedding" element={<KochiWeddingDetails />} />
@@ -93,6 +103,8 @@ const App = () => (
           <Route path="/destinations/lakshadweep" element={<LakshadweepWeddingDetails />} />
           <Route path="/make-own-plan" element={<MakeOwnPlan />} />
           <Route path="/special-trip-details" element={<SpecialTripDetails />} />
+
+          {/* College IV Routes */}
           <Route path="/college-iv/kerala" element={<KeralaIVDetails />} />
           <Route path="/college-iv/bangalore" element={<BangaloreIVDetails />} />
           <Route path="/college-iv/kodaikanal" element={<KodaikanalIVDetails />} />
@@ -103,10 +115,13 @@ const App = () => (
           <Route path="/college-iv/karnataka" element={<KarnatakaIVDetails />} />
           <Route path="/college-iv/valparai" element={<ValparaiIVDetails />} />
           <Route path="/college-iv/pondicherry" element={<PondicherryIVDetails />} />
+
+          {/* Destinations */}
           <Route path="/destinations/ooty" element={<OotyIVDetails />} />
           <Route path="/devotional-details" element={<DevotionalDetails />} />
           <Route path="/destinations" element={<Destinations />} />
           <Route path="/destinations/kerala" element={<KeralaDetails />} />
+          {/* <Route path="/destinations/tamil-nadu" element={<TamilNaduDetails />} /> */}
           <Route path="/destinations/kerala/vagamon" element={<VagamonDetails />} />
           <Route path="/destinations/kerala/munnar" element={<MunnarDetails />} />
           <Route path="/destinations/kerala/alleppey" element={<AlleppeyDetails />} />
@@ -121,26 +136,36 @@ const App = () => (
           <Route path="/destinations/kashmir" element={<KashmirDetails />} />
           <Route path="/destinations/manali" element={<ManaliDetails />} />
           <Route path="/destinations/udaipur" element={<UdaipurDetails />} />
+          <Route path="/destinations/sikkim" element={<SikkimDetails />} />
+          <Route path="/destinations/agra" element={<AgraDetails />} />
+          {/* <Route path="/destinations/punjab" element={<PunjabDetails />} /> */}
+          {/* <Route path="/destinations/andhra" element={<AndhraDetails />} /> */}
+          {/* <Route path="/destinations/mumbai" element={<MumbaiDetails />} /> */}
+          {/* <Route path="/destinations/karnataka" element={<KarnatakaDetails />} /> */}
+
+          {/* Temple Routes */}
+          <Route path="/temple-packages" element={<TemplePackages />} />
           <Route path="/destinations/palani" element={<PalaniDetails />} />
           <Route path="/destinations/thiruvannamalai" element={<ThiruvannamalaiDetails />} />
           <Route path="/destinations/tirupati" element={<TirupatiTempleDetails />} />
           <Route path="/destinations/sabarimala" element={<SabarimalaDetails />} />
           <Route path="/destinations/thiruchendur" element={<ThiruchendurDetails />} />
-          <Route path="/destinations/sikkim" element={<SikkimDetails />} />
-          <Route path="/temple-packages" element={<TemplePackages />} />
           <Route path="/destinations/kerala-temple" element={<KeralaTempleDetails />} />
           <Route path="/destinations/tamilnadu-temple" element={<TamilNaduTempleDetails />} />
           <Route path="/destinations/andhra-temple" element={<AndhraTempleDetails />} />
           <Route path="/destinations/kashmir-temple" element={<KashmirTempleDetails />} />
           <Route path="/destinations/punjab-temple" element={<PunjabTempleDetails />} />
-          <Route path="/destinations/punjab-temple" element={<PunjabTempleDetails />} />
           <Route path="/destinations/mumbai-temple" element={<MumbaiTempleDetails />} />
-          <Route path="/destinations/agra" element={<AgraDetails />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/temple/palani" element={<TamilNaduTempleDetails />} />
+
+          {/* Wedding Routes */}
           <Route path="/destinations/chennai-wedding" element={<ChennaiWeddingDetails />} />
           <Route path="/destinations/goa-wedding" element={<GoaWeddingDetails />} />
           <Route path="/destinations/shimla-wedding" element={<ShimlaWeddingDetails />} />
           <Route path="/destinations/coorg-wedding" element={<CoorgWeddingDetails />} />
+
+          <Route path="/admin-bookings" element={<AdminBookings />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

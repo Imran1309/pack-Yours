@@ -179,12 +179,24 @@ app.post('/api/forms/submit', async (req, res) => {
         await newBooking.save();
 
         // Optional: Send Email Notification
-        // sendEmailNotification(formData);
+        sendEmailNotification(formData);
 
         res.status(200).json({ message: 'Booking submitted successfully!' });
     } catch (error) {
         console.error('Booking Error:', error);
         res.status(500).json({ message: 'Failed to save booking.' });
+    }
+});
+
+// GET All Bookings (Admin)
+app.get('/api/bookings', async (req, res) => {
+    try {
+        // In a real app, verify token/admin status here
+        const bookings = await Booking.find().sort({ submittedAt: -1 });
+        res.status(200).json(bookings);
+    } catch (error) {
+        console.error('Fetch Bookings Error:', error);
+        res.status(500).json({ message: 'Failed to fetch bookings.' });
     }
 });
 
@@ -208,7 +220,7 @@ app.get('/api/reviews', async (req, res) => {
 });
 
 // POST Review/Memory (with file upload)
-const OWNER_EMAILS = ["dhanatoursconsultors2020@gmail.com", "imransurajbasha786@gmail.com"];
+const OWNER_EMAILS = ["dhanatrip2020@gmail.com"];
 
 app.post('/api/reviews', upload.array('media'), async (req, res) => {
     try {
@@ -240,11 +252,42 @@ app.post('/api/reviews', upload.array('media'), async (req, res) => {
 
         res.status(201).json({ message: 'Added successfully!', review: newReview });
 
+
     } catch (error) {
         console.error('Post Review Error:', error);
         res.status(500).json({ message: 'Failed to add review.' });
     }
 });
+
+// DELETE Review
+app.delete('/api/reviews/:id', async (req, res) => {
+    try {
+        const { userEmail } = req.body;
+        const review = await Review.findById(req.params.id);
+
+        if (!review) {
+            return res.status(404).json({ message: 'Review not found' });
+        }
+
+        // If it's a memory, strictly enforce owner email
+        // If it's a review, ideally only the creator or owner can delete
+        if (review.type === 'memory' && !OWNER_EMAILS.includes(userEmail)) {
+            return res.status(403).json({ message: 'Unauthorized: Only owners can delete memories.' });
+        }
+
+        // For now, allow owner to delete ANY review as well (moderation)
+        if (review.type === 'review' && !OWNER_EMAILS.includes(userEmail) && review.userEmail !== userEmail) {
+            return res.status(403).json({ message: 'Unauthorized' });
+        }
+
+        await Review.findByIdAndDelete(req.params.id);
+        res.status(200).json({ message: 'Deleted successfully' });
+    } catch (error) {
+        console.error('Delete Error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 
 
 // Optional: Email Helper (Basic Setup)
@@ -258,10 +301,43 @@ const transporter = nodemailer.createTransport({
 
 function sendEmailNotification(data) {
     const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: process.env.EMAIL_USER, // Send to admin for now
-        subject: `New Booking Request: ${data.name}`,
-        text: JSON.stringify(data, null, 2)
+        from: `"Pack Yours Booking" <${process.env.EMAIL_USER}>`,
+        to: "dhanatrip2020@gmail.com",
+        replyTo: data.email, // Allows owner to directly reply to the customer
+        subject: `✈️ Booking Request: ${data.name} - ${data.destination}`,
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #f9f9f9;">
+                <h2 style="color: #2c3e50; border-bottom: 2px solid #f39c12; padding-bottom: 10px;">New Trip Inquiry</h2>
+                
+                <div style="margin-top: 20px;">
+                    <p><strong>Name:</strong> ${data.name}</p>
+                    <p><strong>Phone:</strong> <a href="tel:${data.phone}" style="color: #2980b9;">${data.phone}</a></p>
+                    <p><strong>Email:</strong> <a href="mailto:${data.email}" style="color: #2980b9;">${data.email}</a></p>
+                </div>
+
+                <div style="background-color: #ffffff; padding: 15px; border-radius: 5px; margin-top: 15px; border: 1px solid #eee;">
+                    <p style="margin: 5px 0;"><strong>Destination:</strong> <span style="color: #e67e22; font-weight: bold;">${data.destination}</span></p>
+                    <p style="margin: 5px 0;"><strong>Date:</strong> ${new Date(data.date).toDateString()}</p>
+                    <p style="margin: 5px 0;"><strong>People:</strong> ${data.people}</p>
+                    <p style="margin: 5px 0;"><strong>Vacation Type:</strong> ${data.vacationType}</p>
+                </div>
+
+                <div style="margin-top: 20px; font-size: 12px; color: #7f8c8d; text-align: center;">
+                    <p>Submitted via <strong>Pack Yours App</strong></p>
+                </div>
+            </div>
+        `,
+        text: `
+New Booking Application
+-----------------------
+Name: ${data.name}
+Email: ${data.email}
+Phone: ${data.phone}
+Destination: ${data.destination}
+Date: ${data.date}
+People: ${data.people}
+Vacation Type: ${data.vacationType}
+        `.trim()
     };
 
     transporter.sendMail(mailOptions, (error, info) => {

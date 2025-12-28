@@ -3,12 +3,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Plus, Upload, User, Star, Globe, Utensils, Car, BedDouble, X, ChevronLeft, ChevronRight, Quote } from "lucide-react";
+import { ArrowLeft, Plus, Upload, User, Star, Globe, Utensils, Car, BedDouble, X, ChevronLeft, ChevronRight, Quote, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import AuthDialog from "@/components/AuthDialog";
-import axios from "axios";
+import API from "@/api/api";
+
+// ... (interfaces remain same)
+
+
 
 interface MediaItem {
   url: string;
@@ -35,7 +39,7 @@ const Memories = () => {
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'review' | 'memory'>('review');
 
-  const OWNER_EMAILS = ["dhanatoursconsultors2020@gmail.com", "imransurajbasha786@gmail.com"];
+  const OWNER_EMAILS = ["dhanatrip2020@gmail.com"];
 
   // Form State
   const [newTitle, setNewTitle] = useState("");
@@ -54,6 +58,23 @@ const Memories = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [activeIndices, setActiveIndices] = useState<Record<string, number>>({});
+
+  const nextSlide = (e: React.MouseEvent, reviewId: string, total: number) => {
+    e.stopPropagation();
+    setActiveIndices(prev => ({
+      ...prev,
+      [reviewId]: ((prev[reviewId] || 0) + 1) % total
+    }));
+  };
+
+  const prevSlide = (e: React.MouseEvent, reviewId: string, total: number) => {
+    e.stopPropagation();
+    setActiveIndices(prev => ({
+      ...prev,
+      [reviewId]: ((prev[reviewId] || 0) - 1 + total) % total
+    }));
+  };
 
   useEffect(() => {
     const currentUser = localStorage.getItem("currentUser");
@@ -70,7 +91,7 @@ const Memories = () => {
 
   const fetchReviews = async () => {
     try {
-      const response = await API.get("/reviews", { params });
+      const response = await API.get("/reviews", { params: { type: activeTab } });
 
       // Transform old data structure if needed (for backward compatibility if DB has old records)
       const data = response.data.map((item: any) => ({
@@ -186,6 +207,30 @@ const Memories = () => {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this memory? This cannot be undone.")) return;
+
+    try {
+      await API.delete(`/reviews/${id}`, {
+        data: { userEmail } // Pass email for authorization check
+      });
+
+      toast({
+        title: "Deleted",
+        description: "Memory deleted successfully.",
+      });
+
+      fetchReviews(); // Refresh list
+    } catch (error: any) {
+      console.error("Delete Error:", error);
+      toast({
+        title: "Delete Failed",
+        description: error.response?.data?.message || "Could not delete.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const getRatingPercentage = (stars: number) => {
     return Math.round((stars / 5) * 100);
   };
@@ -253,12 +298,21 @@ const Memories = () => {
               Account
             </Button>
           )}
-          {(activeTab === 'review' || (activeTab === 'memory' && OWNER_EMAILS.includes(userEmail || ""))) && (
+
+          {(activeTab === 'review' || activeTab === 'memory') && (
             <Button
               onClick={() => {
                 if (!isAuthenticated) {
                   setAuthDialogOpen(true);
                 } else {
+                  if (activeTab === 'memory' && !OWNER_EMAILS.includes(userEmail || "")) {
+                    toast({
+                      title: "Restricted Access",
+                      description: "Only authorized owners can add memories.",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
                   setUploadDialogOpen(true);
                 }
               }}
@@ -296,30 +350,57 @@ const Memories = () => {
               >
                 {/* Media Carousel / Grid */}
                 {review.media && review.media.length > 0 && (
-                  <div className="relative h-64 bg-black/40 overflow-hidden">
-                    {review.media[0].type === 'video' ? (
-                      <video
-                        src={review.media[0].url}
-                        controls
-                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity grayscale-[20%] group-hover:grayscale-0 duration-700"
-                      />
-                    ) : (
-                      <img
-                        src={review.media[0].url}
-                        alt={review.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 opacity-80 group-hover:opacity-100 grayscale-[20%] group-hover:grayscale-0"
-                      />
-                    )}
+                  <div className="relative h-64 bg-black/40 overflow-hidden group/media">
+                    {(() => {
+                      const currentIndex = activeIndices[review._id] || 0;
+                      const currentMedia = review.media[currentIndex];
 
-                    {/* Multiple Items Indicator */}
+                      return currentMedia && (currentMedia.type === 'video' ? (
+                        <video
+                          src={currentMedia.url}
+                          controls
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <img
+                          src={currentMedia.url}
+                          alt={review.title}
+                          className="w-full h-full object-cover transition-transform duration-500"
+                        />
+                      ));
+                    })()}
+
+                    {/* Navigation Buttons */}
                     {review.media.length > 1 && (
-                      <div className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-xl text-white px-3 py-1 rounded-sm text-[10px] font-bold tracking-wider flex items-center gap-1 border border-white/10 uppercase">
-                        <Plus size={8} /> {review.media.length - 1} More
-                      </div>
+                      <>
+                        <button
+                          onClick={(e) => prevSlide(e, review._id, review.media.length)}
+                          className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full opacity-0 group-hover/media:opacity-100 transition-opacity backdrop-blur-sm z-10"
+                        >
+                          <ChevronLeft size={20} />
+                        </button>
+                        <button
+                          onClick={(e) => nextSlide(e, review._id, review.media.length)}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full opacity-0 group-hover/media:opacity-100 transition-opacity backdrop-blur-sm z-10"
+                        >
+                          <ChevronRight size={20} />
+                        </button>
+
+                        {/* Dots Indicator */}
+                        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                          {review.media.map((_, idx) => (
+                            <div
+                              key={idx}
+                              className={`w-1.5 h-1.5 rounded-full transition-colors ${(activeIndices[review._id] || 0) === idx ? 'bg-white' : 'bg-white/40'
+                                }`}
+                            />
+                          ))}
+                        </div>
+                      </>
                     )}
 
                     {/* Badge */}
-                    <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-md px-3 py-1 rounded-sm shadow-lg flex items-center gap-1.5 border border-white/10">
+                    <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-md px-3 py-1 rounded-sm shadow-lg flex items-center gap-1.5 border border-white/10 pointer-events-none z-10">
                       <Star className="w-3 h-3 fill-[#F2C94C] text-[#F2C94C]" />
                       <span className="font-bold text-white text-xs">{review.rating}</span>
                     </div>
@@ -372,9 +453,25 @@ const Memories = () => {
                     <span>
                       {new Date(review.createdAt).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' })}
                     </span>
-                    {isAuthenticated && userEmail === OWNER_EMAILS[0] && (
-                      <span className="text-[#F2C94C]">Owner</span>
-                    )}
+
+                    <div className="flex items-center gap-2">
+                      {isAuthenticated && userEmail === OWNER_EMAILS[0] && (
+                        <span className="text-[#F2C94C]">Owner</span>
+                      )}
+
+                      {isAuthenticated && OWNER_EMAILS.includes(userEmail || "") && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(review._id);
+                          }}
+                          className="p-1.5 hover:bg-red-500/20 rounded-md text-white/40 hover:text-red-400 transition-colors"
+                          title="Delete Review"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

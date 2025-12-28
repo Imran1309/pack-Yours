@@ -8,6 +8,35 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
+  const OWNER_EMAIL = "dhanatrip2020@gmail.com";
+
+  // Check for owner status
+  useEffect(() => {
+    const checkOwner = () => {
+      const user = localStorage.getItem("currentUser");
+      if (user) {
+        try {
+          const parsedUser = JSON.parse(user);
+          if (parsedUser.email === OWNER_EMAIL) {
+            setIsOwner(true);
+          } else {
+            setIsOwner(false);
+          }
+        } catch (e) {
+          console.error("Error parsing user", e);
+          setIsOwner(false);
+        }
+      } else {
+        setIsOwner(false);
+      }
+    };
+
+    checkOwner();
+    // Listen for storage events in case login happens in another tab or component updates it
+    window.addEventListener('storage', checkOwner);
+    return () => window.removeEventListener('storage', checkOwner);
+  }, []);
 
   // Handle scroll to section if URL has hash on load
   useEffect(() => {
@@ -31,6 +60,10 @@ const Navbar = () => {
     { name: "Reviews", type: "hash", path: "#reviews" },
     { name: "About us", type: "hash", path: "#about" },
   ];
+
+  if (isOwner) {
+    navItems.push({ name: "Bookings", type: "page", path: "/admin-bookings" });
+  }
 
   const handleNavigation = (item: { name: string; type: string; path: string }) => {
     setMobileMenuOpen(false);
@@ -104,7 +137,7 @@ const Navbar = () => {
               <button
                 key={item.name}
                 onClick={() => handleNavigation(item)}
-                className="text-white hover:text-[#F2C94C] transition-colors font-bold text-lg animate-fade-in relative group"
+                className={`text-white hover:text-[#F2C94C] transition-colors font-bold text-lg animate-fade-in relative group ${item.name === "Bookings" ? "text-yellow-400" : ""}`}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 {item.name}
@@ -143,7 +176,7 @@ const Navbar = () => {
               <button
                 key={item.name}
                 onClick={() => handleNavigation(item)}
-                className="block w-full text-left py-3 text-white hover:text-[#F2C94C] transition-colors font-bold text-lg border-b border-white/5 last:border-0"
+                className={`block w-full text-left py-3 text-white hover:text-[#F2C94C] transition-colors font-bold text-lg border-b border-white/5 last:border-0 ${item.name === "Bookings" ? "text-yellow-400" : ""}`}
               >
                 {item.name}
               </button>
