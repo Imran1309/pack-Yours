@@ -18,6 +18,12 @@ app.use(express.json());
 // Serve static files from uploads folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Ensure uploads directory exists
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
+
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('✅ MongoDB Connected Successfully'))
@@ -48,6 +54,8 @@ const BookingSchema = new mongoose.Schema({
     people: { type: String, required: true },
     vacationType: { type: String, required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Optional link to user
+    price: { type: Number, default: 0 },
+    status: { type: String, enum: ['pending', 'completed', 'cancelled'], default: 'pending' },
     submittedAt: { type: Date, default: Date.now }
 });
 
@@ -197,6 +205,27 @@ app.get('/api/bookings', async (req, res) => {
     } catch (error) {
         console.error('Fetch Bookings Error:', error);
         res.status(500).json({ message: 'Failed to fetch bookings.' });
+    }
+});
+
+// UPDATE Booking (Admin) - Price & Status
+app.put('/api/bookings/:id', async (req, res) => {
+    try {
+        const { price, status } = req.body;
+        const booking = await Booking.findById(req.params.id);
+
+        if (!booking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        if (price !== undefined) booking.price = price;
+        if (status) booking.status = status;
+
+        await booking.save();
+        res.status(200).json(booking);
+    } catch (error) {
+        console.error('Update Booking Error:', error);
+        res.status(500).json({ message: 'Failed to update booking.' });
     }
 });
 

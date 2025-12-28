@@ -112,7 +112,7 @@ const Navbar = () => {
                   filter: "drop-shadow(2px 2px 4px rgba(0,0,0,0.3))" // Alternative for shadow
                 }}
               >
-                Dhana Tour <span className="hidden md:inline"> Consultors</span>
+                Dhana Tour Consultors
               </h1>
 
               <p
@@ -137,7 +137,7 @@ const Navbar = () => {
               <button
                 key={item.name}
                 onClick={() => handleNavigation(item)}
-                className={`text-white hover:text-[#F2C94C] transition-colors font-bold text-lg animate-fade-in relative group ${item.name === "Bookings" ? "text-yellow-400" : ""}`}
+                className={`text-white hover:text-[#F2C94C] transition-colors font-bold text-lg animate-fade-in relative group whitespace-nowrap ${item.name === "Bookings" ? "text-yellow-400" : ""}`}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 {item.name}
@@ -146,14 +146,16 @@ const Navbar = () => {
             ))}
 
             {/* Book Button */}
-            <Button
-              variant="hero"
-              size="lg"
-              className="animate-fade-in bg-white text-black hover:bg-gray-200 font-bold ml-4"
-              onClick={() => navigate("/booking")}
-            >
-              Book
-            </Button>
+            {!isOwner && (
+              <Button
+                variant="hero"
+                size="lg"
+                className="animate-fade-in bg-white text-black hover:bg-gray-200 font-bold ml-4"
+                onClick={() => navigate("/booking")}
+              >
+                Book
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Icon */}
@@ -182,17 +184,19 @@ const Navbar = () => {
               </button>
             ))}
 
-            <Button
-              variant="hero"
-              size="lg"
-              className="w-full mt-6 font-bold bg-white text-black hover:bg-gray-200"
-              onClick={() => {
-                navigate("/booking");
-                setMobileMenuOpen(false);
-              }}
-            >
-              Book Now
-            </Button>
+            {!isOwner && (
+              <Button
+                variant="hero"
+                size="lg"
+                className="w-full mt-6 font-bold bg-white text-black hover:bg-gray-200"
+                onClick={() => {
+                  navigate("/booking");
+                  setMobileMenuOpen(false);
+                }}
+              >
+                Book Now
+              </Button>
+            )}
           </div>
         )}
       </div>
