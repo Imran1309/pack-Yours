@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import falls3 from "@/assets/bg-city.jpg";
 import go3 from "@/assets/bg-falls.jpg";
-import promoB3 from "@/assets/party .jpeg";
+import promoB3 from "@/assets/night_life.jpg";
 import chakra from "@/assets/chakra.jpg";
 import heroVideo from "@/assets/heroVideo.mp4";
 
@@ -50,7 +50,7 @@ const Hero = () => {
             </video>
           ) : (
             <div
-              className="w-full h-full bg-cover bg-center"
+              className="w-full h-full bg-cover bg-center bg-no-repeat"
               style={{ backgroundImage: `url(${bg.src})` }}
             />
           )}
@@ -89,34 +89,46 @@ const Hero = () => {
                 onClick={() => setCurrentBg(index)}
                 aria-label={`Go to slide ${index + 1}`}
                 title={`Slide ${index + 1}`}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  currentBg === index ? "bg-yellow-400" : "bg-white/50"
-                }`}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${currentBg === index ? "bg-yellow-400" : "bg-white/50"
+                  }`}
               />
             ))}
           </div>
 
           <h1
-            className="text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 animate-fade-in"
-            style={{ animationDelay: "0.2s" }}
+            className="text-3xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6 animate-fade-in"
+            style={{
+              animationDelay: "0.2s",
+              fontFamily: "'Cinzel Decorative', cursive",
+              background: "linear-gradient(to right, #FFD700, #000000, #FFD700)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              filter: "drop-shadow(0px 1px 0px rgba(255,255,255,0.4))"
+            }}
           >
             Where every click brings a little wonder
           </h1>
 
           <p
-            className="text-xl md:text-2xl text-primary-foreground mb-4 animate-fade-in"
-            style={{ animationDelay: "0.4s" }}
+            className="text-3xl md:text-5xl text-primary-foreground mb-4 animate-fade-in tracking-wide"
+            style={{
+              animationDelay: "0.4s",
+              fontFamily: "'Great Vibes', cursive",
+              color: "#000000",
+              textShadow: "0px 0px 10px rgba(255,255,255,0.9)", // Strong white glow to make black text visible on dark bg
+              paddingBottom: "10px"
+            }}
           >
             Your dream came true with our team
           </p>
           <div className="flex flex-wrap items-center justify-center gap-2 mb-8 text-primary-foreground animate-fade-in" style={{ animationDelay: "0.6s" }}>
-            <span className="text-3xl md:text-4xl font-bold text-secondary">32 States</span>
-            <span className="text-2xl md:text-3xl flex items-center gap-1">
+            <span className="text-4xl md:text-5xl font-bold" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#ff7700ff", textShadow: "2px 2px 0px #000" }}>32 States</span>
+            <span className="text-3xl md:text-4xl flex items-center gap-1" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#ffffff", textShadow: "1px 1px 0px #000" }}>
               unf
-              <img src={chakra} alt="Chakra" className="inline-block h-8 w-8 md:h-10 md:w-10 animate-spin" style={{ animationDuration: '8s' }} />
+              <img src={chakra} alt="Chakra" className="inline-block h-13 w-13 md:h-12 md:w-12 animate-spin" style={{ animationDuration: '8s' }} />
               rgettable
             </span>
-         <span className="text-3xl md:text-4xl font-bold text-green-600">memories</span>
+            <span className="text-4xl md:text-5xl font-bold" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#16aa06ff", textShadow: "2px 2px 0px #000" }}>memories</span>
 
           </div>
           {/* Stats */}
@@ -126,9 +138,14 @@ const Hero = () => {
           >
             {/* Book Button → TEXT BLACK + navigate */}
             <Button
-              variant="hero"
+              variant="default"
               size="xl"
-              className="text-black font-bold"
+              className="text-white font-bold hover:opacity-90 transition-opacity text-xl"
+              style={{
+                backgroundColor: "#870b41ff",
+                fontFamily: "'Cinzel Decorative', cursive",
+                letterSpacing: "1px" // Added for decorative effect
+              }}
               onClick={() => navigate("/booking")}
             >
               <Calendar className="mr-2 h-5 w-5" />
@@ -139,7 +156,11 @@ const Hero = () => {
             <Button
               variant="outline"
               size="xl"
-              className="bg-primary-foreground/10 border-primary-foreground text-black hover:bg-primary-foreground/20 font-bold"
+              className="bg-black/40 border-white text-white hover:bg-black/60 font-bold text-xl"
+              style={{
+                fontFamily: "'Cinzel Decorative', cursive",
+                letterSpacing: "1px"
+              }}
               onClick={() => navigate("/states")}
             >
               <MapPin className="mr-2 h-5 w-5" />
@@ -153,27 +174,27 @@ const Hero = () => {
             style={{ animationDelay: "1s" }}
           >
             <div className="text-center">
-              <div className="text-4xl font-bold text-accent mb-2">500+</div>
-              <div className="text-primary-foreground text-sm">Happy Travelers</div>
+              <div className="text-5xl font-bold mb-2" style={{ color: "#ff5a07ff" }}>500+</div>
+              <div className="text-white text-lg font-medium">Happy Travelers</div>
             </div>
 
             <div className="text-center">
-              <div className="text-4xl font-bold text-accent mb-2">32</div>
-              <div className="text-primary-foreground text-sm">States Covered</div>
+              <div className="text-5xl font-bold mb-2" style={{ color: "#1d10a9ff" }}>32</div>
+              <div className="text-white text-lg font-medium">States Covered</div>
             </div>
 
             <div className="text-center">
-              <div className="flex items-center justify-center gap-1 text-4xl font-bold text-accent mb-2">
-                <Star className="h-8 w-8 fill-accent" />
+              <div className="flex items-center justify-center gap-1 text-5xl font-bold mb-2" style={{ color: "#05b22aff" }}>
+                <Star className="h-8 w-8 fill-[#05b22aff] text-[#05b22aff]" />
                 4.9
               </div>
-              <div className="text-primary-foreground text-sm">Average Rating</div>
+              <div className="text-white text-lg font-medium">Average Rating</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Scroll Indicator */}
+    
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-float">
         <div className="w-6 h-10 border-2 border-primary-foreground rounded-full flex justify-center p-2">
           <div className="w-1.5 h-3 bg-accent rounded-full"></div>
