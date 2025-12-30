@@ -97,13 +97,13 @@ const Footer = () => {
                 <div className="bg-white/10 p-3 rounded-xl group-hover:bg-[#FFD700] group-hover:text-[#7F1D1D] transition-all transform group-hover:scale-110">
                   <Phone className="h-6 w-6 flex-shrink-0" />
                 </div>
-                <span className="text-white/90 text-lg font-semibold group-hover:text-[#FFD700] transition-colors">+91-88835-11103</span>
+                <a href="tel:+918883511103" className="text-white/90 text-lg font-semibold group-hover:text-[#FFD700] transition-colors">+91-88835-11103</a>
               </li>
               <li className="flex items-center gap-4 group">
                 <div className="bg-white/10 p-3 rounded-xl group-hover:bg-[#FFD700] group-hover:text-[#7F1D1D] transition-all transform group-hover:scale-110">
                   <Mail className="h-6 w-6 flex-shrink-0" />
                 </div>
-                <span className="text-white/90 text-lg font-semibold break-words group-hover:text-[#FFD700] transition-colors">dhanatoursconsultors2020@gmail.com</span>
+                <a href="mailto:dhanatoursconsultors2020@gmail.com" className="text-white/90 text-lg font-semibold break-words group-hover:text-[#FFD700] transition-colors">dhanatoursconsultors2020@gmail.com</a>
               </li>
             </ul>
           </div>
@@ -112,15 +112,17 @@ const Footer = () => {
         {/* Centered Large Social Icons */}
         <div className="flex justify-center items-center gap-8 mb-12 flex-wrap">
           {[
-            { icon: Facebook, label: "Facebook", color: "hover:bg-blue-600" },
-            { icon: Twitter, label: "Twitter", color: "hover:bg-sky-500" },
-            { icon: MessageCircle, label: "WhatsApp", color: "hover:bg-green-500" },
-            { icon: Instagram, label: "Instagram", color: "hover:bg-pink-600" },
-            { icon: Youtube, label: "YouTube", color: "hover:bg-red-600" },
+            { icon: Facebook, label: "Facebook", color: "hover:bg-blue-600", href: "https://www.facebook.com/share/1MAEhtEFQG/" },
+            { icon: Twitter, label: "Twitter", color: "hover:bg-sky-500", href: "https://x.com/Dhanatour2020" },
+            { icon: MessageCircle, label: "WhatsApp", color: "hover:bg-green-500", href: "https://wa.me/+918883511103" },
+            { icon: Instagram, label: "Instagram", color: "hover:bg-pink-600", href: "https://www.instagram.com/dhanatourconsultors/?utm_source=ig_web_button_share_sheet" },
+            { icon: Youtube, label: "YouTube", color: "hover:bg-red-600", href: "http://www.youtube.com/@dhanatourconsultors2020" },
           ].map((social, idx) => (
             <a
               key={idx}
-              href="#"
+              href={social.href}
+              target={social.href !== "#" ? "_blank" : "_self"}
+              rel={social.href !== "#" ? "noopener noreferrer" : ""}
               aria-label={social.label}
               className={`bg-white/10 p-4 rounded-full ${social.color} hover:scale-125 transition-all duration-300 text-white shadow-lg border border-white/10 group`}
             >

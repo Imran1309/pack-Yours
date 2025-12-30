@@ -100,10 +100,10 @@ const Hero = () => {
             style={{
               animationDelay: "0.2s",
               fontFamily: "'Cinzel Decorative', cursive",
-              background: "linear-gradient(to right, #FFD700, #000000, #FFD700)",
+              background: "linear-gradient(to right, #FFD700, #000000ff, #FFD700)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
-              filter: "drop-shadow(0px 1px 0px rgba(255,255,255,0.4))"
+              filter: "drop-shadow(0px 1px 0px rgba(0, 0, 0, 0.4))"
             }}
           >
             Where every click brings a little wonder

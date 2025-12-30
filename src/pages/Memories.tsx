@@ -3,7 +3,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Plus, Upload, User, Star, Globe, Utensils, Car, BedDouble, X, ChevronLeft, ChevronRight, Quote, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Upload, User, Star, Globe, Utensils, Car, BedDouble, X, ChevronLeft, ChevronRight, Quote, Trash2, Video, Heart, Share2 } from "lucide-react";
+
 import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -30,6 +31,8 @@ interface Review {
   media: MediaItem[]; // Array of media objects
   createdAt: string;
   type: 'review' | 'memory';
+  userEmail: string;
+  likes?: number;
 }
 
 const Memories = () => {
@@ -37,7 +40,7 @@ const Memories = () => {
   const { toast } = useToast();
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'review' | 'memory'>('review');
+  const [activeTab, setActiveTab] = useState<'review' | 'memory' | 'reels'>('review');
 
   const OWNER_EMAILS = ["dhanatrip2020@gmail.com"];
 
@@ -59,6 +62,7 @@ const Memories = () => {
   const [userEmail, setUserEmail] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [activeIndices, setActiveIndices] = useState<Record<string, number>>({});
+  const [likedReviews, setLikedReviews] = useState<Record<string, boolean>>({});
 
   const nextSlide = (e: React.MouseEvent, reviewId: string, total: number) => {
     e.stopPropagation();
@@ -76,6 +80,48 @@ const Memories = () => {
     }));
   };
 
+  const handleLike = async (id: string) => {
+    // Optimistic Update
+    // Prevent multiple likes from same session if already liked
+    if (likedReviews[id]) return;
+
+    setLikedReviews(prev => ({ ...prev, [id]: true }));
+    setReviews(prev => prev.map(r => r._id === id ? { ...r, likes: (r.likes || 0) + 1 } : r));
+
+    try {
+      await API.put(`/reviews/${id}/like`);
+    } catch (error) {
+      console.error("Like failed", error);
+      // Revert optimistic update
+      setLikedReviews(prev => ({ ...prev, [id]: false }));
+      setReviews(prev => prev.map(r => r._id === id ? { ...r, likes: (r.likes || 0) - 1 } : r));
+    }
+  };
+
+  const handleShare = async (review: Review) => {
+    const url = window.location.href; // Or specific deep link if you have routing for individual reviews
+    const shareData = {
+      title: review.title || "Check out this memory from Pack Yours!",
+      text: review.description,
+      url: url,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.log("Share failed/cancelled", err);
+      }
+    } else {
+      // Fallback to clipboard
+      navigator.clipboard.writeText(url);
+      toast({
+        title: "Link Copied!",
+        description: "Shared link copied to clipboard.",
+      });
+    }
+  };
+
   useEffect(() => {
     const currentUser = localStorage.getItem("currentUser");
     if (currentUser) {
@@ -91,13 +137,20 @@ const Memories = () => {
 
   const fetchReviews = async () => {
     try {
-      const response = await API.get("/reviews", { params: { type: activeTab } });
+      // If reels, we want ALL items (no type filter), then we filter for videos client-side
+      const params = activeTab === 'reels' ? {} : { type: activeTab };
+      const response = await API.get("/reviews", { params });
 
       // Transform old data structure if needed (for backward compatibility if DB has old records)
-      const data = response.data.map((item: any) => ({
+      let data = response.data.map((item: any) => ({
         ...item,
-        media: Array.isArray(item.media) ? item.media : (item.media ? [{ url: item.media, type: item.mediaType || 'image' }] : [])
+        media: Array.isArray(item.media) ? item.media : (item.media ? [{ url: item.media, type: item.mediaType || 'image' }] : []),
+        likes: item.likes || 0
       }));
+
+      if (activeTab === 'reels') {
+        data = data.filter((item: Review) => item.media.some(m => m.type === 'video'));
+      }
 
       setReviews(data);
     } catch (error) {
@@ -165,7 +218,9 @@ const Memories = () => {
 
     formData.append("rating", rating.toString());
     formData.append("userEmail", userEmail);
-    formData.append("type", activeTab);
+    // If on Reels tab, default to review or memory? Let's default to review for users, memory for owners if they choose?
+    // Be safe: if tab is reels, we can't upload to 'reels'. Default to 'review'.
+    formData.append("type", activeTab === 'reels' ? 'review' : activeTab);
 
     // Append all selected files
     selectedFiles.forEach((file) => {
@@ -177,10 +232,11 @@ const Memories = () => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        timeout: 600000, // 10 minutes
       });
 
       toast({
-        title: activeTab === 'review' ? "Review Posted!" : "Memories Saved!",
+        title: "Success!",
         description: "Successfully added.",
       });
 
@@ -194,6 +250,7 @@ const Memories = () => {
       setSelectedFiles([]);
       setPreviewUrls([]);
 
+      // Refresh to reflect the new upload (if it has video it will show in reels immediately if we fetch again)
       fetchReviews();
     } catch (error: any) {
       console.error("Error uploading:", error);
@@ -262,7 +319,7 @@ const Memories = () => {
               letterSpacing: "1px",
             }}
           >
-            {activeTab === 'review' ? "Traveller Diaries" : "Our Gallery"}
+            {activeTab === 'review' ? "Traveller Diaries" : activeTab === 'memory' ? "Our Gallery" : "Video Reels"}
           </h1>
         </div>
 
@@ -284,6 +341,14 @@ const Memories = () => {
             <Globe className="w-3 h-3 mr-2" />
             Gallery
           </button>
+          <button
+            onClick={() => setActiveTab('reels')}
+            className={`flex items-center px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-500 ease-out ${activeTab === 'reels' ? 'bg-white text-[#28494B] shadow-lg' : 'text-white/60 hover:text-white'
+              }`}
+          >
+            <Video className="w-3 h-3 mr-2" />
+            Reels
+          </button>
         </div>
 
         <div className="flex items-center gap-4 mt-4 md:mt-0">
@@ -299,7 +364,7 @@ const Memories = () => {
             </Button>
           )}
 
-          {(activeTab === 'review' || activeTab === 'memory') && (
+          {(activeTab === 'review' || activeTab === 'memory' || activeTab === 'reels') && (
             <Button
               onClick={() => {
                 if (!isAuthenticated) {
@@ -313,13 +378,16 @@ const Memories = () => {
                     });
                     return;
                   }
+                  // For reels, we allow users to upload "Review Videos" or owners "Gallery Videos". 
+                  // Since 'reels' isn't a DB type, we'll default to 'review' upload unless owner, but simplification:
+                  // Just open upload dialog.
                   setUploadDialogOpen(true);
                 }
               }}
               className="bg-[#F2C94C] hover:bg-[#d4af37] text-[#1a2d2f] rounded-full px-8 py-6 shadow-xl transform hover:scale-105 transition-all text-xs font-black tracking-widest uppercase border border-yellow-300/50"
             >
               <Plus className="mr-2 h-4 w-4" />
-              {activeTab === 'review' ? "Write Review" : "Add Photos"}
+              {activeTab === 'review' ? "Write Review" : activeTab === 'memory' ? "Add Photos" : "Add Video"}
             </Button>
           )}
         </div>
@@ -333,150 +401,266 @@ const Memories = () => {
               <Globe className="h-16 w-16 text-white/20" />
             </div>
             <h2 className="text-3xl font-light text-white mb-3 tracking-wide">
-              {activeTab === 'review' ? "No Reviews Yet" : "Gallery Empty"}
+              {activeTab === 'review' ? "No Reviews Yet" : activeTab === 'memory' ? "Gallery Empty" : "No Reels Yet"}
             </h2>
             <p className="text-white/50 font-light text-lg max-w-md">
               {activeTab === 'review'
                 ? "Be the first traveler to share your amazing journey with us!"
-                : "We are curating our best travel moments. Stay tuned!"}
+                : activeTab === 'memory'
+                  ? "We are curating our best travel moments. Stay tuned!"
+                  : "Upload your travel videos to see them here!"}
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {reviews.map((review) => (
-              <div
-                key={review._id}
-                className="group bg-white/10 backdrop-blur-md rounded-xl overflow-hidden shadow-2xl transition-all duration-500 hover:bg-white/15 border border-white/10 hover:border-white/30 flex flex-col hover:-translate-y-2"
-              >
-                {/* Media Carousel / Grid */}
-                {review.media && review.media.length > 0 && (
-                  <div className="relative h-64 bg-black/40 overflow-hidden group/media">
-                    {(() => {
-                      const currentIndex = activeIndices[review._id] || 0;
-                      const currentMedia = review.media[currentIndex];
+          activeTab === 'reels' ? (
+            <div className="flex flex-col items-center gap-12 pb-20">
+              {reviews.map((review) => {
+                const videoMedia = review.media.find(m => m.type === 'video');
+                if (!videoMedia) return null;
 
-                      return currentMedia && (currentMedia.type === 'video' ? (
-                        <video
-                          src={currentMedia.url}
-                          controls
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <img
-                          src={currentMedia.url}
-                          alt={review.title}
-                          className="w-full h-full object-cover transition-transform duration-500"
-                        />
-                      ));
-                    })()}
+                return (
+                  <div key={review._id} className="relative w-full max-w-[380px] aspect-[9/16] bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10 group">
+                    {/* Video Player */}
+                    <video
+                      src={videoMedia.url}
+                      className="w-full h-full object-cover cursor-pointer"
+                      loop
+                      playsInline
+                      onClick={(e) => {
+                        const v = e.currentTarget;
+                        if (v.paused) v.play(); else v.pause();
+                      }}
+                    />
 
-                    {/* Navigation Buttons */}
-                    {review.media.length > 1 && (
-                      <>
-                        <button
-                          onClick={(e) => prevSlide(e, review._id, review.media.length)}
-                          className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full opacity-0 group-hover/media:opacity-100 transition-opacity backdrop-blur-sm z-10"
-                        >
-                          <ChevronLeft size={20} />
-                        </button>
-                        <button
-                          onClick={(e) => nextSlide(e, review._id, review.media.length)}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full opacity-0 group-hover/media:opacity-100 transition-opacity backdrop-blur-sm z-10"
-                        >
-                          <ChevronRight size={20} />
-                        </button>
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 pointer-events-none" />
 
-                        {/* Dots Indicator */}
-                        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-                          {review.media.map((_, idx) => (
-                            <div
-                              key={idx}
-                              className={`w-1.5 h-1.5 rounded-full transition-colors ${(activeIndices[review._id] || 0) === idx ? 'bg-white' : 'bg-white/40'
-                                }`}
-                            />
-                          ))}
+                    {/* Content Overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 p-5 z-20 flex flex-col gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#F2C94C] to-[#E91E63] p-[2px]">
+                          <div className="w-full h-full rounded-full bg-black flex items-center justify-center overflow-hidden">
+                            <User size={20} className="text-white/80" />
+                          </div>
                         </div>
-                      </>
-                    )}
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-white text-sm shadow-black drop-shadow-md">
+                              {review.userEmail.split('@')[0]}
+                            </span>
+                            {(review.userEmail === 'dhanatrip2020@gmail.com' || review.type === 'memory') && (
+                              <span className="px-1.5 py-0.5 bg-[#F2C94C] text-[10px] font-bold text-black rounded-sm">
+                                OWNER
+                              </span>
+                            )}
+                          </div>
+                          {review.title && (
+                            <span className="text-xs text-white/80 font-medium tracking-wide">
+                              {review.title}
+                            </span>
+                          )}
+                        </div>
+                      </div>
 
-                    {/* Badge */}
-                    <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-md px-3 py-1 rounded-sm shadow-lg flex items-center gap-1.5 border border-white/10 pointer-events-none z-10">
-                      <Star className="w-3 h-3 fill-[#F2C94C] text-[#F2C94C]" />
-                      <span className="font-bold text-white text-xs">{review.rating}</span>
+                      <p className="text-white/90 text-sm line-clamp-2 font-light leading-relaxed">
+                        {review.description}
+                      </p>
+
+                      {/* Music / Date */}
+                      <div className="flex items-center gap-2 text-xs text-white/60">
+                        <div className="flex items-center gap-1">
+                          <span className="animate-pulse">♫</span> Original Audio
+                        </div>
+                        <span>•</span>
+                        <span>{new Date(review.createdAt).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+
+                    {/* Sidebar Actions */}
+                    <div className="absolute right-3 bottom-24 flex flex-col items-center gap-6 z-30">
+                      <div
+                        className="flex flex-col items-center gap-1 group/btn cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLike(review._id);
+                        }}
+                      >
+                        <div className={`p-2 backdrop-blur-sm rounded-full active:scale-90 transition-transform ${likedReviews[review._id] ? 'bg-red-500/20' : 'bg-black/20'}`}>
+                          <Heart className={`w-7 h-7 ${likedReviews[review._id] ? 'fill-red-500 text-red-500' : 'text-white'}`} />
+                        </div>
+                        <span className="text-xs font-bold text-white shadow-black drop-shadow-md">
+                          {review.likes || 0}
+                        </span>
+                      </div>
+
+                      <div
+                        className="flex flex-col items-center gap-1 cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleShare(review);
+                        }}
+                      >
+                        <div className="p-2 bg-black/20 backdrop-blur-sm rounded-full active:scale-90 transition-transform hover:bg-white/10">
+                          <Share2 className="w-7 h-7 text-white" />
+                        </div>
+                        <span className="text-xs font-bold text-white shadow-black drop-shadow-md">Share</span>
+                      </div>
+
+                      {isAuthenticated && OWNER_EMAILS.includes(userEmail || "") && (
+                        <div className="flex flex-col items-center gap-1 cursor-pointer">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(review._id);
+                            }}
+                            className="p-2 bg-black/20 backdrop-blur-sm rounded-full hover:bg-red-500/20 active:scale-90 transition-all text-white hover:text-red-400"
+                          >
+                            <Trash2 className="w-6 h-6" />
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
-                )}
+                );
+              })}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+              {reviews.map((review) => (
+                <div
+                  key={review._id}
+                  className="group bg-white/10 backdrop-blur-md rounded-xl overflow-hidden shadow-2xl transition-all duration-500 hover:bg-white/15 border border-white/10 hover:border-white/30 flex flex-col hover:-translate-y-2"
+                >
+                  {/* Media Carousel / Grid */}
+                  {review.media && review.media.length > 0 && (
+                    <div className="relative h-64 bg-black/40 overflow-hidden group/media">
+                      {(() => {
+                        const currentIndex = activeIndices[review._id] || 0;
+                        const currentMedia = review.media[currentIndex];
 
-                {/* Content */}
-                <div className="p-6 flex-1 flex flex-col gap-4">
-                  <div>
-                    <h3 className="text-xl font-medium text-white line-clamp-1 mb-2 tracking-wide font-serif">
-                      {review.title}
-                    </h3>
-                    <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
-                      {[...Array(5)].map((_, i) => (
-                        <div key={i} className={`h-0.5 w-full rounded-full ${i < review.rating ? 'bg-[#F2C94C]' : 'bg-white/10'}`} />
-                      ))}
-                    </div>
-                  </div>
+                        return currentMedia && (currentMedia.type === 'video' ? (
+                          <video
+                            src={currentMedia.url}
+                            controls
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <img
+                            src={currentMedia.url}
+                            alt={review.title}
+                            className="w-full h-full object-cover transition-transform duration-500"
+                          />
+                        ));
+                      })()}
 
-                  {/* Reviews Chips */}
-                  {activeTab === 'review' && (
-                    <div className="flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-wider">
-                      {review.foodReview && (
-                        <div className="bg-white/5 px-3 py-1.5 rounded-sm border border-white/10 text-white/80 flex items-center gap-1 group-hover:bg-white/10 transition-colors">
-                          <Utensils size={10} className="text-[#F2C94C]" /> {review.foodReview}
-                        </div>
+                      {/* Navigation Buttons */}
+                      {review.media.length > 1 && (
+                        <>
+                          <button
+                            onClick={(e) => prevSlide(e, review._id, review.media.length)}
+                            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full opacity-0 group-hover/media:opacity-100 transition-opacity backdrop-blur-sm z-10"
+                          >
+                            <ChevronLeft size={20} />
+                          </button>
+                          <button
+                            onClick={(e) => nextSlide(e, review._id, review.media.length)}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full opacity-0 group-hover/media:opacity-100 transition-opacity backdrop-blur-sm z-10"
+                          >
+                            <ChevronRight size={20} />
+                          </button>
+
+                          {/* Dots Indicator */}
+                          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                            {review.media.map((_, idx) => (
+                              <div
+                                key={idx}
+                                className={`w-1.5 h-1.5 rounded-full transition-colors ${(activeIndices[review._id] || 0) === idx ? 'bg-white' : 'bg-white/40'
+                                  }`}
+                              />
+                            ))}
+                          </div>
+                        </>
                       )}
-                      {review.roomReview && (
-                        <div className="bg-white/5 px-3 py-1.5 rounded-sm border border-white/10 text-white/80 flex items-center gap-1 group-hover:bg-white/10 transition-colors">
-                          <BedDouble size={10} className="text-[#F2C94C]" /> {review.roomReview}
-                        </div>
-                      )}
-                      {review.vehicleReview && (
-                        <div className="bg-white/5 px-3 py-1.5 rounded-sm border border-white/10 text-white/80 flex items-center gap-1 group-hover:bg-white/10 transition-colors">
-                          <Car size={10} className="text-[#F2C94C]" /> {review.vehicleReview}
-                        </div>
-                      )}
+
+                      {/* Badge */}
+                      <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-md px-3 py-1 rounded-sm shadow-lg flex items-center gap-1.5 border border-white/10 pointer-events-none z-10">
+                        <Star className="w-3 h-3 fill-[#F2C94C] text-[#F2C94C]" />
+                        <span className="font-bold text-white text-xs">{review.rating}</span>
+                      </div>
                     </div>
                   )}
 
-                  <div className="relative mt-2">
-                    {/* Decorative Quote Mark */}
-                    <Quote className="absolute -top-3 -left-1 w-6 h-6 text-white/10 transform -scale-x-100" />
-                    <p className="text-white/70 text-sm leading-relaxed whitespace-pre-line pl-6 relative z-10 font-light">
-                      {review.description}
-                    </p>
-                  </div>
+                  {/* Content */}
+                  <div className="p-6 flex-1 flex flex-col gap-4">
+                    <div>
+                      <h3 className="text-xl font-medium text-white line-clamp-1 mb-2 tracking-wide font-serif">
+                        {review.title}
+                      </h3>
+                      <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
+                        {[...Array(5)].map((_, i) => (
+                          <div key={i} className={`h-0.5 w-full rounded-full ${i < review.rating ? 'bg-[#F2C94C]' : 'bg-white/10'}`} />
+                        ))}
+                      </div>
+                    </div>
 
-                  <div className="mt-auto pt-4 border-t border-white/5 flex justify-between items-center text-[10px] text-white/40 font-medium tracking-widest uppercase">
-                    <span>
-                      {new Date(review.createdAt).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' })}
-                    </span>
+                    {/* Reviews Chips */}
+                    {activeTab === 'review' && (
+                      <div className="flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-wider">
+                        {review.foodReview && (
+                          <div className="bg-white/5 px-3 py-1.5 rounded-sm border border-white/10 text-white/80 flex items-center gap-1 group-hover:bg-white/10 transition-colors">
+                            <Utensils size={10} className="text-[#F2C94C]" /> {review.foodReview}
+                          </div>
+                        )}
+                        {review.roomReview && (
+                          <div className="bg-white/5 px-3 py-1.5 rounded-sm border border-white/10 text-white/80 flex items-center gap-1 group-hover:bg-white/10 transition-colors">
+                            <BedDouble size={10} className="text-[#F2C94C]" /> {review.roomReview}
+                          </div>
+                        )}
+                        {review.vehicleReview && (
+                          <div className="bg-white/5 px-3 py-1.5 rounded-sm border border-white/10 text-white/80 flex items-center gap-1 group-hover:bg-white/10 transition-colors">
+                            <Car size={10} className="text-[#F2C94C]" /> {review.vehicleReview}
+                          </div>
+                        )}
+                      </div>
+                    )}
 
-                    <div className="flex items-center gap-2">
-                      {isAuthenticated && userEmail === OWNER_EMAILS[0] && (
-                        <span className="text-[#F2C94C]">Owner</span>
-                      )}
+                    <div className="relative mt-2">
+                      {/* Decorative Quote Mark */}
+                      <Quote className="absolute -top-3 -left-1 w-6 h-6 text-white/10 transform -scale-x-100" />
+                      <p className="text-white/70 text-sm leading-relaxed whitespace-pre-line pl-6 relative z-10 font-light">
+                        {review.description}
+                      </p>
+                    </div>
 
-                      {isAuthenticated && OWNER_EMAILS.includes(userEmail || "") && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDelete(review._id);
-                          }}
-                          className="p-1.5 hover:bg-red-500/20 rounded-md text-white/40 hover:text-red-400 transition-colors"
-                          title="Delete Review"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      )}
+                    <div className="mt-auto pt-4 border-t border-white/5 flex justify-between items-center text-[10px] text-white/40 font-medium tracking-widest uppercase">
+                      <span>
+                        {new Date(review.createdAt).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' })}
+                      </span>
+
+                      <div className="flex items-center gap-2">
+                        {isAuthenticated && userEmail === OWNER_EMAILS[0] && (
+                          <span className="text-[#F2C94C]">Owner</span>
+                        )}
+
+                        {isAuthenticated && OWNER_EMAILS.includes(userEmail || "") && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(review._id);
+                            }}
+                            className="p-1.5 hover:bg-red-500/20 rounded-md text-white/40 hover:text-red-400 transition-colors"
+                            title="Delete Review"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )
         )}
       </div>
 
