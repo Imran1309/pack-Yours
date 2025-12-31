@@ -25,3 +25,5 @@ dist-ssr
 
 # Backend uploads
 backend/uploads/
+
+vite.config.ts.timestamp*

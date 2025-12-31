@@ -71,7 +71,7 @@ const KashmirTempleDetails = () => {
                         <img
                             src={slide.image}
                             alt={slide.title}
-                            className={`w-full h-full object-cover blur-sm transform transition-transform duration-[10s] ease-linear ${index === activeSlide ? "scale-110" : "scale-100"}`}
+                            className={`w-full h-full object-cover blur-sm transform transition-transform [transition-duration:10s] ease-linear ${index === activeSlide ? "scale-110" : "scale-100"}`}
                         />
                     </div>
                 ))}
