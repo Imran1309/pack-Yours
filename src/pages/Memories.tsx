@@ -61,6 +61,7 @@ const Memories = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userEmail, setUserEmail] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [activeIndices, setActiveIndices] = useState<Record<string, number>>({});
   const [likedReviews, setLikedReviews] = useState<Record<string, boolean>>({});
 
@@ -144,7 +145,11 @@ const Memories = () => {
       // Transform old data structure if needed (for backward compatibility if DB has old records)
       let data = response.data.map((item: any) => ({
         ...item,
-        media: Array.isArray(item.media) ? item.media : (item.media ? [{ url: item.media, type: item.mediaType || 'image' }] : []),
+        media: (Array.isArray(item.media) ? item.media : (item.media ? [{ url: item.media, type: item.mediaType || 'image' }] : []))
+          .map((m: any) => ({
+            ...m,
+            url: m.url ? m.url.replace('http://localhost:5000', 'https://pack-yours-backend.onrender.com') : ''
+          })),
         likes: item.likes || 0
       }));
 
@@ -208,6 +213,7 @@ const Memories = () => {
     }
 
     setLoading(true);
+    setUploadProgress(0);
     const formData = new FormData();
     formData.append("title", newTitle);
     formData.append("description", newDescription);
@@ -232,7 +238,11 @@ const Memories = () => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-        timeout: 600000, // 10 minutes
+        timeout: 0, // No timeout for large uploads
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
+          setUploadProgress(percentCompleted);
+        },
       });
 
       toast({
@@ -249,6 +259,7 @@ const Memories = () => {
       setRating(5);
       setSelectedFiles([]);
       setPreviewUrls([]);
+      setUploadProgress(0);
 
       // Refresh to reflect the new upload (if it has video it will show in reels immediately if we fetch again)
       fetchReviews();
@@ -261,6 +272,7 @@ const Memories = () => {
       });
     } finally {
       setLoading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -799,7 +811,10 @@ const Memories = () => {
               className="w-full bg-[#F2C94C] hover:bg-[#d4af37] text-[#1a2d2f] font-black tracking-widest uppercase py-6 shadow-xl transition-all rounded-sm hover:-translate-y-1"
               disabled={loading}
             >
-              {loading ? "PROCESSING..." : (activeTab === 'review' ? "PUBLISH REVIEW" : "ADD MEMORY")}
+              {loading
+                ? `UPLOADING ${uploadProgress}%...`
+                : (activeTab === 'review' ? "PUBLISH REVIEW" : "ADD MEMORY")
+              }
             </Button>
           </div>
         </DialogContent>
