@@ -55,7 +55,7 @@ const Navbar = () => {
   const navItems = [
     { name: "Home", type: "hash", path: "/" },
     { name: "Packages", type: "hash", path: "#packages" },
-    { name: "States", type: "page", path: "/states" },
+    { name: "Destinations", type: "page", path: "/states" },
     { name: "Memories", type: "page", path: "/memories" },
     { name: "Reviews", type: "hash", path: "#reviews" },
     { name: "About us", type: "hash", path: "#about" },
