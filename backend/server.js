@@ -233,12 +233,265 @@ app.post('/api/reviews', upload.array('media'), async (req, res) => {
         res.status(500).json({ message: 'Failed to add review.' });
     }
 });
-// ... (Models and other code remain the same) ...
+// -----------------------------------------------------------------------------
+// Models
+// -----------------------------------------------------------------------------
+
+// User Model
+let User;
+try {
+    User = mongoose.model('User');
+} catch {
+    const UserSchema = new mongoose.Schema({
+        name: { type: String, required: true },
+        email: { type: String, required: true, unique: true },
+        phone: { type: String, required: true },
+        password: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now }
+    });
+    User = mongoose.model('User', UserSchema);
+}
+
+// Booking Model
+let Booking;
+try {
+    Booking = mongoose.model('Booking');
+} catch {
+    const BookingSchema = new mongoose.Schema({
+        name: { type: String, required: true },
+        email: { type: String, required: true },
+        phone: { type: String, required: true },
+        destination: { type: String, required: true },
+        date: { type: Date, required: true },
+        people: { type: String, required: true },
+        vacationType: { type: String, required: true },
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        price: { type: Number, default: 0 },
+        status: { type: String, enum: ['pending', 'completed', 'cancelled'], default: 'pending' },
+        submittedAt: { type: Date, default: Date.now }
+    });
+    Booking = mongoose.model('Booking', BookingSchema);
+}
+
+// Review Model (Already defined in POST /api/reviews but safer to have global access)
+let Review;
+try {
+    Review = mongoose.model('Review');
+} catch {
+    const ReviewSchema = new mongoose.Schema({
+        title: { type: String, required: true },
+        description: { type: String, required: true },
+        foodReview: String,
+        roomReview: String,
+        vehicleReview: String,
+        rating: { type: Number, default: 5 },
+        userEmail: { type: String, required: true },
+        type: { type: String, enum: ['review', 'memory'], default: 'review' },
+        media: [{
+            url: String,
+            type: { type: String, default: 'image' }
+        }],
+        createdAt: { type: Date, default: Date.now },
+        likes: { type: Number, default: 0 }
+    });
+    Review = mongoose.model('Review', ReviewSchema);
+}
+
+// -----------------------------------------------------------------------------
+// Routes
+// -----------------------------------------------------------------------------
+
+// 1. User Registration
+app.post('/api/users/register', async (req, res) => {
+    try {
+        const { name, email, phone, password } = req.body;
+
+        if (!email || !password || !name) {
+            return res.status(400).json({ message: 'Please provide all required fields.' });
+        }
+
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: 'User already exists.' });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const newUser = new User({
+            name,
+            email,
+            phone,
+            password: hashedPassword
+        });
+
+        await newUser.save();
+
+        const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+
+        res.status(201).json({
+            message: 'User registered successfully',
+            token,
+            user: { id: newUser._id, name: newUser.name, email: newUser.email }
+        });
+
+    } catch (error) {
+        console.error('Registration Error:', error);
+        res.status(500).json({ message: 'Server error during registration.' });
+    }
+});
+
+// 2. User Login
+app.post('/api/users/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid credentials.' });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid credentials.' });
+        }
+
+        // Token expires in 30 days for persistent login
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+
+        res.status(200).json({
+            message: 'Login successful',
+            token,
+            user: { id: user._id, name: user.name, email: user.email }
+        });
+
+    } catch (error) {
+        console.error('Login Error:', error);
+        res.status(500).json({ message: 'Server error during login.' });
+    }
+});
+
+// 3. Form Submission (Booking)
+app.post('/api/forms/submit', async (req, res) => {
+    try {
+        const formData = req.body;
+        console.log('[BOOKING] New booking received:', formData);
+
+        const newBooking = new Booking(formData);
+        await newBooking.save();
+
+        // sendEmailNotification(formData); // Optional
+
+        res.status(200).json({ message: 'Booking submitted successfully!' });
+    } catch (error) {
+        console.error('Booking Error:', error);
+        res.status(500).json({ message: 'Failed to save booking.' });
+    }
+});
+
+// GET All Bookings (Admin)
+app.get('/api/bookings', async (req, res) => {
+    try {
+        const bookings = await Booking.find().sort({ submittedAt: -1 });
+        res.status(200).json(bookings);
+    } catch (error) {
+        console.error('Fetch Bookings Error:', error);
+        res.status(500).json({ message: 'Failed to fetch bookings.' });
+    }
+});
+
+// UPDATE Booking (Admin)
+app.put('/api/bookings/:id', async (req, res) => {
+    try {
+        const { price, status } = req.body;
+        const booking = await Booking.findById(req.params.id);
+
+        if (!booking) return res.status(404).json({ message: 'Booking not found' });
+
+        if (price !== undefined) booking.price = price;
+        if (status) booking.status = status;
+
+        await booking.save();
+        res.status(200).json(booking);
+    } catch (error) {
+        console.error('Update Booking Error:', error);
+        res.status(500).json({ message: 'Failed to update booking.' });
+    }
+});
+
+// 4. Reviews & Memories
+// GET Reviews
+app.get('/api/reviews', async (req, res) => {
+    try {
+        const { type } = req.query;
+        let filter = {};
+        if (type) filter.type = type;
+
+        const reviews = await Review.find(filter).sort({ createdAt: -1 });
+        res.status(200).json(reviews);
+    } catch (error) {
+        console.error('Get Reviews Error:', error);
+        res.status(500).json({ message: 'Failed to fetch reviews.' });
+    }
+});
+
+// LIKE Review
+app.put('/api/reviews/:id/like', async (req, res) => {
+    try {
+        const review = await Review.findById(req.params.id);
+        if (!review) return res.status(404).json({ message: 'Review not found' });
+
+        review.likes += 1;
+        await review.save();
+        res.status(200).json({ likes: review.likes });
+    } catch (error) {
+        console.error('Like Error:', error);
+        res.status(500).json({ message: 'Failed to like review.' });
+    }
+});
+
+// DELETE Review
+app.delete('/api/reviews/:id', async (req, res) => {
+    try {
+        const { userEmail } = req.body;
+        const review = await Review.findById(req.params.id);
+        const OWNER_EMAILS = ["dhanatrip2020@gmail.com"];
+
+        if (!review) return res.status(404).json({ message: 'Review not found' });
+
+        if (review.type === 'memory' && !OWNER_EMAILS.includes(userEmail)) {
+            return res.status(403).json({ message: 'Unauthorized: Only owners can delete memories.' });
+        }
+
+        if (review.type === 'review' && !OWNER_EMAILS.includes(userEmail) && review.userEmail !== userEmail) {
+            return res.status(403).json({ message: 'Unauthorized' });
+        }
+
+        await Review.findByIdAndDelete(req.params.id);
+        res.status(200).json({ message: 'Deleted successfully' });
+    } catch (error) {
+        console.error('Delete Error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Optional: Email Helper (Basic Setup)
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
+
+// Root endpoint
+app.get('/', (req, res) => {
+    res.send('Pack Yours Backend with MongoDB, GridFS (v3) is running!');
+});
 
 // Start Server
 const server = app.listen(PORT, () => {
-    console.log(`🚀 Server is running on http://localhost:${PORT} (v2 with 500MB limit)`);
+    console.log(`🚀 Server is running on http://localhost:${PORT} (v3 with GridFS & Restored Routes)`);
 });
 
-// Increase server timeout to 30 minutes for slow mobile uploads
 server.setTimeout(30 * 60 * 1000);
