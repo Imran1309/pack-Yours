@@ -103,6 +103,76 @@ app.post('/api/upload/chunk', upload.single('chunk'), async (req, res) => {
         res.status(500).json({ message: 'Chunk upload failed' });
     }
 });
+
+app.post('/api/reviews', upload.array('media'), async (req, res) => {
+    try {
+        const { title, description, foodReview, roomReview, vehicleReview, rating, userEmail, type } = req.body;
+
+        // Backend Validation for Gallery/Memory permission
+        // Assuming OWNER_EMAILS is defined elsewhere, e.g., in .env or a config file
+        const OWNER_EMAILS = process.env.OWNER_EMAILS ? process.env.OWNER_EMAILS.split(',') : [];
+        if (type === 'memory' && !OWNER_EMAILS.includes(userEmail)) {
+            return res.status(403).json({ message: 'Only owners can add to Gallery/Memories.' });
+        }
+
+        const baseUrl = process.env.RENDER_EXTERNAL_URL || `${req.protocol}://${req.get('host')}`;
+
+        // 1. Files uploaded via Multer (small files)
+        const mediaFiles = req.files ? req.files.map(file => ({
+            url: `${baseUrl}/uploads/${file.filename}`,
+            type: file.mimetype.startsWith('video') ? 'video' : 'image'
+        })) : [];
+
+        // 2. Pre-uploaded files (Chunked uploads) - passed as JSON string or array
+        let preUploadedMedia = [];
+        if (req.body.preUploadedMedia) {
+            try {
+                preUploadedMedia = typeof req.body.preUploadedMedia === 'string'
+                    ? JSON.parse(req.body.preUploadedMedia)
+                    : req.body.preUploadedMedia;
+            } catch (e) {
+                console.error('Error parsing preUploadedMedia:', e);
+            }
+        }
+
+        const finalMedia = [...mediaFiles, ...preUploadedMedia];
+
+        // Assuming Review model is defined elsewhere
+        const Review = mongoose.model('Review', new mongoose.Schema({
+            title: String,
+            description: String,
+            foodReview: Number,
+            roomReview: Number,
+            vehicleReview: Number,
+            rating: Number,
+            userEmail: String,
+            type: String,
+            media: [{ url: String, type: String }],
+            createdAt: { type: Date, default: Date.now }
+        }));
+
+        const newReview = new Review({
+            title,
+            description,
+            foodReview,
+            roomReview,
+            vehicleReview,
+            rating,
+            userEmail,
+            type: type || 'review',
+            media: finalMedia
+        });
+
+        await newReview.save();
+
+        res.status(201).json({ message: 'Added successfully!', review: newReview });
+
+
+    } catch (error) {
+        console.error('Post Review Error:', error);
+        res.status(500).json({ message: 'Failed to add review.' });
+    }
+});
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('✅ MongoDB Connected Successfully'))
