@@ -25,6 +25,84 @@ if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir);
 }
 
+// Multer storage configuration for chunked uploads
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        // Multer will temporarily store the chunk in the 'temp' directory
+        cb(null, path.join(__dirname, 'temp'));
+    },
+    filename: function (req, file, cb) {
+        // Use a generic filename, as we'll rename it immediately
+        cb(null, file.fieldname + '-' + Date.now());
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 500 * 1024 * 1024, // 500MB limit
+        fieldSize: 500 * 1024 * 1024
+    }
+});
+
+// -----------------------------------------------------------------------------
+// Chunked Upload Route (Bypass Cloudflare 100MB Limit)
+// -----------------------------------------------------------------------------
+const tempDir = path.join(__dirname, 'temp');
+if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir);
+}
+
+app.post('/api/upload/chunk', upload.single('chunk'), async (req, res) => {
+    try {
+        const { uploadId, chunkIndex, totalChunks, fileName } = req.body;
+        const chunk = req.file;
+
+        if (!uploadId || !chunk || !fileName) {
+            return res.status(400).json({ message: 'Missing chunk data' });
+        }
+
+        const chunkDir = path.join(tempDir, uploadId);
+        if (!fs.existsSync(chunkDir)) {
+            fs.mkdirSync(chunkDir);
+        }
+
+        // Move chunk to temp dir with index
+        const chunkPath = path.join(chunkDir, `${chunkIndex}`);
+        fs.renameSync(chunk.path, chunkPath);
+
+        // Check if all chunks received
+        const currentChunks = fs.readdirSync(chunkDir).length;
+        if (currentChunks === parseInt(totalChunks)) {
+            // Merge chunks
+            const finalPath = path.join(__dirname, 'uploads', `${Date.now()}-${fileName}`);
+            const writeStream = fs.createWriteStream(finalPath);
+
+            for (let i = 0; i < totalChunks; i++) {
+                const chunkP = path.join(chunkDir, `${i}`);
+                const data = fs.readFileSync(chunkP);
+                writeStream.write(data);
+                fs.unlinkSync(chunkP); // Delete chunk
+            }
+
+            writeStream.end();
+            fs.rmdirSync(chunkDir); // Remove temp dir
+
+            const baseUrl = process.env.RENDER_EXTERNAL_URL || `${req.protocol}://${req.get('host')}`;
+            return res.status(200).json({
+                completed: true,
+                url: `${baseUrl}/uploads/${path.basename(finalPath)}`,
+                type: fileName.match(/\.(mp4|mov|avi)$/i) ? 'video' : 'image'
+            });
+        }
+
+        res.status(200).json({ completed: false });
+
+    } catch (error) {
+        console.error('Chunk Upload Error:', error);
+        res.status(500).json({ message: 'Chunk upload failed' });
+    }
+});
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('✅ MongoDB Connected Successfully'))
