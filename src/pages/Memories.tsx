@@ -192,59 +192,143 @@ const Memories = () => {
     setPreviewUrls(newPreviews);
   };
 
+  const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
+
+  const uploadChunk = async (file: File, uploadId: string) => {
+    const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+    let fileName = file.name.replace(/\s+/g, '_'); // Sanitize filename
+
+    for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+      const start = chunkIndex * CHUNK_SIZE;
+      const end = Math.min(start + CHUNK_SIZE, file.size);
+      const chunk = file.slice(start, end);
+
+      const formData = new FormData();
+      formData.append('chunk', chunk);
+      formData.append('uploadId', uploadId);
+      formData.append('chunkIndex', chunkIndex.toString());
+      formData.append('totalChunks', totalChunks.toString());
+      formData.append('fileName', fileName);
+
+      try {
+        const res = await API.post('/upload/chunk', formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+          timeout: 0 // No timeout per chunk
+        });
+
+        if (res.data.completed) {
+          return res.data; // { url, type }
+        }
+      } catch (err) {
+        console.error(`Error uploading chunk ${chunkIndex}`, err);
+        throw err;
+      }
+    }
+  };
+
   const handleUpload = async () => {
     if (!newTitle.trim() || !newDescription.trim()) {
-      toast({
-        title: "Missing information",
-        description: "Please provide a title and review",
-        variant: "destructive",
-      });
+      toast({ title: "Missing information", description: "Please provide a title and review", variant: "destructive", });
       return;
     }
 
     if (!userEmail) {
-      toast({
-        title: "Authentication Error",
-        description: "Please login again",
-        variant: "destructive",
-      });
+      toast({ title: "Authentication Error", description: "Please login again", variant: "destructive", });
       setAuthDialogOpen(true);
       return;
     }
 
     setLoading(true);
     setUploadProgress(0);
-    const formData = new FormData();
-    formData.append("title", newTitle);
-    formData.append("description", newDescription);
 
-    formData.append("foodReview", foodReview);
-    formData.append("roomReview", roomReview);
-    formData.append("vehicleReview", vehicleReview);
+    // Split files into large (chunked) and small (normal)
+    const largeFiles = selectedFiles.filter(f => f.size > 50 * 1024 * 1024); // > 50MB
+    const smallFiles = selectedFiles.filter(f => f.size <= 50 * 1024 * 1024);
 
-    formData.append("rating", rating.toString());
-    formData.append("userEmail", userEmail);
-    // If on Reels tab, default to review or memory? Let's default to review for users, memory for owners if they choose?
-    // Be safe: if tab is reels, we can't upload to 'reels'. Default to 'review'.
-    formData.append("type", activeTab === 'reels' ? 'review' : activeTab);
-
-    // Append all selected files
-    selectedFiles.forEach((file) => {
-      formData.append("media", file); // Key 'media' matches multer config
-    });
+    const preUploadedMedia: { url: string, type: string }[] = [];
+    let totalBytes = selectedFiles.reduce((acc, f) => acc + f.size, 0);
+    let uploadedBytes = 0;
 
     try {
+      // 1. Upload Large Files Chunked
+      for (const file of largeFiles) {
+        const uploadId = crypto.randomUUID();
+        const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+
+        // Custom progress tracker for chunks
+        for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+          const start = chunkIndex * CHUNK_SIZE;
+          const end = Math.min(start + CHUNK_SIZE, file.size);
+          const chunk = file.slice(start, end);
+
+          const formData = new FormData();
+          formData.append('chunk', chunk);
+          formData.append('uploadId', uploadId);
+          formData.append('chunkIndex', chunkIndex.toString());
+          formData.append('totalChunks', totalChunks.toString());
+          formData.append('fileName', file.name.replace(/\s+/g, '_'));
+
+          const res = await API.post('/upload/chunk', formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+            timeout: 0
+          });
+
+          uploadedBytes += chunk.size;
+          const percent = Math.round((uploadedBytes / totalBytes) * 100);
+          setUploadProgress(percent);
+
+          if (res.data.completed) {
+            preUploadedMedia.push({ url: res.data.url, type: res.data.type });
+          }
+        }
+      }
+
+      // 2. Submit Review with Small Files + Pre-uploaded URLs
+      const formData = new FormData();
+      formData.append("title", newTitle);
+      formData.append("description", newDescription);
+      formData.append("foodReview", foodReview);
+      formData.append("roomReview", roomReview);
+      formData.append("vehicleReview", vehicleReview);
+      formData.append("rating", rating.toString());
+      formData.append("userEmail", userEmail);
+      formData.append("type", activeTab === 'reels' ? 'review' : activeTab);
+
+      // Add pre-uploaded media URLs
+      if (preUploadedMedia.length > 0) {
+        formData.append("preUploadedMedia", JSON.stringify(preUploadedMedia));
+      }
+
+      // Add small files
+      smallFiles.forEach((file) => {
+        formData.append("media", file);
+      });
+
+      // Current progress is dominated by large files. 
+      // We can't easily track small file upload progress mixed with axios validation here 
+      // without complicating. Let's just assume small files go fast or use logic.
+      // Or we can attach onUploadProgress for the final request too.
+
       await API.post("/reviews", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-        timeout: 0, // No timeout for large uploads
+        timeout: 0,
         onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
-          setUploadProgress(percentCompleted);
+          // Calculate remaining progress for small files? 
+          // It's tricky because totalBytes included large files.
+          // Let's just set it to 100 near the end or let it flow relative to small files size
+          // Only if detailed tracking needed. For now, 99% logic or simple addition.
+          if (smallFiles.length > 0 && progressEvent.total) {
+            const smallFilesLoaded = progressEvent.loaded;
+            const currentTotal = uploadedBytes + smallFilesLoaded; // Approx
+            const percent = Math.round((currentTotal / totalBytes) * 100);
+            setUploadProgress(Math.min(percent, 99)); // Cap at 99 until done
+          }
         },
       });
 
+      setUploadProgress(100); // Done
       toast({
         title: "Success!",
         description: "Successfully added.",
@@ -261,7 +345,6 @@ const Memories = () => {
       setPreviewUrls([]);
       setUploadProgress(0);
 
-      // Refresh to reflect the new upload (if it has video it will show in reels immediately if we fetch again)
       fetchReviews();
     } catch (error: any) {
       console.error("Error uploading:", error);
@@ -812,10 +895,15 @@ const Memories = () => {
               disabled={loading}
             >
               {loading
-                ? `UPLOADING ${uploadProgress}%...`
+                ? (uploadProgress === 100 ? "FINALIZING... (DO NOT CLOSE)" : `UPLOADING ${uploadProgress}%...`)
                 : (activeTab === 'review' ? "PUBLISH REVIEW" : "ADD MEMORY")
               }
             </Button>
+            {loading && (
+              <p className="text-center text-[10px] text-white/50 mt-2 animate-pulse">
+                Please keep this window open until finished. Large videos may take a few minutes to process.
+              </p>
+            )}
           </div>
         </DialogContent>
       </Dialog>
