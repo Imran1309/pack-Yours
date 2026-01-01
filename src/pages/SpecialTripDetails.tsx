@@ -5,10 +5,10 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 // Assets (Proxies used since generation failed, replace with real assets later)
-import indiaHero from "../assets/india (1).jpg"; // General India cover
+import indiaImg from "@/assets/all_india.jpg"; // General India cover
 import delhiImg from "../assets/mumbai_gateway_full_view_1765970435408.png"; // Proxy for India Gate
 import jaipurImg from "../assets/ramoji_film_city_entrance_1765973648093.png"; // Proxy for Palace/Fort
-import agraImg from "../assets/india (1).jpg"; // Re-using India, typically Taj Mahal
+import agraImg from "@/assets/all_india.jpg"; // Re-using India, typically Taj Mahal
 
 const SpecialTripDetails = () => {
     const navigate = useNavigate();
@@ -48,7 +48,7 @@ const SpecialTripDetails = () => {
             {/* Hero Section */}
             <div className="relative h-[80vh] w-full overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black z-10"></div>
-                <img src={indiaHero} alt="Golden Triangle" className="w-full h-full object-cover" />
+                <img src={indiaImg} alt="Golden Triangle" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center p-4">
                     <div className="flex items-center gap-2 mb-4 bg-yellow-500/20 backdrop-blur-md px-4 py-2 rounded-full border border-yellow-500/50">
                         <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />

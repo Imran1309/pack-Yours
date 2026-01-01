@@ -3,6 +3,13 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
+import honeyImg from "@/assets/honey_moon.jpg";
+import eduImg from "@/assets/education_tour.jpg";
+import devImg from "@/assets/devotional.jpg";
+import weddingImg from "@/assets/wedding.jpg";
+import collegeImg from "@/assets/college_iv.jpg";
+import indiaImg from "@/assets/all_india.jpg";
+
 const Services = () => {
   const navigate = useNavigate();
 
@@ -15,12 +22,12 @@ const Services = () => {
   }, []);
 
   const packages = [
-    { title: "Honey Moon", img: "/src/assets/honey image.jpg" },
-    { title: "Educational Trip", img: "/src/assets/educationtour.jpg" },
-    { title: "Devotional Trip", img: "/src/assets/dev.jpg" },
-    { title: "Wedding Trip", img: "/src/assets/wd.jpg" },
-    { title: "College IV", img: "/src/assets/college iv.jpg" },
-    { title: "All India trip", img: "/src/assets/india (1).jpg" },
+    { title: "Honey Moon", img: honeyImg },
+    { title: "Educational Trip", img: eduImg },
+    { title: "Devotional Trip", img: devImg },
+    { title: "Wedding Trip", img: weddingImg },
+    { title: "College IV", img: collegeImg },
+    { title: "All India trip", img: indiaImg },
   ];
 
   return (
