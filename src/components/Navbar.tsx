@@ -103,7 +103,7 @@ const Navbar = () => {
 
             <div className="flex flex-col">
               <h1
-                className="text-xl md:text-3xl font-bold translate-y-1 whitespace-nowrap"
+                className="text-sm md:text-3xl font-bold translate-y-1 whitespace-nowrap"
                 style={{
                   fontFamily: "'Cinzel Decorative', cursive",
                   background: "linear-gradient(to right, #FFD700, #FF4500, #800080)",

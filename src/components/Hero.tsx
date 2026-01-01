@@ -120,14 +120,29 @@ const Hero = () => {
           >
             Your dream came true with our team
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-2 mb-6 md:mb-8 text-primary-foreground animate-fade-in" style={{ animationDelay: "0.6s" }}>
-            <span className="text-2xl sm:text-4xl md:text-5xl font-bold" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#ff7700ff", textShadow: "2px 2px 0px #000" }}>32 States</span>
-            <span className="text-xl sm:text-3xl md:text-4xl flex items-center gap-1" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#ffffff", textShadow: "1px 1px 0px #000" }}>
-              unf
-              <img src={chakra} alt="Chakra" className="inline-block h-6 w-6 sm:h-8 sm:w-8 md:h-12 md:w-12 animate-spin" style={{ animationDuration: '8s' }} />
-              rgettable
-            </span>
-            <span className="text-2xl sm:text-4xl md:text-5xl font-bold" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#16aa06ff", textShadow: "2px 2px 0px #000" }}>memories</span>
+          <div className="flex flex-wrap items-center justify-center gap-1 mb-6 md:mb-8 text-primary-foreground animate-fade-in" style={{ animationDelay: "0.6s" }}>
+            <span className="text-3xl md:text-5xl font-bold" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#ff7700ff", textShadow: "2px 2px 0px #000" }}>32 States</span>
+            <div className="flex items-center gap-0.5 mx-2">
+              <span className="text-2xl md:text-4xl" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#ffffff", textShadow: "1px 1px 0px #000" }}>
+                unf
+              </span>
+              <img
+                src={chakra}
+                alt="Chakra"
+                className="inline-block animate-spin"
+                style={{
+                  animationDuration: '8s',
+                  height: '24px',
+                  width: '24px',
+                  minWidth: '24px',
+                  minHeight: '24px'
+                }}
+              />
+              <span className="text-2xl md:text-4xl" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#ffffff", textShadow: "1px 1px 0px #000" }}>
+                rgettable
+              </span>
+            </div>
+            <span className="text-3xl md:text-5xl font-bold" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#16aa06ff", textShadow: "2px 2px 0px #000" }}>memories</span>
 
           </div>
           {/* Stats */}
