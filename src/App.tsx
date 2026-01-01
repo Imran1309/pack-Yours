@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Booking from "./pages/Booking";
 import Memories from "./pages/Memories";
-import States from "./pages/States";
+import States from "./pages/Destination";
 import NotFound from "./pages/NotFound";
 import PackageDetails from "./pages/PackageDetails";
 import Destinations from "./pages/Destinations";
@@ -83,7 +83,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/memories" element={<Memories />} />
-          <Route path="/states" element={<States />} />
+          <Route path="/destination" element={<States />} />
           <Route path="/services" element={<Services />} />
           {/* <Route path="/contact" element={<Contact />} /> */}
           <Route path="/why-choose-us" element={<WhyChooseUs />} />
