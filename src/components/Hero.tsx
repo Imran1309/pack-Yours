@@ -37,7 +37,7 @@ const Hero = () => {
   }, [currentBg]);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-x-hidden">
       {backgrounds.map((bg, index) => (
         <div
           key={index}
@@ -61,13 +61,13 @@ const Hero = () => {
       <div className="absolute inset-0 bg-black/30"></div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-20">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         <div className="text-center max-w-4xl mx-auto">
           {/* Dynamic Tagline */}
-          <div className="mb-6 animate-fade-in">
+          <div className="mb-4 md:mb-6 animate-fade-in">
             <span
               key={taglines[currentBg]}
-              className="text-6xl md:text-6xl font-[Great_Vibes] italic underline decoration-yellow-400 transition-all duration-700"
+              className="text-4xl sm:text-5xl md:text-6xl font-[Great_Vibes] italic underline decoration-yellow-400 transition-all duration-700"
               style={{
                 color: "#FF1295",
                 textDecorationThickness: "3px",
@@ -81,7 +81,7 @@ const Hero = () => {
           </div>
 
           {/* Slide Indicators */}
-          <div className="flex justify-center space-x-2 mb-6">
+          <div className="flex justify-center space-x-2 mb-4 md:mb-6">
             {taglines.map((_, index) => (
               <button
                 key={index}
@@ -89,14 +89,13 @@ const Hero = () => {
                 onClick={() => setCurrentBg(index)}
                 aria-label={`Go to slide ${index + 1}`}
                 title={`Slide ${index + 1}`}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${currentBg === index ? "bg-yellow-400" : "bg-white/50"
-                  }`}
+                className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-300 ${currentBg === index ? "bg-yellow-400" : "bg-white/50"}`}
               />
             ))}
           </div>
 
           <h1
-            className="text-3xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6 animate-fade-in"
+            className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-4 md:mb-6 animate-fade-in leading-tight"
             style={{
               animationDelay: "0.2s",
               fontFamily: "'Cinzel Decorative', cursive",
@@ -110,7 +109,7 @@ const Hero = () => {
           </h1>
 
           <p
-            className="text-3xl md:text-5xl text-primary-foreground mb-4 animate-fade-in tracking-wide"
+            className="text-xl sm:text-3xl md:text-5xl text-primary-foreground mb-4 animate-fade-in tracking-wide"
             style={{
               animationDelay: "0.4s",
               fontFamily: "'Great Vibes', cursive",
@@ -121,14 +120,14 @@ const Hero = () => {
           >
             Your dream came true with our team
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-2 mb-8 text-primary-foreground animate-fade-in" style={{ animationDelay: "0.6s" }}>
-            <span className="text-4xl md:text-5xl font-bold" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#ff7700ff", textShadow: "2px 2px 0px #000" }}>32 States</span>
-            <span className="text-3xl md:text-4xl flex items-center gap-1" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#ffffff", textShadow: "1px 1px 0px #000" }}>
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-6 md:mb-8 text-primary-foreground animate-fade-in" style={{ animationDelay: "0.6s" }}>
+            <span className="text-2xl sm:text-4xl md:text-5xl font-bold" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#ff7700ff", textShadow: "2px 2px 0px #000" }}>32 States</span>
+            <span className="text-xl sm:text-3xl md:text-4xl flex items-center gap-1" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#ffffff", textShadow: "1px 1px 0px #000" }}>
               unf
-              <img src={chakra} alt="Chakra" className="inline-block h-13 w-13 md:h-12 md:w-12 animate-spin" style={{ animationDuration: '8s' }} />
+              <img src={chakra} alt="Chakra" className="inline-block h-6 w-6 sm:h-8 sm:w-8 md:h-12 md:w-12 animate-spin" style={{ animationDuration: '8s' }} />
               rgettable
             </span>
-            <span className="text-4xl md:text-5xl font-bold" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#16aa06ff", textShadow: "2px 2px 0px #000" }}>memories</span>
+            <span className="text-2xl sm:text-4xl md:text-5xl font-bold" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#16aa06ff", textShadow: "2px 2px 0px #000" }}>memories</span>
 
           </div>
           {/* Stats */}
@@ -140,7 +139,7 @@ const Hero = () => {
             <Button
               variant="default"
               size="xl"
-              className="text-white font-bold hover:opacity-90 transition-opacity text-xl"
+              className="text-white font-bold hover:opacity-90 transition-opacity text-lg md:text-xl px-8 py-6"
               style={{
                 backgroundColor: "#870b41ff",
                 fontFamily: "'Cinzel Decorative', cursive",
@@ -156,7 +155,7 @@ const Hero = () => {
             <Button
               variant="outline"
               size="xl"
-              className="bg-black/40 border-white text-white hover:bg-black/60 font-bold text-xl"
+              className="bg-black/40 border-white text-white hover:bg-black/60 font-bold text-lg md:text-xl px-8 py-6"
               style={{
                 fontFamily: "'Cinzel Decorative', cursive",
                 letterSpacing: "1px"
@@ -170,32 +169,32 @@ const Hero = () => {
 
           {/* Stats */}
           <div
-            className="grid grid-cols-3 gap-8 mt-16 max-w-2xl mx-auto animate-fade-in"
+            className="grid grid-cols-3 gap-4 md:gap-8 mt-12 md:mt-16 max-w-2xl mx-auto animate-fade-in"
             style={{ animationDelay: "1s" }}
           >
             <div className="text-center">
-              <div className="text-5xl font-bold mb-2" style={{ color: "#ff5a07ff" }}>500+</div>
-              <div className="text-white text-lg font-medium">Happy Travelers</div>
+              <div className="text-3xl md:text-5xl font-bold mb-2" style={{ color: "#ff5a07ff" }}>500+</div>
+              <div className="text-white text-sm md:text-lg font-medium">Happy Travelers</div>
             </div>
 
             <div className="text-center">
-              <div className="text-5xl font-bold mb-2" style={{ color: "#1d10a9ff" }}>32</div>
-              <div className="text-white text-lg font-medium">States Covered</div>
+              <div className="text-3xl md:text-5xl font-bold mb-2" style={{ color: "#1d10a9ff" }}>32</div>
+              <div className="text-white text-sm md:text-lg font-medium">States Covered</div>
             </div>
 
             <div className="text-center">
-              <div className="flex items-center justify-center gap-1 text-5xl font-bold mb-2" style={{ color: "#05b22aff" }}>
-                <Star className="h-8 w-8 fill-[#05b22aff] text-[#05b22aff]" />
+              <div className="flex items-center justify-center gap-1 text-3xl md:text-5xl font-bold mb-2" style={{ color: "#05b22aff" }}>
+                <Star className="h-6 w-6 md:h-8 md:w-8 fill-[#05b22aff] text-[#05b22aff]" />
                 4.9
               </div>
-              <div className="text-white text-lg font-medium">Average Rating</div>
+              <div className="text-white text-sm md:text-lg font-medium">Average Rating</div>
             </div>
           </div>
         </div>
       </div>
 
-    
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-float">
+
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-float hidden md:block">
         <div className="w-6 h-10 border-2 border-primary-foreground rounded-full flex justify-center p-2">
           <div className="w-1.5 h-3 bg-accent rounded-full"></div>
         </div>
