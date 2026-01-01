@@ -34,7 +34,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Start Server
 const server = app.listen(PORT, () => {
-    console.log(`🚀 Server is running on http://localhost:${PORT}`);
+    console.log(`🚀 Server is running on http://localhost:${PORT} (v2 with 500MB limit)`);
 });
 
 // Increase server timeout to 30 minutes for slow mobile uploads
