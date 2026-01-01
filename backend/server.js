@@ -45,14 +45,21 @@ const upload = multer({
     }
 });
 
-// -----------------------------------------------------------------------------
-// Chunked Upload Route (Bypass Cloudflare 100MB Limit)
-// -----------------------------------------------------------------------------
-const tempDir = path.join(__dirname, 'temp');
-if (!fs.existsSync(tempDir)) {
-    fs.mkdirSync(tempDir);
-}
+let gridfsBucket;
 
+// MongoDB Connection
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        console.log('✅ MongoDB Connected Successfully');
+        gridfsBucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+            bucketName: 'uploads'
+        });
+    })
+    .catch(err => console.error('❌ MongoDB Connection Error:', err));
+
+// -----------------------------------------------------------------------------
+// Chunked Upload Route (GridFS Integration)
+// -----------------------------------------------------------------------------
 app.post('/api/upload/chunk', upload.single('chunk'), async (req, res) => {
     try {
         const { uploadId, chunkIndex, totalChunks, fileName } = req.body;
@@ -74,24 +81,30 @@ app.post('/api/upload/chunk', upload.single('chunk'), async (req, res) => {
         // Check if all chunks received
         const currentChunks = fs.readdirSync(chunkDir).length;
         if (currentChunks === parseInt(totalChunks)) {
-            // Merge chunks
-            const finalPath = path.join(__dirname, 'uploads', `${Date.now()}-${fileName}`);
-            const writeStream = fs.createWriteStream(finalPath);
+            // Merge chunks and stream to GridFS
+            const finalFileName = `${Date.now()}-${fileName}`;
+            const uploadStream = gridfsBucket.openUploadStream(finalFileName);
 
             for (let i = 0; i < totalChunks; i++) {
                 const chunkP = path.join(chunkDir, `${i}`);
                 const data = fs.readFileSync(chunkP);
-                writeStream.write(data);
+                uploadStream.write(data);
                 fs.unlinkSync(chunkP); // Delete chunk
             }
 
-            writeStream.end();
+            uploadStream.end();
             fs.rmdirSync(chunkDir); // Remove temp dir
+
+            // Wait for stream to finish
+            await new Promise((resolve, reject) => {
+                uploadStream.on('finish', resolve);
+                uploadStream.on('error', reject);
+            });
 
             const baseUrl = process.env.RENDER_EXTERNAL_URL || `${req.protocol}://${req.get('host')}`;
             return res.status(200).json({
                 completed: true,
-                url: `${baseUrl}/uploads/${path.basename(finalPath)}`,
+                url: `${baseUrl}/api/file/${finalFileName}`,
                 type: fileName.match(/\.(mp4|mov|avi|webm|mkv|3gp|flv|wmv)$/i) ? 'video' : 'image'
             });
         }
@@ -104,24 +117,62 @@ app.post('/api/upload/chunk', upload.single('chunk'), async (req, res) => {
     }
 });
 
+// Route to serve files from GridFS
+app.get('/api/file/:filename', async (req, res) => {
+    try {
+        const file = await gridfsBucket.find({ filename: req.params.filename }).next();
+        if (!file) {
+            return res.status(404).json({ message: 'File not found' });
+        }
+
+        res.set('Content-Type', file.contentType || 'application/octet-stream');
+        res.set('Content-Length', file.length);
+
+        const downloadStream = gridfsBucket.openDownloadStreamByName(req.params.filename);
+        downloadStream.pipe(res);
+    } catch (error) {
+        console.error('File Download Error:', error);
+        res.status(500).json({ message: 'Error retrieving file' });
+    }
+});
+
 app.post('/api/reviews', upload.array('media'), async (req, res) => {
     try {
         const { title, description, foodReview, roomReview, vehicleReview, rating, userEmail, type } = req.body;
 
-        // Backend Validation for Gallery/Memory permission
-        // Assuming OWNER_EMAILS is defined elsewhere, e.g., in .env or a config file
-        const OWNER_EMAILS = process.env.OWNER_EMAILS ? process.env.OWNER_EMAILS.split(',') : [];
+        const OWNER_EMAILS = ["dhanatrip2020@gmail.com"];
         if (type === 'memory' && !OWNER_EMAILS.includes(userEmail)) {
             return res.status(403).json({ message: 'Only owners can add to Gallery/Memories.' });
         }
 
         const baseUrl = process.env.RENDER_EXTERNAL_URL || `${req.protocol}://${req.get('host')}`;
 
-        // 1. Files uploaded via Multer (small files)
-        const mediaFiles = req.files ? req.files.map(file => ({
-            url: `${baseUrl}/uploads/${file.filename}`,
-            type: file.mimetype.startsWith('video') ? 'video' : 'image'
-        })) : [];
+        // 1. Files uploaded via Multer -> Move to GridFS
+        const mediaFiles = [];
+        if (req.files) {
+            for (const file of req.files) {
+                const finalFileName = `${Date.now()}-${file.originalname}`;
+                const uploadStream = gridfsBucket.openUploadStream(finalFileName, {
+                    contentType: file.mimetype
+                });
+                const readStream = fs.createReadStream(file.path);
+
+                readStream.pipe(uploadStream);
+
+                await new Promise((resolve, reject) => {
+                    uploadStream.on('finish', resolve);
+                    uploadStream.on('error', reject);
+                });
+
+                // Delete local temp file
+                fs.unlinkSync(file.path);
+
+                mediaFiles.push({
+                    url: `${baseUrl}/api/file/${finalFileName}`,
+                    type: file.mimetype.startsWith('video') ? 'video' : 'image'
+                });
+            }
+        }
 
         // 2. Pre-uploaded files (Chunked uploads) - passed as JSON string or array
         let preUploadedMedia = [];
@@ -137,19 +188,28 @@ app.post('/api/reviews', upload.array('media'), async (req, res) => {
 
         const finalMedia = [...mediaFiles, ...preUploadedMedia];
 
-        // Assuming Review model is defined elsewhere
-        const Review = mongoose.model('Review', new mongoose.Schema({
-            title: String,
-            description: String,
-            foodReview: Number,
-            roomReview: Number,
-            vehicleReview: Number,
-            rating: Number,
-            userEmail: String,
-            type: String,
-            media: [{ url: String, type: String }],
-            createdAt: { type: Date, default: Date.now }
-        }));
+        let Review;
+        try {
+            Review = mongoose.model('Review');
+        } catch {
+            const ReviewSchema = new mongoose.Schema({
+                title: { type: String, required: true },
+                description: { type: String, required: true },
+                foodReview: String,
+                roomReview: String,
+                vehicleReview: String,
+                rating: { type: Number, default: 5 },
+                userEmail: { type: String, required: true },
+                type: { type: String, enum: ['review', 'memory'], default: 'review' },
+                media: [{
+                    url: String,
+                    type: { type: String, default: 'image' }
+                }],
+                createdAt: { type: Date, default: Date.now },
+                likes: { type: Number, default: 0 }
+            });
+            Review = mongoose.model('Review', ReviewSchema);
+        }
 
         const newReview = new Review({
             title,
@@ -173,11 +233,6 @@ app.post('/api/reviews', upload.array('media'), async (req, res) => {
         res.status(500).json({ message: 'Failed to add review.' });
     }
 });
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('✅ MongoDB Connected Successfully'))
-    .catch(err => console.error('❌ MongoDB Connection Error:', err));
-
 // ... (Models and other code remain the same) ...
 
 // Start Server
