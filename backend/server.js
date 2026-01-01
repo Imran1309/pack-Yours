@@ -92,7 +92,7 @@ app.post('/api/upload/chunk', upload.single('chunk'), async (req, res) => {
             return res.status(200).json({
                 completed: true,
                 url: `${baseUrl}/uploads/${path.basename(finalPath)}`,
-                type: fileName.match(/\.(mp4|mov|avi)$/i) ? 'video' : 'image'
+                type: fileName.match(/\.(mp4|mov|avi|webm|mkv|3gp|flv|wmv)$/i) ? 'video' : 'image'
             });
         }
 

@@ -139,7 +139,7 @@ const Memories = () => {
   const fetchReviews = async () => {
     try {
       // If reels, we want ALL items (no type filter), then we filter for videos client-side
-      const params = activeTab === 'reels' ? {} : { type: activeTab };
+      const params = activeTab === 'reels' ? { _t: Date.now() } : { type: activeTab, _t: Date.now() };
       const response = await API.get("/reviews", { params });
 
       // Transform old data structure if needed (for backward compatibility if DB has old records)
