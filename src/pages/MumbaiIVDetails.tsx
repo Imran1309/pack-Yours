@@ -16,10 +16,9 @@ import pavBhajiImg from "@/assets/mumbai_pav_bhaji_1765971112475.png";
 import kebabsImg from "@/assets/mumbai_chicken_kebabs_1765971162080.png";
 // import streetFoodImg from "@/assets/mumbai_street_food_combo_1765970609478.png"; // Fallback/General
 
-// Using reliable external images to prevent build asset errors
-const sandwichImg = "https://images.unsplash.com/photo-1626132645672-8d76d8b94326?w=800&q=80"; // Grilled Sandwich
-const fishFryImg = "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=800&q=80";   // Fried Fish
-const platterImg = "https://images.unsplash.com/photo-1596797038530-2c107229654b?w=800&q=80";   // Kebab Platter
+import sandwichImg from "@/assets/mumbai_bombay_sandwich_special_1767287330443.png";
+import fishFryImg from "@/assets/mumbai_fish_fry_crispy_1767287350331.png";
+import platterImg from "@/assets/mumbai_kebabs_platter_mix_1767287367503.png";
 
 // Rooms
 import dormImg from "@/assets/mumbai_hostel_dorm_1765971217665.png";
