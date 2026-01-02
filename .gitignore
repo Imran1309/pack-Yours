@@ -27,3 +27,7 @@ dist-ssr
 backend/uploads/
 
 vite.config.ts.timestamp*
+web_build/
+build_dist/
+.firebase/
+.env

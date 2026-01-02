@@ -94,16 +94,16 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10 transition-all duration-300">
-      <div className="w-full px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-2 sm:px-4 lg:px-8">
         <div className="flex items-center justify-between h-20">
 
           {/* Logo + Title */}
           <div className="flex items-center gap-4 md:gap-8 animate-slide-in cursor-pointer" onClick={() => navigate('/')}>
-            <img src={logo} alt="Dhana Tour Consultors Logo" className="h-16 w-auto md:h-20" />
+            <img src={logo} alt="Dhana Tour Consultors Logo" className="h-12 w-auto md:h-16 lg:h-20" />
 
             <div className="flex flex-col">
               <h1
-                className="text-sm md:text-3xl font-bold translate-y-1 whitespace-nowrap"
+                className="text-xs sm:text-base md:text-lg lg:text-2xl font-bold translate-y-1 whitespace-nowrap"
                 style={{
                   fontFamily: "'Cinzel Decorative', cursive",
                   background: "linear-gradient(to right, #FFD700, #FF4500, #800080)",
@@ -118,7 +118,7 @@ const Navbar = () => {
               </h1>
 
               <p
-                className="text-xs md:text-lg block whitespace-nowrap"
+                className="text-[10px] sm:text-xs md:text-sm lg:text-lg block whitespace-nowrap"
                 style={{
                   fontFamily: "'Cinzel Decorative', cursive",
                   background: "linear-gradient(to right, #FFD700, #FF4500, #800080)",

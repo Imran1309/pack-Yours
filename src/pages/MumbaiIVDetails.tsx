@@ -14,7 +14,12 @@ import filmCityImg from "@/assets/mumbai_film_city_tour_1765970555024.png";
 import vadaPavImg from "@/assets/mumbai_vada_pav_close_1765971065308.png";
 import pavBhajiImg from "@/assets/mumbai_pav_bhaji_1765971112475.png";
 import kebabsImg from "@/assets/mumbai_chicken_kebabs_1765971162080.png";
-import streetFoodImg from "@/assets/mumbai_street_food_combo_1765970609478.png"; // Fallback/General
+// import streetFoodImg from "@/assets/mumbai_street_food_combo_1765970609478.png"; // Fallback/General
+
+// Using reliable external images to prevent build asset errors
+const sandwichImg = "https://images.unsplash.com/photo-1626132645672-8d76d8b94326?w=800&q=80"; // Grilled Sandwich
+const fishFryImg = "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=800&q=80";   // Fried Fish
+const platterImg = "https://images.unsplash.com/photo-1596797038530-2c107229654b?w=800&q=80";   // Kebab Platter
 
 // Rooms
 import dormImg from "@/assets/mumbai_hostel_dorm_1765971217665.png";
@@ -47,13 +52,14 @@ const MumbaiIVDetails = () => {
     ];
 
     // Using new distinct images
+    // Using new distinct images
     const foodItems = [
         { name: "Vada Pav", type: "Veg", image: vadaPavImg },
         { name: "Pav Bhaji", type: "Veg", image: pavBhajiImg },
-        { name: "Bombay Sandwich", type: "Veg", image: streetFoodImg },
+        { name: "Bombay Sandwich", type: "Veg", image: sandwichImg },
         { name: "Chicken Tikka", type: "Non-Veg", image: kebabsImg },
-        { name: "Kebabs Platter", type: "Non-Veg", image: kebabsImg },
-        { name: "Fish Fry", type: "Non-Veg", image: streetFoodImg },
+        { name: "Kebabs Platter", type: "Non-Veg", image: platterImg },
+        { name: "Fish Fry", type: "Non-Veg", image: fishFryImg },
     ];
 
     // New Rooms Data
@@ -194,7 +200,7 @@ const MumbaiIVDetails = () => {
                             <Utensils className="w-4 h-4 text-blue-400" />
                             <span className="text-sm font-bold text-blue-300 uppercase tracking-widest">Mumbai Masala</span>
                         </div>
-                        <h2 className="text-4xl font-bold text-white mb-4">Street Food Combo</h2>
+                        <h2 className="text-4xl font-bold text-white mb-4">Famous Street Food Combo</h2>
                         <p className="text-gray-300 max-w-2xl mx-auto">
                             Relish the famous Mumbai street food. We offer a mix of Veg and Non-Veg delights.
                         </p>

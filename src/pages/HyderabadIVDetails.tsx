@@ -17,6 +17,8 @@ import dosaImg from "@/assets/mysore_masala_dosa_veg_1765905247257.png";
 import nonvegFeast from "@/assets/south_indian_nonveg_feast_1765904961097.png";
 import normalRoom from "@/assets/mumbai_hotel_room_standard_1765971267672.png";
 
+import osmaniaImg from "@/assets/osmania_biscuits_1767330825977.png";
+
 const HyderabadIVDetails = () => {
     const navigate = useNavigate();
     const [activeSlide, setActiveSlide] = useState(0);
@@ -48,7 +50,7 @@ const HyderabadIVDetails = () => {
         { name: "Mutton Haleem", type: "Non-Veg", image: biryaniImg },
         { name: "Double Ka Meetha", type: "Veg", image: sweetImg },
         { name: "Mirchi Ka Salan", type: "Veg", image: dosaImg },
-        { name: "Osmania Biscuits", type: "Veg", image: sweetImg },
+        { name: "Osmania Biscuits", type: "Veg", image: osmaniaImg },
     ];
 
     const roomTypes = [

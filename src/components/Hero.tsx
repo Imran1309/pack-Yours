@@ -120,30 +120,16 @@ const Hero = () => {
           >
             Your dream came true with our team
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-1 mb-6 md:mb-8 text-primary-foreground animate-fade-in" style={{ animationDelay: "0.6s" }}>
-            <span className="text-xl md:text-5xl font-bold" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#ff7700ff", textShadow: "2px 2px 0px #000" }}>32 States</span>
-            <div className="flex items-center gap-0.5 mx-2">
-              <span className="text-lg md:text-4xl" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#ffffff", textShadow: "1px 1px 0px #000" }}>
-                unf
-              </span>
+          <div className="flex flex-nowrap items-center justify-center gap-1 mb-6 md:mb-8 text-primary-foreground animate-fade-in whitespace-nowrap overflow-visible" style={{ animationDelay: "0.6s" }}>
+            <span className="text-xs sm:text-base md:text-4xl font-bold" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#ff7700ff", textShadow: "1px 1px 0px #000" }}>The World Is Waiting</span>
+            <div className="flex items-center gap-0.5 mx-1">
               <img
                 src={chakra}
                 alt="Chakra"
-                className="inline-block animate-spin"
-                style={{
-                  animationDuration: '8s',
-                  height: '20px',
-                  width: '20px',
-                  minWidth: '20px',
-                  minHeight: '20px'
-                }}
+                className="inline-block animate-spin w-4 h-4 md:w-8 md:h-8"
               />
-              <span className="text-lg md:text-4xl" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#ffffff", textShadow: "1px 1px 0px #000" }}>
-                rgettable
-              </span>
             </div>
-            <span className="text-xl md:text-5xl font-bold" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#16aa06ff", textShadow: "2px 2px 0px #000" }}>memories</span>
-
+            <span className="text-xs sm:text-base md:text-4xl font-bold" style={{ fontFamily: "'Cinzel Decorative', cursive", color: "#16aa06ff", textShadow: "1px 1px 0px #000" }}>Let’s Travel</span>
           </div>
           {/* Stats */}
           <div

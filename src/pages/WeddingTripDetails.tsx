@@ -12,6 +12,7 @@ import weddingHugBg from "../assets/wedding_hug_flowers.png";
 import weddingWalkingBg from "../assets/wedding_walking.png";
 import jaipurWeddingImg from "../assets/jaipur_wedding.png";
 import jodhpurImg from "../assets/jodhpur_jaisalmer.png";
+const agraImg = "https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&q=80";
 
 import alleppeyBoatImg from "../assets/alleppey_boat_wedding.jpg";
 import chennaiImg from "../assets/andaman_wedding_beach.png";
@@ -74,7 +75,7 @@ const WeddingTripDetails = () => {
         {
             category: "Special Packages",
             items: [
-                { name: "Taj Mahal Agra", image: "/src/assets/agra_taj_mahal_romantic_1766064172254.png", route: "/destinations/agra" },
+                { name: "Taj Mahal Agra", image: agraImg, route: "/destinations/agra" },
                 { name: "Royal Palace Wedding", image: "https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=800", route: "/destinations/udaipur" },
                 { name: "Jodhpur & Jaisalmer", image: jodhpurImg, route: "/destinations/jodhpur-jaisalmer" },
                 { name: "Jaipur Royal", image: jaipurWeddingImg, route: "/destinations/jaipur" },

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { MapPin, Star, Coffee, Utensils, Hotel, ArrowLeft } from "lucide-react";
-import agraImg from "../assets/agra_taj_mahal_romantic_1766064172254.png";
+const agraImg = "https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&q=80";
 import agraPethaImg from "../assets/agra_petha.jpg";
 
 const AgraDetails = () => {
@@ -63,7 +63,7 @@ const AgraDetails = () => {
 
             {/* Hero Section */}
             <div className="relative h-[80vh] w-full overflow-hidden">
-                <img src="/src/assets/agra_taj_mahal_romantic_1766064172254.png" alt="Taj Mahal Night View" className="absolute inset-0 w-full h-full object-cover" />
+                <img src={agraImg} alt="Taj Mahal Night View" className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
 
                 {/* Back Button */}
