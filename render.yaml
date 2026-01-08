@@ -1,0 +1,17 @@
+services:
+  # The Backend Service (Node.js + Express)
+  - type: web
+    name: pack-yours-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PORT
+        value: 10000
+    autoDeploy: true
