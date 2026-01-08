@@ -143,12 +143,14 @@ const Memories = () => {
       const response = await API.get("/reviews", { params });
 
       // Transform old data structure if needed (for backward compatibility if DB has old records)
+      // Transform old data structure if needed
       let data = response.data.map((item: any) => ({
         ...item,
         media: (Array.isArray(item.media) ? item.media : (item.media ? [{ url: item.media, type: item.mediaType || 'image' }] : []))
           .map((m: any) => ({
             ...m,
-            url: m.url ? m.url.replace('http://localhost:5000', 'https://pack-yours-backend.onrender.com') : ''
+            // Trust the backend provided URL
+            url: m.url
           })),
         likes: item.likes || 0
       }));
@@ -192,13 +194,15 @@ const Memories = () => {
     setPreviewUrls(newPreviews);
   };
 
-  const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
+  const CHUNK_SIZE = 10 * 1024 * 1024; // 5MB chunks for faster uploads
+  const PARALLEL_CHUNKS = 5; // Upload 5 chunks in parallel
 
-  const uploadChunk = async (file: File, uploadId: string) => {
+  const uploadFileChunked = async (file: File, uploadId: string, onProgress: (uploadedBytes: number) => void): Promise<{ url: string; type: string } | null> => {
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
-    let fileName = file.name.replace(/\s+/g, '_'); // Sanitize filename
+    const fileName = file.name.replace(/\s+/g, '_');
 
-    for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+    // Create all chunk tasks
+    const tasks = Array.from({ length: totalChunks }, (_, chunkIndex) => async () => {
       const start = chunkIndex * CHUNK_SIZE;
       const end = Math.min(start + CHUNK_SIZE, file.size);
       const chunk = file.slice(start, end);
@@ -210,20 +214,47 @@ const Memories = () => {
       formData.append('totalChunks', totalChunks.toString());
       formData.append('fileName', fileName);
 
-      try {
-        const res = await API.post('/upload/chunk', formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-          timeout: 0 // No timeout per chunk
-        });
-
-        if (res.data.completed) {
-          return res.data; // { url, type }
+      let retries = 3;
+      while (retries > 0) {
+        try {
+          const res = await API.post('/upload/chunk', formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+            timeout: 60000 // 60s timeout
+          });
+          return { ...res.data, size: chunk.size };
+        } catch (err) {
+          console.error(`Chunk ${chunkIndex} failed, retrying...`, err);
+          retries--;
+          if (retries === 0) throw err;
+          await new Promise(r => setTimeout(r, 1000 * (4 - retries)));
         }
-      } catch (err) {
-        console.error(`Error uploading chunk ${chunkIndex}`, err);
-        throw err;
+      }
+    });
+
+    // Execute with concurrency limit
+    const results: any[] = [];
+    const executing: Promise<void>[] = [];
+    let completedData: { url: string; type: string } | null = null;
+
+    for (const task of tasks) {
+      const p = task().then(res => {
+        // Update progress
+        onProgress(res.size);
+        if (res && res.completed) completedData = res;
+        return res;
+      });
+
+      results.push(p);
+      const e: any = p.then(() => executing.splice(executing.indexOf(e), 1));
+      executing.push(e);
+
+      if (executing.length >= PARALLEL_CHUNKS) {
+        await Promise.race(executing);
       }
     }
+
+    await Promise.all(results);
+    return completedData;
   };
 
   const handleUpload = async () => {
@@ -241,45 +272,44 @@ const Memories = () => {
     setLoading(true);
     setUploadProgress(0);
 
-    // Split files into large (chunked) and small (normal)
-    const largeFiles = selectedFiles.filter(f => f.size > 50 * 1024 * 1024); // > 50MB
-    const smallFiles = selectedFiles.filter(f => f.size <= 50 * 1024 * 1024);
+    // Use lower threshold for chunking to avoid server limits on body size
+    const LARGE_FILE_THRESHOLD = 5 * 1024 * 1024; // 5MB
+
+    // Split files
+    const largeFiles = selectedFiles.filter(f => f.size > LARGE_FILE_THRESHOLD);
+    const smallFiles = selectedFiles.filter(f => f.size <= LARGE_FILE_THRESHOLD);
 
     const preUploadedMedia: { url: string, type: string }[] = [];
     let totalBytes = selectedFiles.reduce((acc, f) => acc + f.size, 0);
-    let uploadedBytes = 0;
+    let globalUploadedBytes = 0;
 
     try {
-      // 1. Upload Large Files Chunked
+      // 1. Upload Large Files with Parallel Chunking
       for (const file of largeFiles) {
-        const uploadId = crypto.randomUUID();
-        const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
-
-        // Custom progress tracker for chunks
-        for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
-          const start = chunkIndex * CHUNK_SIZE;
-          const end = Math.min(start + CHUNK_SIZE, file.size);
-          const chunk = file.slice(start, end);
-
-          const formData = new FormData();
-          formData.append('chunk', chunk);
-          formData.append('uploadId', uploadId);
-          formData.append('chunkIndex', chunkIndex.toString());
-          formData.append('totalChunks', totalChunks.toString());
-          formData.append('fileName', file.name.replace(/\s+/g, '_'));
-
-          const res = await API.post('/upload/chunk', formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-            timeout: 0
-          });
-
-          uploadedBytes += chunk.size;
-          const percent = Math.round((uploadedBytes / totalBytes) * 100);
-          setUploadProgress(percent);
-
-          if (res.data.completed) {
-            preUploadedMedia.push({ url: res.data.url, type: res.data.type });
+        // Generate UUID (fallback for non-secure contexts)
+        const generateUUID = () => {
+          if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+            return crypto.randomUUID();
           }
+          return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+          });
+        };
+
+        const uploadId = generateUUID();
+        // Track progress for this file
+        const updateFileProgress = (chunkBytes: number) => {
+          globalUploadedBytes += chunkBytes;
+          const percent = Math.round((globalUploadedBytes / totalBytes) * 100);
+          setUploadProgress(Math.min(percent, 95));
+        };
+
+        const result = await uploadFileChunked(file, uploadId, updateFileProgress);
+        if (result) {
+          preUploadedMedia.push({ url: result.url, type: result.type });
+        } else {
+          throw new Error(`Failed to upload file: ${file.name}`);
         }
       }
 
@@ -294,44 +324,32 @@ const Memories = () => {
       formData.append("userEmail", userEmail);
       formData.append("type", activeTab === 'reels' ? 'review' : activeTab);
 
-      // Add pre-uploaded media URLs
       if (preUploadedMedia.length > 0) {
         formData.append("preUploadedMedia", JSON.stringify(preUploadedMedia));
       }
 
-      // Add small files
       smallFiles.forEach((file) => {
         formData.append("media", file);
       });
 
-      // Current progress is dominated by large files. 
-      // We can't easily track small file upload progress mixed with axios validation here 
-      // without complicating. Let's just assume small files go fast or use logic.
-      // Or we can attach onUploadProgress for the final request too.
+      // Account for small files size in progress immediately for UI smoothness 
+      // (or tracking it via axios onUploadProgress, but mixed tracking is complex)
 
       await API.post("/reviews", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        timeout: 0,
+        headers: { "Content-Type": "multipart/form-data" },
+        timeout: 120000, // 2 minutes for small files
         onUploadProgress: (progressEvent) => {
-          // Calculate remaining progress for small files? 
-          // It's tricky because totalBytes included large files.
-          // Let's just set it to 100 near the end or let it flow relative to small files size
-          // Only if detailed tracking needed. For now, 99% logic or simple addition.
-          if (smallFiles.length > 0 && progressEvent.total) {
-            const smallFilesLoaded = progressEvent.loaded;
-            const currentTotal = uploadedBytes + smallFilesLoaded; // Approx
-            const percent = Math.round((currentTotal / totalBytes) * 100);
-            setUploadProgress(Math.min(percent, 99)); // Cap at 99 until done
+          if (progressEvent.total && smallFiles.length > 0) {
+            // Logic to blend progress could go here, but with large files done, we are near 100%
+            // Just let it jump to 100 on completion
           }
-        },
+        }
       });
 
-      setUploadProgress(100); // Done
+      setUploadProgress(100);
       toast({
-        title: "Success!",
-        description: "Successfully added.",
+        title: "Success Link generated!",
+        description: "Successfully added your memory.",
       });
 
       setUploadDialogOpen(false);
@@ -350,7 +368,7 @@ const Memories = () => {
       console.error("Error uploading:", error);
       toast({
         title: "Upload failed",
-        description: error.response?.data?.message || "Network Error: Check Payload Size or Server Status",
+        description: error.response?.data?.message || error.message || "Check your internet connection or try smaller files.",
         variant: "destructive",
       });
     } finally {

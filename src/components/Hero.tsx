@@ -161,7 +161,7 @@ const Hero = () => {
                 fontFamily: "'Cinzel Decorative', cursive",
                 letterSpacing: "1px"
               }}
-              onClick={() => navigate("/states")}
+              onClick={() => navigate("/destination")}
             >
               <MapPin className="mr-2 h-5 w-5" />
               Explore Destinations
