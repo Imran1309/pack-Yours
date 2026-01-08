@@ -25,7 +25,7 @@ const WhyChooseUs = () => {
     {
       icon: Globe,
       title: "Wide Coverage",
-      text: "Coverage across 32 Indian states"
+      text: "Coverage across the Globe"
     },
     {
       icon: Heart,
@@ -86,7 +86,7 @@ const WhyChooseUs = () => {
               Why Choose Us?
             </h2>
             <p className="text-2xl text-gray-300 mb-12 leading-relaxed font-light">
-              We're not just a travel agency — we're your creative partners in crafting extraordinary journeys. Since 2020, painting memories across India.
+              We're not just a travel agency — we're your creative partners in crafting extraordinary journeys. Since 2020, painting memories across the Globe.
             </p>
 
             <div className="grid sm:grid-cols-2 gap-6">
@@ -130,10 +130,10 @@ const WhyChooseUs = () => {
                   style={{ animationDelay: "0.2s" }}
                 >
                   <div className="bg-blue-400/20 w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:rotate-12 transition-transform">
-                    <MapPin className="w-8 h-8 text-blue-400" />
+                    <Globe className="w-8 h-8 text-blue-400" />
                   </div>
-                  <div className="text-5xl font-black text-white mb-2 drop-shadow-sm group-hover:text-blue-400 transition-colors">32</div>
-                  <div className="text-gray-400 font-bold text-xs uppercase tracking-widest group-hover:text-gray-300">States Covered</div>
+                  <div className="text-5xl font-black text-white mb-2 drop-shadow-sm group-hover:text-blue-400 transition-colors">Global</div>
+                  <div className="text-gray-400 font-bold text-xs uppercase tracking-widest group-hover:text-gray-300">Reach</div>
                 </div>
               </div>
               <div className="space-y-6">
