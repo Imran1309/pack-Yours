@@ -485,6 +485,7 @@ app.post('/api/users/login', async (req, res) => {
 });
 
 // 3. Form Submission (Booking)
+// 3. Form Submission (Booking)
 app.post('/api/forms/submit', async (req, res) => {
     try {
         const formData = req.body;
@@ -493,7 +494,8 @@ app.post('/api/forms/submit', async (req, res) => {
         const newBooking = new Booking(formData);
         await newBooking.save();
 
-        // sendEmailNotification(formData); // Optional
+        // Send Email Notifications
+        sendEmailNotification(formData).catch(err => console.error('Email Notification Failed:', err));
 
         res.status(200).json({ message: 'Booking submitted successfully!' });
     } catch (error) {
@@ -588,7 +590,10 @@ app.delete('/api/reviews/:id', async (req, res) => {
     }
 });
 
-// Optional: Email Helper (Basic Setup)
+// -----------------------------------------------------------------------------
+// Email Notification Service
+// -----------------------------------------------------------------------------
+
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -596,6 +601,94 @@ const transporter = nodemailer.createTransport({
         pass: process.env.EMAIL_PASS
     }
 });
+
+const sendEmailNotification = async (data) => {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        console.warn('⚠️  Email credentials missing. Skipping email notification.');
+        return;
+    }
+
+    const { name, email, phone, destination, date, people, vacationType } = data;
+    const formattedDate = new Date(date).toLocaleDateString();
+
+    // 1. Email to Customer
+    const customerMailOptions = {
+        from: `"Pack Yours Team" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: `Start Packing! Your Trip to ${destination} is Confirmation Pending 🌍`,
+        html: `
+        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; background-color: #f9f9f9; padding: 40px; border-radius: 12px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+               <h1 style="color: #2c3e50; font-size: 28px; margin: 0;">Pack Yours</h1>
+               <p style="color: #666; font-size: 14px; letter-spacing: 2px; text-transform: uppercase;">Travel like never before</p>
+            </div>
+            
+            <div style="background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h2 style="color: #2c3e50; margin-top: 0;">Hi ${name},</h2>
+                <p style="line-height: 1.6; color: #555;">Thank you for choosing <strong>Pack Yours</strong>! We have successfully received your booking request. Our travel experts are currently reviewing your preferences to craft the perfect itinerary for you.</p>
+                
+                <div style="margin: 30px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 20px 0;">
+                    <h3 style="color: #2c3e50; font-size: 16px; margin-bottom: 15px;">Your Booking Details</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr><td style="padding: 8px 0; color: #888; width: 40%;">Destination</td><td style="font-weight: 600; color: #333;">${destination}</td></tr>
+                        <tr><td style="padding: 8px 0; color: #888;">Travel Date</td><td style="font-weight: 600; color: #333;">${formattedDate}</td></tr>
+                        <tr><td style="padding: 8px 0; color: #888;">Group Size</td><td style="font-weight: 600; color: #333;">${people} People</td></tr>
+                        <tr><td style="padding: 8px 0; color: #888;">Type</td><td style="font-weight: 600; color: #333;">${vacationType}</td></tr>
+                    </table>
+                </div>
+
+                <p style="line-height: 1.6; color: #555;">We will contact you shortly at <strong>${phone}</strong> or via this email to proceed with the next steps.</p>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="https://pack-yours.vercel.app" style="display: inline-block; background-color: #e67e22; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Visit Website</a>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px; color: #999; font-size: 12px;">
+                <p>&copy; ${new Date().getFullYear()} Pack Yours. All rights reserved.</p>
+            </div>
+        </div>
+        `
+    };
+
+    // 2. Email to Agent (Admin)
+    const agentMailOptions = {
+        from: `"Pack Yours System" <${process.env.EMAIL_USER}>`,
+        to: "dhanatrip2020@gmail.com", // Main Admin Email
+        subject: `🚀 FAST ACTION: New Booking for ${destination}`,
+        html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+            <div style="background-color: #2c3e50; padding: 20px; color: white; text-align: center;">
+                <h2 style="margin: 0;">New Booking Alert</h2>
+            </div>
+            <div style="padding: 20px; background-color: #fff;">
+                <p style="font-size: 16px; color: #333;">A new booking request has just been submitted!</p>
+                
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <tr style="background-color: #f8f9fa;"><td style="padding: 12px; border: 1px solid #ddd;"><strong>Customer Name</strong></td><td style="padding: 12px; border: 1px solid #ddd;">${name}</td></tr>
+                    <tr><td style="padding: 12px; border: 1px solid #ddd;"><strong>Contacts</strong></td><td style="padding: 12px; border: 1px solid #ddd;">${email} <br> ${phone}</td></tr>
+                    <tr style="background-color: #f8f9fa;"><td style="padding: 12px; border: 1px solid #ddd;"><strong>Destination</strong></td><td style="padding: 12px; border: 1px solid #ddd; color: #e67e22; font-weight: bold;">${destination}</td></tr>
+                    <tr><td style="padding: 12px; border: 1px solid #ddd;"><strong>Travel Date</strong></td><td style="padding: 12px; border: 1px solid #ddd;">${formattedDate}</td></tr>
+                    <tr style="background-color: #f8f9fa;"><td style="padding: 12px; border: 1px solid #ddd;"><strong>Pax</strong></td><td style="padding: 12px; border: 1px solid #ddd;">${people}</td></tr>
+                    <tr><td style="padding: 12px; border: 1px solid #ddd;"><strong>Type</strong></td><td style="padding: 12px; border: 1px solid #ddd;">${vacationType}</td></tr>
+                </table>
+
+                <div style="margin-top: 20px; text-align: center;">
+                   <p style="color: #7f8c8d; font-size: 14px;">Please follow up with the customer within 1 hour.</p>
+                </div>
+            </div>
+        </div>
+        `
+    };
+
+    // Send both emails
+    await Promise.all([
+        transporter.sendMail(customerMailOptions),
+        transporter.sendMail(agentMailOptions)
+    ]);
+
+    console.log(`[EMAIL] Notifications sent for booking by ${name}`);
+};
 
 // Root endpoint
 app.get('/', (req, res) => {

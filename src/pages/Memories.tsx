@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Plus, Upload, User, Star, Globe, Utensils, Car, BedDouble, X, ChevronLeft, ChevronRight, Quote, Trash2, Video, Heart, Share2, Play } from "lucide-react";
+import { ArrowLeft, Plus, Upload, User, Star, Globe, Utensils, Car, BedDouble, X, ChevronLeft, ChevronRight, Quote, Trash2, Video, Heart, Share2, Play, Volume2, VolumeX } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
@@ -64,7 +64,76 @@ const Memories = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [activeIndices, setActiveIndices] = useState<Record<string, number>>({});
   const [likedReviews, setLikedReviews] = useState<Record<string, boolean>>({});
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // Reels Logic
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const [currentReelIndex, setCurrentReelIndex] = useState(-1);
+  const [isMuted, setIsMuted] = useState(true);
+
+  // Observer for Reels
+  useEffect(() => {
+    if (activeTab !== 'reels') return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = Number(entry.target.getAttribute('data-index'));
+            setCurrentReelIndex(index);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    // Give a small delay for refs to populate
+    const timeout = setTimeout(() => {
+      videoRefs.current.forEach((ref) => {
+        if (ref) observer.observe(ref);
+      });
+    }, 100);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(timeout);
+    };
+  }, [activeTab, reviews]);
+
+  // Handle Video Playback
+  useEffect(() => {
+    if (activeTab !== 'reels') {
+      // Pause all if leaving tab
+      videoRefs.current.forEach(ref => ref && ref.pause());
+      return;
+    }
+
+    videoRefs.current.forEach((ref, idx) => {
+      if (!ref) return;
+
+      if (idx === currentReelIndex) {
+        const playPromise = ref.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((error) => {
+            console.log("Autoplay prevented:", error);
+            // If autoplay fails (e.g. unmuted blocked), ensure muted is true
+            if (!isMuted) {
+              ref.muted = true;
+              ref.play().catch(e => console.error("Retry play failed", e));
+            }
+          });
+        }
+      } else {
+        ref.pause();
+        ref.currentTime = 0;
+      }
+      ref.muted = isMuted;
+    });
+  }, [currentReelIndex, isMuted, activeTab]);
+
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsMuted(!isMuted);
+  };
 
   const nextSlide = (e: React.MouseEvent, reviewId: string, total: number) => {
     e.stopPropagation();
@@ -195,8 +264,8 @@ const Memories = () => {
     setPreviewUrls(newPreviews);
   };
 
-  const CHUNK_SIZE = 50 * 1024 * 1024; // 50MB chunks for faster uploads
-  const PARALLEL_CHUNKS = 4; // Upload 4 chunks in parallel
+  const CHUNK_SIZE = 10 * 1024 * 1024; // 5MB chunks for faster uploads
+  const PARALLEL_CHUNKS = 5; // Upload 5 chunks in parallel
 
   const uploadFileChunked = async (file: File, uploadId: string, onProgress: (uploadedBytes: number) => void): Promise<{ url: string; type: string } | null> => {
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
@@ -220,7 +289,7 @@ const Memories = () => {
         try {
           const res = await API.post('/upload/chunk', formData, {
             headers: { "Content-Type": "multipart/form-data" },
-            timeout: 300000 // 5 minutes timeout
+            timeout: 60000 // 60s timeout
           });
           return { ...res.data, size: chunk.size };
         } catch (err) {
@@ -274,7 +343,7 @@ const Memories = () => {
     setUploadProgress(0);
 
     // Use lower threshold for chunking to avoid server limits on body size
-    const LARGE_FILE_THRESHOLD = 50 * 1024 * 1024; // 50MB
+    const LARGE_FILE_THRESHOLD = 5 * 1024 * 1024; // 5MB
 
     // Split files
     const largeFiles = selectedFiles.filter(f => f.size > LARGE_FILE_THRESHOLD);
@@ -338,7 +407,7 @@ const Memories = () => {
 
       await API.post("/reviews", formData, {
         headers: { "Content-Type": "multipart/form-data" },
-        timeout: 300000, // 5 minutes for small files
+        timeout: 120000, // 2 minutes for small files
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total && smallFiles.length > 0) {
             // Logic to blend progress could go here, but with large files done, we are near 100%
@@ -406,55 +475,12 @@ const Memories = () => {
     return Math.round((stars / 5) * 100);
   };
 
-  useEffect(() => {
-    if (activeTab !== 'reels') return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const video = entry.target as HTMLVideoElement;
-          if (entry.isIntersecting) {
-            // Attempt to play
-            const playPromise = video.play();
-            if (playPromise !== undefined) {
-              playPromise.catch((error) => {
-                console.log("Autoplay prevented:", error);
-                // Optionally show a "Click to Play" UI if autoplay is blocked
-              });
-            }
-          } else {
-            video.pause();
-            video.currentTime = 0; // Optional: Reset to start when scrolled away? standard reels behavior usually just pauses.
-            // video.currentTime = 0; // Keep it paused where it was? Instagram resets or pauses? 
-            // Usually pauses. Resetting might be annoying if you scroll back up.
-          }
-        });
-      },
-      { threshold: 0.6 } // Video must be 60% visible to play
-    );
-
-    // Small timeout to ensure DOM is rendered (since we are using querySelectorAll on state change)
-    const timeoutId = setTimeout(() => {
-      const videos = document.querySelectorAll('video.reel-video');
-      videos.forEach((v) => observer.observe(v));
-    }, 100);
-
-    return () => {
-      clearTimeout(timeoutId);
-      const videos = document.querySelectorAll('video.reel-video');
-      videos.forEach((v) => observer.unobserve(v));
-      observer.disconnect();
-    };
-  }, [activeTab, reviews]);
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#4b6cb7] to-[#182848] md:from-[#5F8D8B] md:to-[#28494B] relative text-white font-sans selection:bg-[#F2C94C] selection:text-black">
       {/* Decorative Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-white/10 to-transparent mix-blend-overlay"></div>
-        <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-[#F2C94C] rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-pulse-slow"></div>
-        <div className="absolute top-20 right-0 w-72 h-72 bg-[#5effee] rounded-full mix-blend-overlay filter blur-[96px] opacity-20"></div>
-      </div>
+      <div className="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-white/10 to-transparent pointer-events-none mix-blend-overlay"></div>
+      <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-[#F2C94C] rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-pulse-slow"></div>
+      <div className="absolute top-20 right-0 w-72 h-72 bg-[#5effee] rounded-full mix-blend-overlay filter blur-[96px] opacity-20"></div>
 
       {/* Header */}
       <div className="flex flex-col md:flex-row items-center justify-between p-6 bg-white/5 backdrop-blur-md sticky top-0 z-50 shadow-sm border-b border-white/10">
@@ -551,7 +577,7 @@ const Memories = () => {
       </div>
 
       {/* Grid */}
-      <div className={activeTab === 'reels' ? "w-full h-[calc(100dvh-90px)] relative z-0 bg-[#0f0f0f]" : "container mx-auto px-4 py-8 relative z-0"}>
+      <div className="container mx-auto px-4 py-8 relative z-0">
         {reviews.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="bg-white/5 p-8 rounded-full mb-6 backdrop-blur-sm border border-white/10">
@@ -570,69 +596,83 @@ const Memories = () => {
           </div>
         ) : (
           activeTab === 'reels' ? (
-            <div className="w-full h-full overflow-y-scroll snap-y snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-              {reviews.map((review) => {
+            <div className="h-[calc(100vh-140px)] w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar">
+              {reviews.map((review, index) => {
                 const videoMedia = review.media.find(m => m.type === 'video');
                 if (!videoMedia) return null;
 
+                const isPlaying = index === currentReelIndex;
+
                 return (
-                  <div key={review._id} className="relative w-full h-full snap-start shrink-0 flex justify-center bg-black">
-                    <div className="relative w-full md:max-w-[480px] h-full bg-black shadow-2xl overflow-hidden">
+                  <div key={review._id} className="snap-center w-full h-full flex items-center justify-center p-2 md:p-4">
+                    <div className="relative w-full max-w-[400px] h-full max-h-[85vh] aspect-[9/16] bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10 group">
                       {/* Video Player */}
                       <video
+                        ref={el => videoRefs.current[index] = el}
+                        data-index={index}
                         src={videoMedia.url}
-                        className="w-full h-full object-cover cursor-pointer peer reel-video"
+                        className="w-full h-full object-cover cursor-pointer"
                         loop
                         playsInline
-                        muted={false}
+                        muted={isMuted} // Controlled by state
+                        preload="metadata"
                         crossOrigin="anonymous"
                         onClick={(e) => {
                           const v = e.currentTarget;
-                          if (v.paused) v.play(); else v.pause();
+                          toggleMute(e); // Tap video to toggle sound
                         }}
                       />
 
-                      {/* Play Button Overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-300 opacity-0 bg-black/20 peer-paused:opacity-100">
-                        <Play className="w-16 h-16 text-white/90 fill-white/20 drop-shadow-lg" />
+                      {/* Play/Pause/Mute Indicator Overlay */}
+                      <button 
+                        onClick={toggleMute}
+                        className="absolute top-4 right-4 z-40 p-2 bg-black/40 backdrop-blur-md rounded-full text-white/80 hover:bg-black/60 transition-colors"
+                      >
+                        {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                      </button>
+
+                      {/* Video Controls Overlay - Play/Pause */}
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+                         {/* Optional: Add visible controls if needed, but tap-to-mute is cleaner for Reels */}
                       </div>
 
+
                       {/* Gradient Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/90 pointer-events-none" />
+                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
 
                       {/* Content Overlay */}
-                      <div className="absolute bottom-0 left-0 right-0 p-6 z-20 flex flex-col gap-4 pb-16 md:pb-6">
+                      <div className="absolute bottom-0 left-0 right-0 p-6 z-20 flex flex-col gap-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#F2C94C] to-[#E91E63] p-[2px]">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#F2C94C] to-[#E91E63] p-[2px]">
                             <div className="w-full h-full rounded-full bg-black flex items-center justify-center overflow-hidden">
-                              <User size={24} className="text-white/80" />
+                              <User size={20} className="text-white/80" />
                             </div>
                           </div>
                           <div className="flex flex-col">
                             <div className="flex items-center gap-2">
-                              <span className="font-bold text-white text-base shadow-black drop-shadow-md">
+                              <span className="font-bold text-white text-sm shadow-black drop-shadow-md">
                                 {review.userEmail.split('@')[0]}
                               </span>
                               {(review.userEmail === 'dhanatrip2020@gmail.com' || review.type === 'memory') && (
-                                <span className="px-2 py-0.5 bg-[#F2C94C] text-[10px] font-bold text-black rounded-full">
+                                <span className="px-1.5 py-0.5 bg-[#F2C94C] text-[10px] font-bold text-black rounded-sm">
                                   OWNER
                                 </span>
                               )}
                             </div>
                             {review.title && (
-                              <span className="text-sm text-white/90 font-medium tracking-wide">
+                              <span className="text-xs text-white/80 font-medium tracking-wide">
                                 {review.title}
                               </span>
                             )}
                           </div>
                         </div>
 
-                        <p className="text-white/90 text-sm md:text-base font-light leading-relaxed line-clamp-3">
+                        <p className="text-white/90 text-sm line-clamp-2 font-light leading-relaxed">
                           {review.description}
                         </p>
 
                         {/* Music / Date */}
-                        <div className="flex items-center gap-2 text-xs text-white/70">
+                        <div className="flex items-center gap-2 text-xs text-white/60">
                           <div className="flex items-center gap-1">
                             <span className="animate-pulse">♫</span> Original Audio
                           </div>
@@ -642,16 +682,16 @@ const Memories = () => {
                       </div>
 
                       {/* Sidebar Actions */}
-                      <div className="absolute right-4 bottom-28 md:bottom-20 flex flex-col items-center gap-6 z-30">
+                      <div className="absolute right-3 bottom-24 flex flex-col items-center gap-6 z-30">
                         <div
-                          className="flex flex-col items-center gap-1 group/btn cursor-pointer transition-transform active:scale-90"
+                          className="flex flex-col items-center gap-1 group/btn cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleLike(review._id);
                           }}
                         >
-                          <div className={`p-3 backdrop-blur-md rounded-full transition-colors ${likedReviews[review._id] ? 'bg-red-500/20' : 'bg-black/30'}`}>
-                            <Heart className={`w-8 h-8 ${likedReviews[review._id] ? 'fill-red-500 text-red-500' : 'text-white'}`} />
+                          <div className={`p-2 backdrop-blur-sm rounded-full active:scale-90 transition-transform ${likedReviews[review._id] ? 'bg-red-500/20' : 'bg-black/20'}`}>
+                            <Heart className={`w-7 h-7 ${likedReviews[review._id] ? 'fill-red-500 text-red-500' : 'text-white'}`} />
                           </div>
                           <span className="text-xs font-bold text-white shadow-black drop-shadow-md">
                             {review.likes || 0}
@@ -659,13 +699,13 @@ const Memories = () => {
                         </div>
 
                         <div
-                          className="flex flex-col items-center gap-1 cursor-pointer transition-transform active:scale-90"
+                          className="flex flex-col items-center gap-1 cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleShare(review);
                           }}
                         >
-                          <div className="p-3 bg-black/30 backdrop-blur-md rounded-full hover:bg-white/10">
+                          <div className="p-2 bg-black/20 backdrop-blur-sm rounded-full active:scale-90 transition-transform hover:bg-white/10">
                             <Share2 className="w-7 h-7 text-white" />
                           </div>
                           <span className="text-xs font-bold text-white shadow-black drop-shadow-md">Share</span>
@@ -678,7 +718,7 @@ const Memories = () => {
                                 e.stopPropagation();
                                 handleDelete(review._id);
                               }}
-                              className="p-3 bg-black/30 backdrop-blur-md rounded-full hover:bg-red-500/20 text-white hover:text-red-400"
+                              className="p-2 bg-black/20 backdrop-blur-sm rounded-full hover:bg-red-500/20 active:scale-90 transition-all text-white hover:text-red-400"
                             >
                               <Trash2 className="w-6 h-6" />
                             </button>
@@ -714,8 +754,7 @@ const Memories = () => {
                           <img
                             src={currentMedia.url}
                             alt={review.title}
-                            className="w-full h-full object-cover transition-transform duration-500 cursor-pointer"
-                            onClick={() => setSelectedImage(currentMedia.url)}
+                            className="w-full h-full object-cover transition-transform duration-500"
                           />
                         ));
                       })()}
@@ -980,6 +1019,7 @@ const Memories = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Auth Dialog - Passed props to match dark theme inside if needed, assuming generic dialog */}
       <AuthDialog
         open={authDialogOpen}
         onOpenChange={setAuthDialogOpen}
@@ -995,29 +1035,6 @@ const Memories = () => {
           setUserEmail("");
         }}
       />
-
-      {/* Full Screen Image Overlay */}
-      {selectedImage && (
-        <div
-          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 animate-in fade-in duration-300"
-          onClick={() => setSelectedImage(null)}
-        >
-          <button
-            className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"
-            onClick={() => setSelectedImage(null)}
-          >
-            <X size={40} />
-          </button>
-          <img
-            src={selectedImage}
-            alt="Full view"
-            className="max-w-full max-h-full object-contain rounded-lg shadow-2xl scale-in-95 animate-in duration-300"
-            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the image itself? Or allow it? 
-          // Usually clicking background closes. Clicking image can do nothing or toggle zoom.
-          // Let's just catch propagation so it doesn't close immediately if user clicks image.
-          />
-        </div>
-      )}
     </div>
   );
 };
