@@ -64,6 +64,7 @@ const Memories = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [activeIndices, setActiveIndices] = useState<Record<string, number>>({});
   const [likedReviews, setLikedReviews] = useState<Record<string, boolean>>({});
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const nextSlide = (e: React.MouseEvent, reviewId: string, total: number) => {
     e.stopPropagation();
@@ -219,7 +220,7 @@ const Memories = () => {
         try {
           const res = await API.post('/upload/chunk', formData, {
             headers: { "Content-Type": "multipart/form-data" },
-            timeout: 60000 // 60s timeout
+            timeout: 300000 // 5 minutes timeout
           });
           return { ...res.data, size: chunk.size };
         } catch (err) {
@@ -337,7 +338,7 @@ const Memories = () => {
 
       await API.post("/reviews", formData, {
         headers: { "Content-Type": "multipart/form-data" },
-        timeout: 120000, // 2 minutes for small files
+        timeout: 300000, // 5 minutes for small files
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total && smallFiles.length > 0) {
             // Logic to blend progress could go here, but with large files done, we are near 100%
@@ -405,12 +406,55 @@ const Memories = () => {
     return Math.round((stars / 5) * 100);
   };
 
+  useEffect(() => {
+    if (activeTab !== 'reels') return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) {
+            // Attempt to play
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+              playPromise.catch((error) => {
+                console.log("Autoplay prevented:", error);
+                // Optionally show a "Click to Play" UI if autoplay is blocked
+              });
+            }
+          } else {
+            video.pause();
+            video.currentTime = 0; // Optional: Reset to start when scrolled away? standard reels behavior usually just pauses.
+            // video.currentTime = 0; // Keep it paused where it was? Instagram resets or pauses? 
+            // Usually pauses. Resetting might be annoying if you scroll back up.
+          }
+        });
+      },
+      { threshold: 0.6 } // Video must be 60% visible to play
+    );
+
+    // Small timeout to ensure DOM is rendered (since we are using querySelectorAll on state change)
+    const timeoutId = setTimeout(() => {
+      const videos = document.querySelectorAll('video.reel-video');
+      videos.forEach((v) => observer.observe(v));
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      const videos = document.querySelectorAll('video.reel-video');
+      videos.forEach((v) => observer.unobserve(v));
+      observer.disconnect();
+    };
+  }, [activeTab, reviews]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#4b6cb7] to-[#182848] md:from-[#5F8D8B] md:to-[#28494B] relative text-white font-sans selection:bg-[#F2C94C] selection:text-black">
       {/* Decorative Background Elements */}
-      <div className="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-white/10 to-transparent pointer-events-none mix-blend-overlay"></div>
-      <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-[#F2C94C] rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-pulse-slow"></div>
-      <div className="absolute top-20 right-0 w-72 h-72 bg-[#5effee] rounded-full mix-blend-overlay filter blur-[96px] opacity-20"></div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-white/10 to-transparent mix-blend-overlay"></div>
+        <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-[#F2C94C] rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-pulse-slow"></div>
+        <div className="absolute top-20 right-0 w-72 h-72 bg-[#5effee] rounded-full mix-blend-overlay filter blur-[96px] opacity-20"></div>
+      </div>
 
       {/* Header */}
       <div className="flex flex-col md:flex-row items-center justify-between p-6 bg-white/5 backdrop-blur-md sticky top-0 z-50 shadow-sm border-b border-white/10">
@@ -507,7 +551,7 @@ const Memories = () => {
       </div>
 
       {/* Grid */}
-      <div className="container mx-auto px-4 py-8 relative z-0">
+      <div className={activeTab === 'reels' ? "w-full h-[calc(100dvh-90px)] relative z-0 bg-[#0f0f0f]" : "container mx-auto px-4 py-8 relative z-0"}>
         {reviews.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="bg-white/5 p-8 rounded-full mb-6 backdrop-blur-sm border border-white/10">
@@ -526,120 +570,121 @@ const Memories = () => {
           </div>
         ) : (
           activeTab === 'reels' ? (
-            <div className="flex flex-col items-center gap-12 pb-20">
+            <div className="w-full h-full overflow-y-scroll snap-y snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               {reviews.map((review) => {
                 const videoMedia = review.media.find(m => m.type === 'video');
                 if (!videoMedia) return null;
 
                 return (
-                  <div key={review._id} className="relative w-full max-w-[380px] aspect-[9/16] bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10 group">
-                    {/* Video Player */}
-                    <video
-                      src={videoMedia.url}
-                      className="w-full h-full object-cover cursor-pointer peer"
-                      loop
-                      playsInline
-                      muted
-                      preload="metadata"
-                      crossOrigin="anonymous"
-                      onClick={(e) => {
-                        const v = e.currentTarget;
-                        if (v.paused) v.play(); else v.pause();
-                      }}
-                    />
+                  <div key={review._id} className="relative w-full h-full snap-start shrink-0 flex justify-center bg-black">
+                    <div className="relative w-full md:max-w-[480px] h-full bg-black shadow-2xl overflow-hidden">
+                      {/* Video Player */}
+                      <video
+                        src={videoMedia.url}
+                        className="w-full h-full object-cover cursor-pointer peer reel-video"
+                        loop
+                        playsInline
+                        muted={false}
+                        crossOrigin="anonymous"
+                        onClick={(e) => {
+                          const v = e.currentTarget;
+                          if (v.paused) v.play(); else v.pause();
+                        }}
+                      />
 
-                    {/* Play Button Overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-300 opacity-0 bg-black/20 peer-paused:opacity-100">
-                      <Play className="w-12 h-12 text-white/90 fill-white/20 drop-shadow-lg" />
-                    </div>
+                      {/* Play Button Overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-300 opacity-0 bg-black/20 peer-paused:opacity-100">
+                        <Play className="w-16 h-16 text-white/90 fill-white/20 drop-shadow-lg" />
+                      </div>
 
-                    {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 pointer-events-none" />
+                      {/* Gradient Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/90 pointer-events-none" />
 
-                    {/* Content Overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 p-5 z-20 flex flex-col gap-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#F2C94C] to-[#E91E63] p-[2px]">
-                          <div className="w-full h-full rounded-full bg-black flex items-center justify-center overflow-hidden">
-                            <User size={20} className="text-white/80" />
+                      {/* Content Overlay */}
+                      <div className="absolute bottom-0 left-0 right-0 p-6 z-20 flex flex-col gap-4 pb-16 md:pb-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#F2C94C] to-[#E91E63] p-[2px]">
+                            <div className="w-full h-full rounded-full bg-black flex items-center justify-center overflow-hidden">
+                              <User size={24} className="text-white/80" />
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex flex-col">
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-white text-sm shadow-black drop-shadow-md">
-                              {review.userEmail.split('@')[0]}
-                            </span>
-                            {(review.userEmail === 'dhanatrip2020@gmail.com' || review.type === 'memory') && (
-                              <span className="px-1.5 py-0.5 bg-[#F2C94C] text-[10px] font-bold text-black rounded-sm">
-                                OWNER
+                          <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-white text-base shadow-black drop-shadow-md">
+                                {review.userEmail.split('@')[0]}
+                              </span>
+                              {(review.userEmail === 'dhanatrip2020@gmail.com' || review.type === 'memory') && (
+                                <span className="px-2 py-0.5 bg-[#F2C94C] text-[10px] font-bold text-black rounded-full">
+                                  OWNER
+                                </span>
+                              )}
+                            </div>
+                            {review.title && (
+                              <span className="text-sm text-white/90 font-medium tracking-wide">
+                                {review.title}
                               </span>
                             )}
                           </div>
-                          {review.title && (
-                            <span className="text-xs text-white/80 font-medium tracking-wide">
-                              {review.title}
-                            </span>
-                          )}
+                        </div>
+
+                        <p className="text-white/90 text-sm md:text-base font-light leading-relaxed line-clamp-3">
+                          {review.description}
+                        </p>
+
+                        {/* Music / Date */}
+                        <div className="flex items-center gap-2 text-xs text-white/70">
+                          <div className="flex items-center gap-1">
+                            <span className="animate-pulse">♫</span> Original Audio
+                          </div>
+                          <span>•</span>
+                          <span>{new Date(review.createdAt).toLocaleDateString()}</span>
                         </div>
                       </div>
 
-                      <p className="text-white/90 text-sm line-clamp-2 font-light leading-relaxed">
-                        {review.description}
-                      </p>
-
-                      {/* Music / Date */}
-                      <div className="flex items-center gap-2 text-xs text-white/60">
-                        <div className="flex items-center gap-1">
-                          <span className="animate-pulse">♫</span> Original Audio
+                      {/* Sidebar Actions */}
+                      <div className="absolute right-4 bottom-28 md:bottom-20 flex flex-col items-center gap-6 z-30">
+                        <div
+                          className="flex flex-col items-center gap-1 group/btn cursor-pointer transition-transform active:scale-90"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleLike(review._id);
+                          }}
+                        >
+                          <div className={`p-3 backdrop-blur-md rounded-full transition-colors ${likedReviews[review._id] ? 'bg-red-500/20' : 'bg-black/30'}`}>
+                            <Heart className={`w-8 h-8 ${likedReviews[review._id] ? 'fill-red-500 text-red-500' : 'text-white'}`} />
+                          </div>
+                          <span className="text-xs font-bold text-white shadow-black drop-shadow-md">
+                            {review.likes || 0}
+                          </span>
                         </div>
-                        <span>•</span>
-                        <span>{new Date(review.createdAt).toLocaleDateString()}</span>
+
+                        <div
+                          className="flex flex-col items-center gap-1 cursor-pointer transition-transform active:scale-90"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleShare(review);
+                          }}
+                        >
+                          <div className="p-3 bg-black/30 backdrop-blur-md rounded-full hover:bg-white/10">
+                            <Share2 className="w-7 h-7 text-white" />
+                          </div>
+                          <span className="text-xs font-bold text-white shadow-black drop-shadow-md">Share</span>
+                        </div>
+
+                        {isAuthenticated && OWNER_EMAILS.includes(userEmail || "") && (
+                          <div className="flex flex-col items-center gap-1 cursor-pointer">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(review._id);
+                              }}
+                              className="p-3 bg-black/30 backdrop-blur-md rounded-full hover:bg-red-500/20 text-white hover:text-red-400"
+                            >
+                              <Trash2 className="w-6 h-6" />
+                            </button>
+                          </div>
+                        )}
                       </div>
-                    </div>
-
-                    {/* Sidebar Actions */}
-                    <div className="absolute right-3 bottom-24 flex flex-col items-center gap-6 z-30">
-                      <div
-                        className="flex flex-col items-center gap-1 group/btn cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleLike(review._id);
-                        }}
-                      >
-                        <div className={`p-2 backdrop-blur-sm rounded-full active:scale-90 transition-transform ${likedReviews[review._id] ? 'bg-red-500/20' : 'bg-black/20'}`}>
-                          <Heart className={`w-7 h-7 ${likedReviews[review._id] ? 'fill-red-500 text-red-500' : 'text-white'}`} />
-                        </div>
-                        <span className="text-xs font-bold text-white shadow-black drop-shadow-md">
-                          {review.likes || 0}
-                        </span>
-                      </div>
-
-                      <div
-                        className="flex flex-col items-center gap-1 cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleShare(review);
-                        }}
-                      >
-                        <div className="p-2 bg-black/20 backdrop-blur-sm rounded-full active:scale-90 transition-transform hover:bg-white/10">
-                          <Share2 className="w-7 h-7 text-white" />
-                        </div>
-                        <span className="text-xs font-bold text-white shadow-black drop-shadow-md">Share</span>
-                      </div>
-
-                      {isAuthenticated && OWNER_EMAILS.includes(userEmail || "") && (
-                        <div className="flex flex-col items-center gap-1 cursor-pointer">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(review._id);
-                            }}
-                            className="p-2 bg-black/20 backdrop-blur-sm rounded-full hover:bg-red-500/20 active:scale-90 transition-all text-white hover:text-red-400"
-                          >
-                            <Trash2 className="w-6 h-6" />
-                          </button>
-                        </div>
-                      )}
                     </div>
                   </div>
                 );
@@ -669,7 +714,8 @@ const Memories = () => {
                           <img
                             src={currentMedia.url}
                             alt={review.title}
-                            className="w-full h-full object-cover transition-transform duration-500"
+                            className="w-full h-full object-cover transition-transform duration-500 cursor-pointer"
+                            onClick={() => setSelectedImage(currentMedia.url)}
                           />
                         ));
                       })()}
@@ -934,7 +980,6 @@ const Memories = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Auth Dialog - Passed props to match dark theme inside if needed, assuming generic dialog */}
       <AuthDialog
         open={authDialogOpen}
         onOpenChange={setAuthDialogOpen}
@@ -950,6 +995,29 @@ const Memories = () => {
           setUserEmail("");
         }}
       />
+
+      {/* Full Screen Image Overlay */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 animate-in fade-in duration-300"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button
+            className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"
+            onClick={() => setSelectedImage(null)}
+          >
+            <X size={40} />
+          </button>
+          <img
+            src={selectedImage}
+            alt="Full view"
+            className="max-w-full max-h-full object-contain rounded-lg shadow-2xl scale-in-95 animate-in duration-300"
+            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the image itself? Or allow it? 
+          // Usually clicking background closes. Clicking image can do nothing or toggle zoom.
+          // Let's just catch propagation so it doesn't close immediately if user clicks image.
+          />
+        </div>
+      )}
     </div>
   );
 };
