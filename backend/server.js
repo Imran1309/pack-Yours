@@ -196,7 +196,30 @@ app.post('/api/upload/chunk', (req, res, next) => {
         const currentChunks = fs.readdirSync(chunkDir).length;
         if (currentChunks === parseInt(totalChunks)) {
             const finalFileName = `${Date.now()}-${fileName}`;
-            const uploadStream = gridfsBucket.openUploadStream(finalFileName);
+
+            // Determine content type based on extension
+            const ext = fileName.split('.').pop().toLowerCase();
+            const mimeTypes = {
+                'mp4': 'video/mp4',
+                'mov': 'video/quicktime',
+                'avi': 'video/x-msvideo',
+                'webm': 'video/webm',
+                'mkv': 'video/x-matroska',
+                '3gp': 'video/3gpp',
+                'flv': 'video/x-flv',
+                'wmv': 'video/x-ms-wmv',
+                'png': 'image/png',
+                'jpg': 'image/jpeg',
+                'jpeg': 'image/jpeg',
+                'gif': 'image/gif',
+                'webp': 'image/webp'
+            };
+            const contentType = mimeTypes[ext] || 'application/octet-stream';
+
+            const uploadStream = gridfsBucket.openUploadStream(finalFileName, {
+                contentType: contentType,
+                metadata: { originalName: fileName }
+            });
 
             const host = req.get('host');
             const protocol = req.protocol;
@@ -237,6 +260,70 @@ app.post('/api/upload/chunk', (req, res, next) => {
     } catch (error) {
         console.error('Chunk Upload Error:', error);
         res.status(500).json({ message: 'Chunk upload failed' });
+    }
+});
+
+// 1.5. GET File (Stream from GridFS)
+app.get('/api/file/:filename', async (req, res) => {
+    try {
+        if (!gridfsBucket) {
+            return res.status(503).json({ message: 'Server initializing, please wait...' });
+        }
+
+        const filename = req.params.filename;
+
+        // Check if file exists
+        const files = await gridfsBucket.find({ filename }).toArray();
+        if (!files || files.length === 0) {
+            return res.status(404).json({ message: 'File not found' });
+        }
+
+        const file = files[0];
+
+        // Smart Content-Type Detection (Fallback for files uploaded without metadata)
+        let contentType = file.contentType;
+        if (!contentType || contentType === 'application/octet-stream') {
+            const ext = filename.split('.').pop().toLowerCase();
+            const mimeTypes = {
+                'mp4': 'video/mp4', 'mov': 'video/quicktime', 'webm': 'video/webm',
+                'png': 'image/png', 'jpg': 'image/jpeg', 'jpeg': 'image/jpeg'
+            };
+            if (mimeTypes[ext]) contentType = mimeTypes[ext];
+        }
+
+        // Handle Range Headers for Video Streaming
+        if (req.headers.range) {
+            const range = req.headers.range;
+            const parts = range.replace(/bytes=/, "").split("-");
+            const start = parseInt(parts[0], 10);
+            const end = parts[1] ? parseInt(parts[1], 10) : file.length - 1;
+            const chunksize = (end - start) + 1;
+
+            res.writeHead(206, {
+                'Content-Range': `bytes ${start}-${end}/${file.length}`,
+                'Accept-Ranges': 'bytes',
+                'Content-Length': chunksize,
+                'Content-Type': contentType || 'application/octet-stream',
+            });
+
+            const downloadStream = gridfsBucket.openDownloadStreamByName(filename, {
+                start,
+                end: end + 1 // GridFS end is exclusive (roughly) or handled by driver
+            });
+            downloadStream.pipe(res);
+        } else {
+            // Standard Stream
+            res.header('Content-Length', file.length);
+            res.header('Content-Type', contentType || 'application/octet-stream');
+
+            const downloadStream = gridfsBucket.openDownloadStreamByName(filename);
+            downloadStream.pipe(res);
+        }
+    } catch (error) {
+        console.error('File Stream Error:', error);
+        if (!res.headersSent) {
+            res.status(500).json({ message: 'Error streaming file' });
+        }
     }
 });
 

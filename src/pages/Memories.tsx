@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Plus, Upload, User, Star, Globe, Utensils, Car, BedDouble, X, ChevronLeft, ChevronRight, Quote, Trash2, Video, Heart, Share2 } from "lucide-react";
+import { ArrowLeft, Plus, Upload, User, Star, Globe, Utensils, Car, BedDouble, X, ChevronLeft, ChevronRight, Quote, Trash2, Video, Heart, Share2, Play } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
@@ -536,14 +536,22 @@ const Memories = () => {
                     {/* Video Player */}
                     <video
                       src={videoMedia.url}
-                      className="w-full h-full object-cover cursor-pointer"
+                      className="w-full h-full object-cover cursor-pointer peer"
                       loop
                       playsInline
+                      muted
+                      preload="metadata"
+                      crossOrigin="anonymous"
                       onClick={(e) => {
                         const v = e.currentTarget;
                         if (v.paused) v.play(); else v.pause();
                       }}
                     />
+
+                    {/* Play Button Overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-300 opacity-0 bg-black/20 peer-paused:opacity-100">
+                      <Play className="w-12 h-12 text-white/90 fill-white/20 drop-shadow-lg" />
+                    </div>
 
                     {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/90 pointer-events-none" />
