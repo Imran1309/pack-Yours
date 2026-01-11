@@ -195,8 +195,8 @@ const Memories = () => {
     setPreviewUrls(newPreviews);
   };
 
-  const CHUNK_SIZE = 10 * 1024 * 1024; // 5MB chunks for faster uploads
-  const PARALLEL_CHUNKS = 5; // Upload 5 chunks in parallel
+  const CHUNK_SIZE = 50 * 1024 * 1024; // 50MB chunks for faster uploads
+  const PARALLEL_CHUNKS = 4; // Upload 4 chunks in parallel
 
   const uploadFileChunked = async (file: File, uploadId: string, onProgress: (uploadedBytes: number) => void): Promise<{ url: string; type: string } | null> => {
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
@@ -274,7 +274,7 @@ const Memories = () => {
     setUploadProgress(0);
 
     // Use lower threshold for chunking to avoid server limits on body size
-    const LARGE_FILE_THRESHOLD = 5 * 1024 * 1024; // 5MB
+    const LARGE_FILE_THRESHOLD = 50 * 1024 * 1024; // 50MB
 
     // Split files
     const largeFiles = selectedFiles.filter(f => f.size > LARGE_FILE_THRESHOLD);
