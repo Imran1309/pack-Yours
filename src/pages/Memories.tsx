@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Plus, Upload, User, Star, Globe, Utensils, Car, BedDouble, X, ChevronLeft, ChevronRight, Quote, Trash2, Video, Heart, Share2, Play, Volume2, VolumeX } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useToast } from "@/hooks/use-toast";
 import AuthDialog from "@/components/AuthDialog";
 import API from "@/api/api";
@@ -63,6 +63,7 @@ const Memories = () => {
   const [loading, setLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [activeIndices, setActiveIndices] = useState<Record<string, number>>({});
+  const [fullScreenMedia, setFullScreenMedia] = useState<{ url: string, type: string } | null>(null);
   const [likedReviews, setLikedReviews] = useState<Record<string, boolean>>({});
 
   // Reels Logic
@@ -70,9 +71,22 @@ const Memories = () => {
   const [currentReelIndex, setCurrentReelIndex] = useState(-1);
   const [isMuted, setIsMuted] = useState(true);
 
+  // Flatten reviews for Reels view: each video in a review becomes a "Reel"
+  const reelItems = useMemo(() => {
+    if (activeTab !== 'reels') return [];
+    return reviews.flatMap(review =>
+      review.media
+        .filter(m => m.type === 'video')
+        .map(media => ({ ...review, activeMedia: media }))
+    );
+  }, [reviews, activeTab]);
+
   // Observer for Reels
   useEffect(() => {
     if (activeTab !== 'reels') return;
+
+    // Reset refs when items change to avoid potential leaks/mismatches
+    videoRefs.current = videoRefs.current.slice(0, reelItems.length);
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -83,7 +97,7 @@ const Memories = () => {
           }
         });
       },
-      { threshold: 0.5 }
+      { threshold: 0.6 } // Increased threshold for better snap detection
     );
 
     // Give a small delay for refs to populate
@@ -97,7 +111,7 @@ const Memories = () => {
       observer.disconnect();
       clearTimeout(timeout);
     };
-  }, [activeTab, reviews]);
+  }, [activeTab, reelItems]); // Depend on flattened reelItems
 
   // Handle Video Playback
   useEffect(() => {
@@ -111,11 +125,12 @@ const Memories = () => {
       if (!ref) return;
 
       if (idx === currentReelIndex) {
+        // Reset time if it's a new video or leave it if play just resumed?
+        // Instagram reels usually restart or resume. Let's just play.
         const playPromise = ref.play();
         if (playPromise !== undefined) {
           playPromise.catch((error) => {
             console.log("Autoplay prevented:", error);
-            // If autoplay fails (e.g. unmuted blocked), ensure muted is true
             if (!isMuted) {
               ref.muted = true;
               ref.play().catch(e => console.error("Retry play failed", e));
@@ -124,11 +139,12 @@ const Memories = () => {
         }
       } else {
         ref.pause();
-        ref.currentTime = 0;
+        // Optional: Reset non-playing videos to start?
+        // ref.currentTime = 0; 
       }
       ref.muted = isMuted;
     });
-  }, [currentReelIndex, isMuted, activeTab]);
+  }, [currentReelIndex, isMuted, activeTab, reelItems]);
 
   const toggleMute = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -475,8 +491,17 @@ const Memories = () => {
     return Math.round((stars / 5) * 100);
   };
 
+  useEffect(() => {
+    // Set body background color to match the page theme to prevent white bars on scroll/bounce
+    const originalStyle = document.body.style.backgroundColor;
+    document.body.style.backgroundColor = "#28494B"; // Match the dark teal theme
+    return () => {
+      document.body.style.backgroundColor = originalStyle;
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#4b6cb7] to-[#182848] md:from-[#5F8D8B] md:to-[#28494B] relative text-white font-sans selection:bg-[#F2C94C] selection:text-black">
+    <div className={`min-h-[100dvh] relative text-white font-sans selection:bg-[#F2C94C] selection:text-black overflow-hidden transition-colors duration-500 ${activeTab === 'reels' ? 'bg-black' : 'bg-gradient-to-br from-[#4b6cb7] to-[#182848] md:from-[#5F8D8B] md:to-[#28494B]'}`}>
       {/* Decorative Background Elements */}
       <div className="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-white/10 to-transparent pointer-events-none mix-blend-overlay"></div>
       <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-[#F2C94C] rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-pulse-slow"></div>
@@ -535,17 +560,15 @@ const Memories = () => {
         </div>
 
         <div className="flex items-center gap-4 mt-4 md:mt-0">
-          {isAuthenticated && (
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setAuthDialogOpen(true)}
-              className="hidden md:flex bg-transparent hover:bg-white/10 text-white border border-white/30 backdrop-blur-md transition-all"
-            >
-              <User className="h-4 w-4 mr-2" />
-              Account
-            </Button>
-          )}
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setAuthDialogOpen(true)}
+            className="flex bg-transparent hover:bg-white/10 text-white border border-white/30 backdrop-blur-md transition-all"
+          >
+            <User className="h-4 w-4 mr-2" />
+            {isAuthenticated ? "Account" : "Login"}
+          </Button>
 
           {(activeTab === 'review' || activeTab === 'memory' || activeTab === 'reels') && (
             <Button
@@ -596,133 +619,123 @@ const Memories = () => {
           </div>
         ) : (
           activeTab === 'reels' ? (
-            <div className="h-[calc(100vh-140px)] w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar">
-              {reviews.map((review, index) => {
-                const videoMedia = review.media.find(m => m.type === 'video');
-                if (!videoMedia) return null;
-
+            // Full Screen Vertical Scroll Container
+            <div className="h-[calc(100vh-80px)] md:h-[calc(100vh-100px)] w-full overflow-y-scroll snap-y snap-mandatory scroll-smooth no-scrollbar">
+              {reelItems.map((item, index) => {
                 const isPlaying = index === currentReelIndex;
-
                 return (
-                  <div key={review._id} className="snap-center w-full h-full flex items-center justify-center p-2 md:p-4">
-                    <div className="relative w-full max-w-[400px] h-full max-h-[85vh] aspect-[9/16] bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10 group">
+                  // Snap Container
+                  <div key={`${item._id}-${index}`} className="snap-start w-full h-full flex items-center justify-center bg-black relative">
+                    {/* Mobile: Full Screen, Desktop: Centered Phone-like ratio */}
+                    <div className="relative w-full md:w-auto md:aspect-[9/16] h-full md:h-[95vh] bg-black md:rounded-xl overflow-hidden shadow-2xl">
+
                       {/* Video Player */}
                       <video
                         ref={el => videoRefs.current[index] = el}
                         data-index={index}
-                        src={videoMedia.url}
+                        src={item.activeMedia.url}
                         className="w-full h-full object-cover cursor-pointer"
                         loop
                         playsInline
-                        muted={isMuted} // Controlled by state
-                        preload="metadata"
+                        muted={isMuted}
+                        preload="metadata" // Save data
                         crossOrigin="anonymous"
                         onClick={(e) => {
-                          const v = e.currentTarget;
-                          toggleMute(e); // Tap video to toggle sound
+                          toggleMute(e);
                         }}
                       />
 
-                      {/* Play/Pause/Mute Indicator Overlay */}
-                      <button 
+                      {/* Mute Indicator/Toggle */}
+                      <button
                         onClick={toggleMute}
-                        className="absolute top-4 right-4 z-40 p-2 bg-black/40 backdrop-blur-md rounded-full text-white/80 hover:bg-black/60 transition-colors"
+                        className="absolute top-6 right-6 z-40 p-2.5 bg-black/30 backdrop-blur-md rounded-full text-white/90 hover:bg-black/50 transition-colors pointer-events-auto"
                       >
-                        {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                        {isMuted ? <VolumeX size={22} /> : <Volume2 size={22} />}
                       </button>
 
-                      {/* Video Controls Overlay - Play/Pause */}
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity duration-300 opacity-0 group-hover:opacity-100">
-                         {/* Optional: Add visible controls if needed, but tap-to-mute is cleaner for Reels */}
-                      </div>
-
-
-                      {/* Gradient Overlay */}
-                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
+                      {/* Gradient Overlay for bottom text readability */}
+                      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
 
                       {/* Content Overlay */}
-                      <div className="absolute bottom-0 left-0 right-0 p-6 z-20 flex flex-col gap-3">
+                      <div className="absolute bottom-0 left-0 right-0 p-6 z-30 flex flex-col gap-3 pb-8 md:pb-6">
                         <div className="flex items-center gap-3">
+                          {/* User Avatar Placeholder/Identicon */}
                           <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#F2C94C] to-[#E91E63] p-[2px]">
                             <div className="w-full h-full rounded-full bg-black flex items-center justify-center overflow-hidden">
-                              <User size={20} className="text-white/80" />
+                              <User size={18} className="text-white/90" />
                             </div>
                           </div>
                           <div className="flex flex-col">
                             <div className="flex items-center gap-2">
-                              <span className="font-bold text-white text-sm shadow-black drop-shadow-md">
-                                {review.userEmail.split('@')[0]}
+                              <span className="font-bold text-white text-sm drop-shadow-md">
+                                {item.userEmail.split('@')[0]}
                               </span>
-                              {(review.userEmail === 'dhanatrip2020@gmail.com' || review.type === 'memory') && (
-                                <span className="px-1.5 py-0.5 bg-[#F2C94C] text-[10px] font-bold text-black rounded-sm">
+                              {(item.userEmail === 'dhanatrip2020@gmail.com' || item.type === 'memory') && (
+                                <span className="px-1.5 py-0.5 bg-[#F2C94C] text-[10px] font-bold text-black rounded-sm shadow-sm">
                                   OWNER
                                 </span>
                               )}
                             </div>
-                            {review.title && (
-                              <span className="text-xs text-white/80 font-medium tracking-wide">
-                                {review.title}
+                            {item.title && (
+                              <span className="text-xs text-white/80 font-medium tracking-wide drop-shadow-sm">
+                                {item.title}
                               </span>
                             )}
                           </div>
                         </div>
 
-                        <p className="text-white/90 text-sm line-clamp-2 font-light leading-relaxed">
-                          {review.description}
+                        <p className="text-white/90 text-sm line-clamp-3 font-light leading-relaxed drop-shadow-md">
+                          {item.description}
                         </p>
 
-                        {/* Music / Date */}
-                        <div className="flex items-center gap-2 text-xs text-white/60">
+                        <div className="flex items-center gap-2 text-xs text-white/70 mt-1">
                           <div className="flex items-center gap-1">
                             <span className="animate-pulse">♫</span> Original Audio
                           </div>
                           <span>•</span>
-                          <span>{new Date(review.createdAt).toLocaleDateString()}</span>
+                          <span>{new Date(item.createdAt).toLocaleDateString()}</span>
                         </div>
                       </div>
 
-                      {/* Sidebar Actions */}
-                      <div className="absolute right-3 bottom-24 flex flex-col items-center gap-6 z-30">
-                        <div
-                          className="flex flex-col items-center gap-1 group/btn cursor-pointer"
+                      {/* Right Sidebar Actions */}
+                      <div className="absolute right-3 bottom-24 flex flex-col items-center gap-6 z-40">
+                        {/* Like Button */}
+                        <div className="flex flex-col items-center gap-1 group/btn cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleLike(review._id);
+                            handleLike(item._id);
                           }}
                         >
-                          <div className={`p-2 backdrop-blur-sm rounded-full active:scale-90 transition-transform ${likedReviews[review._id] ? 'bg-red-500/20' : 'bg-black/20'}`}>
-                            <Heart className={`w-7 h-7 ${likedReviews[review._id] ? 'fill-red-500 text-red-500' : 'text-white'}`} />
+                          <div className={`p-2 backdrop-blur-sm rounded-full active:scale-90 transition-transform ${likedReviews[item._id] ? 'text-red-500' : 'text-white'}`}>
+                            <Heart className={`w-8 h-8 ${likedReviews[item._id] ? 'fill-red-500' : ''}`} strokeWidth={1.5} />
                           </div>
-                          <span className="text-xs font-bold text-white shadow-black drop-shadow-md">
-                            {review.likes || 0}
-                          </span>
+                          <span className="text-xs font-bold text-white drop-shadow-md">{item.likes || 0}</span>
                         </div>
 
-                        <div
-                          className="flex flex-col items-center gap-1 cursor-pointer"
+                        {/* Share Button */}
+                        <div className="flex flex-col items-center gap-1 cursor-pointer"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleShare(review);
+                            handleShare(item);
                           }}
                         >
-                          <div className="p-2 bg-black/20 backdrop-blur-sm rounded-full active:scale-90 transition-transform hover:bg-white/10">
-                            <Share2 className="w-7 h-7 text-white" />
+                          <div className="p-2 backdrop-blur-sm rounded-full active:scale-90 transition-transform">
+                            <Share2 className="w-7 h-7 text-white" strokeWidth={1.5} />
                           </div>
-                          <span className="text-xs font-bold text-white shadow-black drop-shadow-md">Share</span>
+                          <span className="text-xs font-bold text-white drop-shadow-md">Share</span>
                         </div>
 
+                        {/* Delete Button (Owner) */}
                         {isAuthenticated && OWNER_EMAILS.includes(userEmail || "") && (
-                          <div className="flex flex-col items-center gap-1 cursor-pointer">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDelete(review._id);
-                              }}
-                              className="p-2 bg-black/20 backdrop-blur-sm rounded-full hover:bg-red-500/20 active:scale-90 transition-all text-white hover:text-red-400"
-                            >
-                              <Trash2 className="w-6 h-6" />
-                            </button>
-                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(item._id);
+                            }}
+                            className="p-2 backdrop-blur-sm rounded-full hover:bg-red-500/20 active:scale-90 transition-all text-white/80 hover:text-red-400 mt-2"
+                          >
+                            <Trash2 className="w-6 h-6" />
+                          </button>
                         )}
                       </div>
                     </div>
@@ -754,7 +767,8 @@ const Memories = () => {
                           <img
                             src={currentMedia.url}
                             alt={review.title}
-                            className="w-full h-full object-cover transition-transform duration-500"
+                            className="w-full h-full object-cover transition-transform duration-500 cursor-pointer"
+                            onClick={() => setFullScreenMedia(currentMedia)}
                           />
                         ));
                       })()}
@@ -798,15 +812,25 @@ const Memories = () => {
 
                   {/* Content */}
                   <div className="p-6 flex-1 flex flex-col gap-4">
-                    <div>
-                      <h3 className="text-xl font-medium text-white line-clamp-1 mb-2 tracking-wide font-serif">
-                        {review.title}
-                      </h3>
-                      <div className="flex gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
-                        {[...Array(5)].map((_, i) => (
-                          <div key={i} className={`h-0.5 w-full rounded-full ${i < review.rating ? 'bg-[#F2C94C]' : 'bg-white/10'}`} />
-                        ))}
+                    <div className="flex items-start justify-between">
+                      <div>
+                        {review.title && <h3 className="font-serif text-xl text-white mb-1 tracking-wide">{review.title}</h3>}
+                        <div className="flex items-center gap-1.5 text-xs font-bold tracking-wider text-white/50 uppercase">
+                          <User size={12} />
+                          <span>{review.userEmail.split('@')[0]}</span>
+                          {review.userEmail === 'dhanatrip2020@gmail.com' && (
+                            <span className="ml-2 px-1.5 py-0.5 bg-[#F2C94C] text-black text-[10px] rounded-sm">OWNER</span>
+                          )}
+                        </div>
                       </div>
+                      <span className="text-xs text-white/40 font-mono">{new Date(review.createdAt).toLocaleDateString()}</span>
+                    </div>
+
+                    <div className="relative">
+                      <Quote className="absolute -top-2 -left-2 w-6 h-6 text-white/10 rotate-180" />
+                      <p className="text-white/70 text-sm leading-relaxed whitespace-pre-line pl-4 italic font-light">
+                        {review.description}
+                      </p>
                     </div>
 
                     {/* Reviews Chips */}
@@ -830,37 +854,32 @@ const Memories = () => {
                       </div>
                     )}
 
-                    <div className="relative mt-2">
-                      {/* Decorative Quote Mark */}
-                      <Quote className="absolute -top-3 -left-1 w-6 h-6 text-white/10 transform -scale-x-100" />
-                      <p className="text-white/70 text-sm leading-relaxed whitespace-pre-line pl-6 relative z-10 font-light">
-                        {review.description}
-                      </p>
-                    </div>
-
-                    <div className="mt-auto pt-4 border-t border-white/5 flex justify-between items-center text-[10px] text-white/40 font-medium tracking-widest uppercase">
-                      <span>
-                        {new Date(review.createdAt).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' })}
-                      </span>
-
-                      <div className="flex items-center gap-2">
-                        {isAuthenticated && userEmail === OWNER_EMAILS[0] && (
-                          <span className="text-[#F2C94C]">Owner</span>
-                        )}
-
-                        {isAuthenticated && OWNER_EMAILS.includes(userEmail || "") && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(review._id);
-                            }}
-                            className="p-1.5 hover:bg-red-500/20 rounded-md text-white/40 hover:text-red-400 transition-colors"
-                            title="Delete Review"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        )}
+                    <div className="mt-auto pt-4 border-t border-white/10 flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <button
+                          onClick={() => handleLike(review._id)}
+                          className="flex items-center gap-1.5 group/like hover:scale-105 transition-transform"
+                        >
+                          <Heart className={`w-4 h-4 transition-colors ${likedReviews[review._id] ? 'fill-red-500 text-red-500' : 'text-white/60 group-hover/like:text-red-400'}`} />
+                          <span className="text-xs font-medium text-white/60">{review.likes || 0}</span>
+                        </button>
+                        <button
+                          onClick={() => handleShare(review)}
+                          className="flex items-center gap-1.5 group/share hover:scale-105 transition-transform"
+                        >
+                          <Share2 className="w-4 h-4 text-white/60 group-hover/share:text-white transition-colors" />
+                        </button>
                       </div>
+
+                      {isAuthenticated && (OWNER_EMAILS.includes(userEmail || "") || review.userEmail === userEmail) && (
+                        <button
+                          onClick={() => handleDelete(review._id)}
+                          className="text-white/40 hover:text-red-400 transition-colors p-1"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -870,7 +889,7 @@ const Memories = () => {
         )}
       </div>
 
-      {/* Upload Dialog - Minimalist Teal Theme */}
+      {/* Upload Dialog */}
       <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
         <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-[#2b4c4f]/95 backdrop-blur-xl border-white/10 text-white shadow-2xl rounded-none">
           <DialogHeader>
@@ -999,6 +1018,22 @@ const Memories = () => {
                 />
               </div>
             </div>
+            {/* Progress Bar */}
+            {loading && uploadProgress > 0 && (
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs text-white/50">
+                  <span>Uploading...</span>
+                  <span>{uploadProgress}%</span>
+                </div>
+                <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-[#F2C94C] transition-all duration-300 ease-out"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
 
             <Button
               onClick={handleUpload}
@@ -1019,7 +1054,36 @@ const Memories = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Auth Dialog - Passed props to match dark theme inside if needed, assuming generic dialog */}
+      {/* Full Screen Image View Dialog */}
+      <Dialog open={!!fullScreenMedia} onOpenChange={(open) => !open && setFullScreenMedia(null)}>
+        <DialogContent className="max-w-[95vw] max-h-[95vh] w-auto h-auto p-0 bg-transparent border-none shadow-none flex items-center justify-center overflow-hidden focus:outline-none ring-0 outline-none">
+          <div className="relative w-full h-full flex items-center justify-center outline-none">
+            <button
+              onClick={() => setFullScreenMedia(null)}
+              className="absolute top-4 right-4 text-white hover:text-gray-300 p-2 z-50 rounded-full bg-black/50 backdrop-blur-md transition-all hover:bg-black/70"
+              title="Close Full View"
+            >
+              <X size={24} />
+            </button>
+            {fullScreenMedia?.type === 'video' ? (
+              <video
+                src={fullScreenMedia?.url}
+                controls
+                autoPlay
+                className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+              />
+            ) : (
+              <img
+                src={fullScreenMedia?.url}
+                alt="Full View"
+                className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+
       <AuthDialog
         open={authDialogOpen}
         onOpenChange={setAuthDialogOpen}
