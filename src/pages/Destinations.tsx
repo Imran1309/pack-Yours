@@ -257,7 +257,8 @@ const Destinations = () => {
                                     } else if (dest.name === "Agra") {
                                         navigate("/destinations/agra");
                                     } else if (dest.name === "Tamil Nadu") {
-                                        navigate("/destinations/tamilnadu-temple");
+                                        console.log("Navigating to Tamil Nadu explore page");
+                                        navigate("/destinations/tamil-nadu");
                                     } else if (dest.name === "Andhra Pradesh") {
                                         navigate("/destinations/andhra-temple");
                                     } else if (dest.name === "Punjab") {

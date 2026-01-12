@@ -70,6 +70,38 @@ import PondicherryIVDetails from "./pages/PondicherryIVDetails";
 import Services from "./components/Services";
 import WhyChooseUs from "./components/WhyChooseUs";
 import AdminBookings from "./pages/AdminBookings";
+import TamilnaduExplore from "./pages/TamilnaduExplore";
+import AndhraPradeshExplorer from "./pages/AndhraPradeshExplorer";
+import ArunachalExplorer from "./pages/ArunachalExplorer";
+import AssamExplorer from "./pages/AssamExplorer";
+import BiharExplorer from "./pages/BiharExplorer";
+import ChhattisgarhExplorer from "./pages/ChhattisgarhExplorer";
+import DelhiExplorer from "./pages/DelhiExplorer";
+import GoaExplorer from "./pages/GoaExplorer";
+import GujaratExplorer from "./pages/GujaratExplorer";
+import HaryanaExplorer from "./pages/HaryanaExplorer";
+import HimachalExplorer from "./pages/HimachalExplorer";
+import JammuKashmirExplorer from "./pages/JammuKashmirExplorer";
+import JharkhandExplorer from "./pages/JharkhandExplorer";
+import KarnatakaExplorer from "./pages/KarnatakaExplorer";
+import KeralaExplorer from "./pages/KeralaExplorer";
+import LadakhExplorer from "./pages/LadakhExplorer";
+import MadhyaPradeshExplorer from "./pages/MadhyaPradeshExplorer";
+import MaharashtraExplorer from "./pages/MaharashtraExplorer";
+import ManipurExplorer from "./pages/ManipurExplorer";
+import MeghalayaExplorer from "./pages/MeghalayaExplorer";
+import MizoramExplorer from "./pages/MizoramExplorer";
+import NagalandExplorer from "./pages/NagalandExplorer";
+import OdishaExplorer from "./pages/OdishaExplorer";
+import PuducherryExplorer from "./pages/PuducherryExplorer";
+import PunjabExplorer from "./pages/PunjabExplorer";
+import RajasthanExplorer from "./pages/RajasthanExplorer";
+import SikkimExplorer from "./pages/SikkimExplorer";
+import TelanganaExplorer from "./pages/TelanganaExplorer";
+import TripuraExplorer from "./pages/TripuraExplorer";
+import UttarPradeshExplorer from "./pages/UttarPradeshExplorer";
+import WestBengalExplorer from "./pages/WestBengalExplorer";
+import AndamanExplorer from "./pages/AndamanExplorer";
 
 const queryClient = new QueryClient();
 
@@ -138,6 +170,40 @@ const App = () => (
           <Route path="/destinations/udaipur" element={<UdaipurDetails />} />
           <Route path="/destinations/sikkim" element={<SikkimDetails />} />
           <Route path="/destinations/agra" element={<AgraDetails />} />
+          <Route path="/destinations/tamil-nadu" element={<TamilnaduExplore />} />
+
+          {/* New Explorer Routes - Partially enabled */}
+          <Route path="/destinations/andhra" element={<AndhraPradeshExplorer />} />
+          <Route path="/destinations/arunachal" element={<ArunachalExplorer />} />
+          <Route path="/destinations/assam" element={<AssamExplorer />} />
+          <Route path="/destinations/bihar" element={<BiharExplorer />} />
+          <Route path="/destinations/chhattisgarh" element={<ChhattisgarhExplorer />} />
+          <Route path="/destinations/delhi" element={<DelhiExplorer />} />
+          <Route path="/destinations/goa-explorer" element={<GoaExplorer />} />
+          <Route path="/destinations/gujarat" element={<GujaratExplorer />} />
+          <Route path="/destinations/haryana" element={<HaryanaExplorer />} />
+          <Route path="/destinations/himachal" element={<HimachalExplorer />} />
+          <Route path="/destinations/jammu-kashmir" element={<JammuKashmirExplorer />} />
+          <Route path="/destinations/jharkhand" element={<JharkhandExplorer />} />
+          <Route path="/destinations/karnataka-explorer" element={<KarnatakaExplorer />} />
+          <Route path="/destinations/kerala-explorer" element={<KeralaExplorer />} />
+          <Route path="/destinations/ladakh" element={<LadakhExplorer />} />
+          <Route path="/destinations/madhya-pradesh" element={<MadhyaPradeshExplorer />} />
+          <Route path="/destinations/maharashtra" element={<MaharashtraExplorer />} />
+          <Route path="/destinations/manipur" element={<ManipurExplorer />} />
+          <Route path="/destinations/meghalaya" element={<MeghalayaExplorer />} />
+          <Route path="/destinations/mizoram" element={<MizoramExplorer />} />
+          <Route path="/destinations/nagaland" element={<NagalandExplorer />} />
+          <Route path="/destinations/odisha" element={<OdishaExplorer />} />
+          <Route path="/destinations/puducherry" element={<PuducherryExplorer />} />
+          <Route path="/destinations/punjab-explorer" element={<PunjabExplorer />} />
+          <Route path="/destinations/rajasthan" element={<RajasthanExplorer />} />
+          <Route path="/destinations/sikkim-explorer" element={<SikkimExplorer />} />
+          <Route path="/destinations/telangana" element={<TelanganaExplorer />} />
+          <Route path="/destinations/tripura" element={<TripuraExplorer />} />
+          <Route path="/destinations/uttar-pradesh" element={<UttarPradeshExplorer />} />
+          <Route path="/destinations/west-bengal" element={<WestBengalExplorer />} />
+          <Route path="/destinations/andaman-explorer" element={<AndamanExplorer />} />
           {/* <Route path="/destinations/punjab" element={<PunjabDetails />} /> */}
           {/* <Route path="/destinations/andhra" element={<AndhraDetails />} /> */}
           {/* <Route path="/destinations/mumbai" element={<MumbaiDetails />} /> */}

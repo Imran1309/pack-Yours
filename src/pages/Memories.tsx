@@ -752,21 +752,26 @@ const Memories = () => {
                 >
                   {/* Media Carousel / Grid */}
                   {review.media && review.media.length > 0 && (
-                    <div className="relative h-64 bg-black/40 overflow-hidden group/media">
+                    <div className="relative h-64 bg-gray-900 overflow-hidden group/media">
                       {(() => {
                         const currentIndex = activeIndices[review._id] || 0;
                         const currentMedia = review.media[currentIndex];
 
                         return currentMedia && (currentMedia.type === 'video' ? (
                           <video
+                            key={currentMedia.url}
                             src={currentMedia.url}
                             controls
+                            playsInline
+                            preload="metadata"
                             className="w-full h-full object-cover"
                           />
                         ) : (
                           <img
+                            key={currentMedia.url}
                             src={currentMedia.url}
                             alt={review.title}
+                            loading="lazy"
                             className="w-full h-full object-cover transition-transform duration-500 cursor-pointer"
                             onClick={() => setFullScreenMedia(currentMedia)}
                           />

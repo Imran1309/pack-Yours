@@ -1,5 +1,5 @@
 import { Facebook, Instagram, Twitter, Mail, Phone, MapPin, Youtube, MessageCircle } from "lucide-react";
-import logo from "@/assets/company-logo.png";
+import logo from "@/assets/dhana_logo.jpg";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();

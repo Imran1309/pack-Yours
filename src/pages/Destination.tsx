@@ -23,7 +23,7 @@ import puducherry from "@/assets/py.jpg";
 import gujarat from "@/assets/gujarath.jpg";
 import rajasthan from "@/assets/Rajasthan.png";
 import ladakh from "@/assets/ladakh.jpg";
-import madhya from "@/assets/andhara.jpg"; // maybe wrong? image reused
+import madhya from "@/assets/khajuraho.jpg"; // Corrected from andhara.jpg
 import assam from "@/assets/assam.jpg";
 import andaman from "@/assets/An.jpg";
 import uttarpradesh from "@/assets/up.jpg";
@@ -111,6 +111,78 @@ const States = () => {
           {currentStates.map((state, index) => (
             <div
               key={index}
+              onClick={() => {
+                if (state.name === "Tamil Nadu") {
+                  navigate("/destinations/tamil-nadu");
+                } else if (state.name === "Kerala") {
+                  navigate("/destinations/kerala-explorer");
+                } else if (state.name === "Karnataka") {
+                  navigate("/destinations/karnataka-explorer");
+                } else if (state.name === "Goa") {
+                  navigate("/destinations/goa-explorer");
+                } else if (state.name === "Delhi") {
+                  navigate("/destinations/delhi");
+                } else if (state.name === "Maharashtra") {
+                  navigate("/destinations/maharashtra");
+                } else if (state.name === "Gujarat") {
+                  navigate("/destinations/gujarat");
+                } else if (state.name === "Rajasthan") {
+                  navigate("/destinations/rajasthan");
+                } else if (state.name === "Puducherry") {
+                  navigate("/destinations/puducherry");
+                } else if (state.name === "Andhra Pradesh") {
+                  navigate("/destinations/andhra");
+                } else if (state.name === "Telangana") {
+                  navigate("/destinations/telangana");
+                } else if (state.name === "Jammu & Kashmir") {
+                  navigate("/destinations/jammu-kashmir");
+                } else if (state.name === "Ladakh") {
+                  navigate("/destinations/ladakh");
+                } else if (state.name === "Madhya Pradesh") {
+                  navigate("/destinations/madhya-pradesh");
+                } else if (state.name === "Uttar Pradesh") {
+                  navigate("/destinations/uttar-pradesh");
+                } else if (state.name === "West Bengal") {
+                  navigate("/destinations/west-bengal");
+                } else if (state.name === "Punjab") {
+                  navigate("/destinations/punjab-explorer");
+                } else if (state.name === "Assam") {
+                  navigate("/destinations/assam");
+                } else if (state.name === "Andaman & Nicobar") {
+                  navigate("/destinations/andaman-explorer");
+                } else if (state.name === "Bihar") {
+                  navigate("/destinations/bihar");
+                } else if (state.name === "Jharkhand") {
+                  navigate("/destinations/jharkhand");
+                } else if (state.name === "Sikkim") {
+                  navigate("/destinations/sikkim-explorer");
+                } else if (state.name === "Arunachal Pradesh") {
+                  navigate("/destinations/arunachal");
+                } else if (state.name === "Manipur") {
+                  navigate("/destinations/manipur");
+                } else if (state.name === "Meghalaya") {
+                  navigate("/destinations/meghalaya");
+                } else if (state.name === "Nagaland") {
+                  navigate("/destinations/nagaland");
+                } else if (state.name === "Himachal Pradesh") {
+                  navigate("/destinations/himachal");
+                } else if (state.name === "Odisha") {
+                  navigate("/destinations/odisha");
+                } else if (state.name === "Chhattisgarh") {
+                  navigate("/destinations/chhattisgarh");
+                } else if (state.name === "Tripura") {
+                  navigate("/destinations/tripura");
+                } else if (state.name === "Mizoram") {
+                  navigate("/destinations/mizoram");
+                } else if (state.name === "Haryana") {
+                  navigate("/destinations/haryana");
+                } else {
+                  // Fallback for not-yet-enabled states to prevent 404
+                  // console.log(`Navigating to generic destination for ${state.name}`);
+                  // navigate(`/destinations?type=${state.name}`); 
+                  alert(`Detailed explorer page for ${state.name} is coming soon!`);
+                }
+              }}
               className="flex flex-col items-center cursor-pointer group hover:scale-105 transition-transform"
             >
               <div className="w-full h-56 rounded-2xl shadow-2xl overflow-hidden relative">
@@ -158,7 +230,7 @@ const States = () => {
           </PaginationContent>
         </Pagination>
       </div>
-    </div>
+    </div >
   );
 };
 
