@@ -1,10 +1,15 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { ArrowLeft, Star, Landmark, Users, Sun } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import diviImg from "@/assets/divi.jpg";
 import familyImg from "@/assets/familytemple.jpg";
 import seasonalImg from "@/assets/seasonal_yatra.jpg";
+import tanjoreImg from "@/assets/tanjore_temple_new.jpg";
+import nagoreImg from "@/assets/nagore_dargah.jpg";
+import ervadiImg from "@/assets/ervadi_dargah.png";
+import velankanniImg from "@/assets/velankanni_church.jpg";
 
 const DevotionalDetails = () => {
     const navigate = useNavigate();
@@ -37,18 +42,44 @@ const DevotionalDetails = () => {
 
     ];
 
+    const [currentBg, setCurrentBg] = useState(0);
+
+    const backgrounds = [
+        tanjoreImg, // Tanjore
+        nagoreImg, // Nagore
+        ervadiImg, // Ervadi
+        velankanniImg, // Velankanni
+        // "Nano Banana" image was requested but not found. Placeholder if needed.
+    ];
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentBg((prev) => (prev + 1) % backgrounds.length);
+        }, 5000);
+        return () => clearInterval(timer);
+    }, []);
+
     return (
-        <div className="min-h-screen bg-amber-950 text-white font-sans selection:bg-orange-500 selection:text-white">
+        <div className="min-h-screen bg-black text-white font-sans selection:bg-orange-500 selection:text-white relative">
             <Navbar />
 
-            <main className="pt-36 pb-32 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-                {/* Ambient Background - Warm/Spiritual Tones */}
-                <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-                    <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-orange-600/20 rounded-full blur-[120px] animate-pulse"></div>
-                    <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-yellow-600/20 rounded-full blur-[100px] animate-pulse delay-1000"></div>
-                </div>
+            {/* Background Slideshow */}
+            <div className="fixed inset-0 z-0">
+                {backgrounds.map((bg, index) => (
+                    <div
+                        key={index}
+                        className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
+                        style={{
+                            backgroundImage: `url(${bg})`,
+                            opacity: currentBg === index ? 1 : 0
+                        }}
+                    />
+                ))}
+                <div className="absolute inset-0 bg-black/70"></div> {/* Dark Overlay */}
+            </div>
 
-                <div className="relative z-10 container mx-auto">
+            <main className="pt-36 pb-32 px-4 sm:px-6 lg:px-8 relative z-10 overflow-hidden">
+                <div className="container mx-auto">
                     {/* Header */}
                     <div className="flex items-center gap-6 mb-16">
                         <button
@@ -120,10 +151,10 @@ const DevotionalDetails = () => {
                         ))}
                     </div>
                 </div>
-            </main>
+            </main >
 
             <Footer />
-        </div>
+        </div >
     );
 };
 

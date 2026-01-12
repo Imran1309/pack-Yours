@@ -89,9 +89,8 @@ const Hero = () => {
                 onClick={() => setCurrentBg(index)}
                 aria-label={`Go to slide ${index + 1}`}
                 title={`Slide ${index + 1}`}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  currentBg === index ? "bg-yellow-400" : "bg-white/50"
-                }`}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${currentBg === index ? "bg-yellow-400" : "bg-white/50"
+                  }`}
               />
             ))}
           </div>
