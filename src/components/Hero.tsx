@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, Star } from "lucide-react";
+import { MapPin, Calendar, Star, Globe } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -179,8 +179,10 @@ const Hero = () => {
             </div>
 
             <div className="text-center">
-              <div className="text-3xl md:text-5xl font-bold mb-2" style={{ color: "#1d10a9ff" }}>32</div>
-              <div className="text-white text-sm md:text-lg font-medium">States Covered</div>
+              <div className="flex justify-center mb-2">
+                <Globe className="h-8 w-8 md:h-12 md:w-12 animate-spin-slow" style={{ color: "#1d10a9ff" }} />
+              </div>
+              <div className="text-white text-sm md:text-lg font-medium">World Wide Coverage</div>
             </div>
 
             <div className="text-center">
