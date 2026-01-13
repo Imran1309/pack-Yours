@@ -224,7 +224,7 @@ app.post('/api/upload/chunk', (req, res, next) => {
             const host = req.get('host');
             const protocol = req.protocol;
             const isLocal = host.includes('localhost') || host.includes('127.0.0.1');
-            const baseUrl = isLocal ? `${protocol}://${host}` : (process.env.RENDER_EXTERNAL_URL || `${protocol}://${host}`);
+            const baseUrl = isLocal ? `${protocol}://${host}` : (process.env.RENDER_EXTERNAL_URL || `https://${host}`);
 
             // Sequentially pipe chunks
             for (let i = 0; i < totalChunks; i++) {
@@ -346,7 +346,7 @@ app.post('/api/reviews', upload.array('media'), async (req, res) => {
         const host = req.get('host');
         const protocol = req.protocol;
         const isLocal = host.includes('localhost') || host.includes('127.0.0.1');
-        const baseUrl = isLocal ? `${protocol}://${host}` : (process.env.RENDER_EXTERNAL_URL || `${protocol}://${host}`);
+        const baseUrl = isLocal ? `${protocol}://${host}` : (process.env.RENDER_EXTERNAL_URL || `https://${host}`);
 
         // 1. Files uploaded via Multer -> Move to GridFS
         const mediaFiles = [];
