@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import logo from "@/assets/dhana_logo.jpg";
+import logo from "@/assets/dhana_logo.png";
 
 const Navbar = () => {
   const navigate = useNavigate();
