@@ -124,13 +124,20 @@ try {
     Review = mongoose.model('Review', ReviewSchema);
 }
 
-// -----------------------------------------------------------------------------
-// Routes
-// -----------------------------------------------------------------------------
-
-// -----------------------------------------------------------------------------
-// Routes
-// -----------------------------------------------------------------------------
+// Special Offer Model
+let SpecialOffer;
+try {
+    SpecialOffer = mongoose.model('SpecialOffer');
+} catch {
+    const SpecialOfferSchema = new mongoose.Schema({
+        imageUrl: { type: String },
+        percentage: { type: String, required: true },
+        isVisible: { type: Boolean, default: true },
+        backgroundColor: { type: String, default: '#000000' }, // Default to black
+        updatedAt: { type: Date, default: Date.now }
+    });
+    SpecialOffer = mongoose.model('SpecialOffer', SpecialOfferSchema);
+}
 
 // Wrapper to debug Multer errors
 const chunkUpload = upload.single('chunk');
@@ -587,6 +594,119 @@ app.delete('/api/reviews/:id', async (req, res) => {
     } catch (error) {
         console.error('Delete Error:', error);
         res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// -----------------------------------------------------------------------------
+// Special Offer Routes
+// -----------------------------------------------------------------------------
+
+// GET Special Offer
+app.get('/api/special-offer', async (req, res) => {
+    try {
+        // We only expect one active offer, so we find the most recent one or just the single document
+        // If we want to support multiple, we would find all. But user request implies a single offer section.
+        // We will maintain just one document in the collection or always fetch the latest.
+        const offer = await SpecialOffer.findOne().sort({ updatedAt: -1 });
+        res.status(200).json(offer || { isVisible: false });
+    } catch (error) {
+        console.error('Get Special Offer Error:', error);
+        res.status(500).json({ message: 'Failed to fetch special offer.' });
+    }
+});
+
+// SAVE/UPDATE Special Offer
+app.post('/api/special-offer', upload.single('image'), async (req, res) => {
+    try {
+        const { percentage, isVisible, backgroundColor, userEmail } = req.body;
+        const OWNER_EMAILS = ["dhanatrip2020@gmail.com"];
+
+        if (!OWNER_EMAILS.includes(userEmail)) {
+            return res.status(403).json({ message: 'Unauthorized: Only owners can manage offers.' });
+        }
+
+        let imageUrl;
+
+        // Handle Image Upload if present
+        if (req.file) {
+            if (!gridfsBucket) {
+                return res.status(503).json({ message: 'Server initializing, please wait...' });
+            }
+
+            // Sanitize filename: remove spaces and special chars
+            const safeName = req.file.originalname.replace(/[^a-zA-Z0-9.-]/g, '-');
+            const finalFileName = `${Date.now()}-${safeName}`;
+
+            const uploadStream = gridfsBucket.openUploadStream(finalFileName, {
+                contentType: req.file.mimetype
+            });
+            const readStream = fs.createReadStream(req.file.path);
+            readStream.pipe(uploadStream);
+
+            await new Promise((resolve, reject) => {
+                uploadStream.on('finish', resolve);
+                uploadStream.on('error', reject);
+            });
+
+            // Delete local temp file
+            fs.unlinkSync(req.file.path);
+
+            const host = req.get('host');
+            const protocol = req.protocol;
+            const isLocal = host.includes('localhost') || host.includes('127.0.0.1');
+            // If local, trust the host header. If production, use env var.
+            // Using encodesURI to support odd characters if they sneak in
+            const baseUrl = isLocal ? `${protocol}://${host}` : (process.env.RENDER_EXTERNAL_URL || `https://${host}`);
+            imageUrl = `${baseUrl}/api/file/${finalFileName}`;
+        }
+
+
+        // Check if an offer exists to update, else create new
+        let offer = await SpecialOffer.findOne().sort({ updatedAt: -1 });
+
+        if (offer) {
+            offer.percentage = percentage || offer.percentage;
+            offer.isVisible = isVisible === 'true' || isVisible === true; // Handle formData string boolean
+            if (backgroundColor) offer.backgroundColor = backgroundColor;
+            if (imageUrl) offer.imageUrl = imageUrl;
+            offer.updatedAt = Date.now();
+            await offer.save();
+        } else {
+            if (!imageUrl) {
+                return res.status(400).json({ message: "Image is required for the first offer creation" });
+            }
+            offer = new SpecialOffer({
+                imageUrl,
+                percentage,
+                isVisible: isVisible === 'true' || isVisible === true,
+                backgroundColor: backgroundColor || '#000000'
+            });
+            await offer.save();
+        }
+
+        res.status(200).json({ message: 'Offer updated successfully!', offer });
+
+    } catch (error) {
+        console.error('Save Special Offer Error:', error);
+        res.status(500).json({ message: 'Failed to save offer: ' + error.message });
+    }
+});
+
+// DELETE Special Offer
+app.delete('/api/special-offer', async (req, res) => {
+    try {
+        const { userEmail } = req.body;
+        const OWNER_EMAILS = ["dhanatrip2020@gmail.com"];
+
+        if (!OWNER_EMAILS.includes(userEmail)) {
+            return res.status(403).json({ message: 'Unauthorized: Only owners can delete offers.' });
+        }
+
+        await SpecialOffer.deleteMany({}); // Clear all offers
+        res.status(200).json({ message: 'Offer deleted successfully' });
+    } catch (error) {
+        console.error('Delete Special Offer Error:', error);
+        res.status(500).json({ message: 'Failed to delete offer.' });
     }
 });
 
