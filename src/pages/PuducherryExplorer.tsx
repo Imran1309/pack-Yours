@@ -4,17 +4,17 @@ import { useNavigate } from "react-router-dom";
 
 // Spiritual (Temples/Ashrams)
 import pyAuroville from "@/assets/auroville_matrimandir.png";
-import pyAshram from "@/assets/pondicherry_church.png"; // Proxy
-import pyTemple from "@/assets/temple_drums_bg.png"; // Proxy
+import pyAshram from "@/assets/Sri Aurobindo Ashram.jpg"; // Proxy
+import pyTemple from "@/assets/manakula vinayagar.jpg"; // Proxy
 
 // Beaches
-import pyParadise from "@/assets/bg-falls.jpg"; // Proxy
-import pyRock from "@/assets/andaman_wedding_beach.png"; // Proxy for beach
-import pySerenity from "@/assets/cavelossim.png"; // Proxy
+import pyParadise from "@/assets/paradise.jpg"; // Proxy
+import pyRock from "@/assets/Promenade-Beach.jpg"; // Proxy for beach
+import pySerenity from "@/assets/Serenity Beach.jpg"; // Proxy
 
 // Colonial/City
-import pyFrench from "@/assets/pondicherry_church.png"; // Proxy
-import pyWar from "@/assets/bg-city.jpg"; // Proxy
+import pyFrench from "@/assets/white town.jpg"; // Proxy
+import pyWar from "@/assets/war-memorial.jpg"; // Proxy
 import pyChurch from "@/assets/pondicherry_church.png";
 
 // Resorts & Food

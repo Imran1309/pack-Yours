@@ -17,14 +17,14 @@ import fatehpurSikriImg from "@/assets/Fatehpur-Sikri.jpg";
 
 // Natural & Modern
 import dudhwaImg from "@/assets/dudhwa park.jpg";
-import gomtiImg from "@/assets/gomti river.jpg";
+import gomtiImg from "@/assets/gomti_river.jpg";
 import noidaImg from "@/assets/nodia.jpg";
 
 // Resorts & Food
 import resortImg from "@/assets/itc-mughal.jpg";
 import vegImg from "@/assets/up veg.jpg";
 import nonVegImg from "@/assets/up non-veg.jpg";
-import picnicImg from "@/assets/as picnic.jpg";
+import picnicImg from "@/assets/as_picnic.jpg";
 
 const PlaceCard = ({ image, title, desc, icon: Icon }: { image: string, title: string, desc: string, icon: any }) => (
     <div className="relative group overflow-hidden rounded-3xl h-[400px] shadow-2xl cursor-pointer border border-white/10 hover:border-orange-500/50 transition-all duration-500">

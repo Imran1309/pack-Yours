@@ -5,28 +5,28 @@ import { useNavigate } from "react-router-dom";
 // ==========================================
 // 1. IMAGE IMPORTS
 // ==========================================
-import mizoramHero from "@/assets/mizoram_hero.jpg";
+import mizoramHero from "@/assets/mizo.jpg";
 
 // Hills & Waterfalls
-import phawngpuiImg from "@/assets/phawngpui_peak.jpg";
-import vantawngImg from "@/assets/vantawng_falls.jpg";
-import reiekImg from "@/assets/reiek_tlang.jpg";
+import phawngpuiImg from "@/assets/Phawngpui Peak,.jpg";
+import vantawngImg from "@/assets/Vantawng Falls,.jpg";
+import reiekImg from "@/assets/Reiek Tlang,.jpg";
 
 // Nature & Adventure
-import dampaImg from "@/assets/dampa_tiger_reserve.jpg";
-import palakImg from "@/assets/palak_lake.jpg";
-import murlenImg from "@/assets/murlen_national_park.jpg";
+import dampaImg from "@/assets/Dampa Tiger Reserve,.jpg";
+import palakImg from "@/assets/Palak Lake,.jpg";
+import murlenImg from "@/assets/Murlen National Park,.jpg";
 
 // Party Spots
-import zarkawtImg from "@/assets/zarkawt_aizawl.jpg";
-import regencyImg from "@/assets/hotel_regency.jpg";
-import davidImg from "@/assets/david_corner.jpg";
+import zarkawtImg from "@/assets/Zarkawt,.jpg";
+import regencyImg from "@/assets/Hotel Regency,.jpg";
+import davidImg from "@/assets/David's Corner,.jpg";
 
 // Resort & Food
-import resortImg from "@/assets/aizawl_guest_house.jpg";
-import vegImg from "@/assets/bai.jpg";
-import nonVegImg from "@/assets/vawksa_rep.jpg";
-import picnicImg from "@/assets/tamdil_lake.jpg";
+import resortImg from "@/assets/miz-res.jpg";
+import vegImg from "@/assets/miz-veg.jpg";
+import nonVegImg from "@/assets/miz-non.jpg";
+import picnicImg from "@/assets/picnic maha.jpg";
 
 // ==========================================
 // 2. COMPONENTS

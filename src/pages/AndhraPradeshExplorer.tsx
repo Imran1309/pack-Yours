@@ -11,19 +11,19 @@ import kanakaDurga from "@/assets/ap_kanaka_durga.png";
 import simhachalam from "@/assets/ap_srisailam.png";
 
 // Beaches
-import vizagBeach from "@/assets/An.jpg"; // Proxy: Andaman
-import bheemunipatnam from "@/assets/mahe_beach.png"; // Proxy: Mahe
-import mypadu from "@/assets/goa.jpg"; // Proxy: Goa
+import vizagBeach from "@/assets/rk-beach.jpg"; // Proxy: Andaman
+import bheemunipatnam from "@/assets/Bheemili_beach.jpg"; // Proxy: Mahe
+import mypadu from "@/assets/mypadu beach.jpg"; // Proxy: Goa
 
 // Mountains
-import araku from "@/assets/coorg_coffee_hills.png"; // Proxy: Coorg
-import horsley from "@/assets/kodaikanal.jpg"; // Proxy: Kodaikanal
-import lambasingi from "@/assets/himachal.jpg"; // Proxy: Himachal
+import araku from "@/assets/araku-valley.jpg"; // Proxy: Coorg
+import horsley from "@/assets/horsley-hills.jpg"; // Proxy: Kodaikanal
+import lambasingi from "@/assets/lambasingi hill.jpg"; // Proxy: Himachal
 
 // Food
 import vegFood from "@/assets/Apfood.jpg";
 import nonVegFood from "@/assets/mandi_biryani_hyderabad_1765973745689.png"; // Corrected name
-import ownFood from "@/assets/Apfood.jpg"; // Reusing existing asset
+import ownFood from "@/assets/pic-hari.jpg"; // Reusing existing asset
 
 // Resort
 import resort from "@/assets/apresorts.jpeg"; // Corrected

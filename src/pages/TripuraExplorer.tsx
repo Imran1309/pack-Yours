@@ -10,7 +10,7 @@ import tripuraHero from "@/assets/tripura_hero.jpg";
 // Royal Heritage
 import ujjayantaImg from "@/assets/ujjayanta_palace.jpg";
 import neermahalImg from "@/assets/neermahal.jpg";
-import tripuraSundariImg from "@/assets/tripura_sundari.jpg";
+import tripuraSundariImg from "@/assets/tripura_sundari.jpeg";
 
 // Natural Beauty
 import sepahijalaImg from "@/assets/sepahijala_wildlife.jpg";
@@ -26,7 +26,7 @@ import frespressoImg from "@/assets/cafe_frespresso.jpg";
 import resortImg from "@/assets/ginger_agartala.jpg";
 import vegImg from "@/assets/mui_borok.jpg";
 import nonVegImg from "@/assets/wahan_mosdeng.jpg";
-import picnicImg from "@/assets/rudrasagar_lake.jpg";
+import picnicImg from "@/assets/as_picnic.jpg";
 
 // ==========================================
 // 2. COMPONENTS
@@ -174,6 +174,7 @@ const TripuraExplorer = () => {
                         />
                     </div>
                 </section>
+
 
                 {/* --- Resort & Food Section --- */}
                 <section className="relative rounded-[4rem] overflow-hidden border border-purple-500/10 shadow-2xl bg-[#1a0a1a]">

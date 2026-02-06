@@ -28,7 +28,7 @@ import assam from "@/assets/assam.jpg";
 import andaman from "@/assets/An.jpg";
 import uttarpradesh from "@/assets/up.jpg";
 import bihar from "@/assets/bihar.jpg";
-import jharkhand from "@/assets/jaharkand.jpg";
+
 import sikkim from "@/assets/sikkim.jpg";
 import meghalaya from "@/assets/Megahalaya.jpg";
 import arunachal from "@/assets/arunachal.jpg";
@@ -39,9 +39,10 @@ import westBengal from "@/assets/westBengal.jpg";
 import odisha from "@/assets/odisha.jpg";
 import chattisgarh from "@/assets/chattisgarh.jpg";
 import punjab from "@/assets/punjab.jpg";
-import tripura from "@/assets/tripura.jpg";
+import tripura from "@/assets/tripura_overview.jpg";
 import mizoram from "@/assets/mizo.jpg";
 import haryana from "@/assets/haryana.jpg";
+import jharkhand from "@/assets/Tourism-in-Jharkhand.jpg";
 
 const States = () => {
   const navigate = useNavigate();
@@ -66,7 +67,7 @@ const States = () => {
     { name: "Andaman & Nicobar", image: andaman },
     { name: "Uttar Pradesh", image: uttarpradesh },
     { name: "Bihar", image: bihar },
-    { name: "Jharkhand", image: jharkhand },
+
     { name: "Sikkim", image: sikkim },
     { name: "Meghalaya", image: meghalaya },
     { name: "Arunachal Pradesh", image: arunachal },
@@ -80,6 +81,7 @@ const States = () => {
     { name: "Tripura", image: tripura },
     { name: "Mizoram", image: mizoram },
     { name: "Haryana", image: haryana },
+    { name: "Jharkhand", image: jharkhand },
   ];
 
   const itemsPerPage = 16;
@@ -152,8 +154,6 @@ const States = () => {
                   navigate("/destinations/andaman-explorer");
                 } else if (state.name === "Bihar") {
                   navigate("/destinations/bihar");
-                } else if (state.name === "Jharkhand") {
-                  navigate("/destinations/jharkhand");
                 } else if (state.name === "Sikkim") {
                   navigate("/destinations/sikkim-explorer");
                 } else if (state.name === "Arunachal Pradesh") {
@@ -176,6 +176,8 @@ const States = () => {
                   navigate("/destinations/mizoram");
                 } else if (state.name === "Haryana") {
                   navigate("/destinations/haryana");
+                } else if (state.name === "Jharkhand") {
+                  navigate("/destinations/jharkhand");
                 } else {
                   // Fallback for not-yet-enabled states to prevent 404
                   // console.log(`Navigating to generic destination for ${state.name}`);

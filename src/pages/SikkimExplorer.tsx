@@ -9,23 +9,22 @@ import sikkimHero from "@/assets/sikkim_hero.jpg";
 
 // Mountains
 import kanchenjungaImg from "@/assets/kanchenjunga.jpg";
-import pandimImg from "@/assets/pandim.jpg";
-import kabruImg from "@/assets/kabru.jpg";
-
+import pandimImg from "@/assets/Mt._Pandim.jpg";
+import kabruImg from "@/assets/kabru - Copy.jpg";
 // Culture
-import rumtekImg from "@/assets/rumtek.jpg";
-import chamImg from "@/assets/cham_dance.jpg";
-import thangkaImg from "@/assets/thangka.jpg";
+import rumtekImg from "@/assets/rumtek monastery.jpg";
+import chamImg from "@/assets/Cham-Dance.jpg";
+import thangkaImg from "@/assets/thangka art.jpg";
 
 // Spots
-import tsomgoImg from "@/assets/tsomgo.jpg";
-import nathulaImg from "@/assets/nathula.jpg";
-import gurudongmarImg from "@/assets/gurudongmar.jpg";
+import tsomgoImg from "@/assets/Tsongmo_Lake.jpg";
+import nathulaImg from "@/assets/Nathula-Pass.jpg";
+import gurudongmarImg from "@/assets/gurudongmar lake.jpg";
 
 // Resort & Food
-import resortImg from "@/assets/mayfair_resort.jpg";
-import vegImg from "@/assets/momos.jpg";
-import nonVegImg from "@/assets/thukpa.jpg";
+import resortImg from "@/assets/resorts sik.jpg";
+import vegImg from "@/assets/momo.sik.jpg";
+import nonVegImg from "@/assets/non-veg sik.jpg";
 import picnicImg from "@/assets/picnic_sikkim.jpg";
 
 // ==========================================

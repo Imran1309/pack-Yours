@@ -12,10 +12,10 @@ import kaChikmagalur from "@/assets/munnar.jpg"; // Proxy: Munnar
 import kaKudremukh from "@/assets/kodaikanal.jpg"; // Proxy: Kodaikanal
 
 import kaGokarna from "@/assets/gokarna_beach_sunset.png"; // Corrected asset
-import kaMalpe from "@/assets/An.jpg"; // Proxy: Andaman
+import kaMalpe from "@/assets/Malpe.jpeg"; // Proxy: Andaman
 import kaMurudeshwarBeach from "@/assets/mahe_beach.png"; // Proxy: Mahe
 
-import kaHampi from "@/assets/tanjore_temple.png"; // Proxy for Hampi ruins
+import kaHampi from "@/assets/Hampi.jpg"; // Proxy for Hampi ruins
 import kaChamundi from "@/assets/mysore_palace_illuminated_1765904833927.png"; // Use palace
 import kaMurudeshwarTemple from "@/assets/murdeshwar_shiva_statue.png"; // Corrected asset (spelling murdeshwar)
 

@@ -5,28 +5,28 @@ import { useNavigate } from "react-router-dom";
 // ==========================================
 // 1. IMAGE IMPORTS
 // ==========================================
-import haryanaHero from "@/assets/haryana_hero.jpg";
+import haryanaHero from "@/assets/hari-hero.jpg";
 
 // Historical & Spiritual
-import brahmaSarovarImg from "@/assets/brahma_sarovar.jpg";
-import starMonumentImg from "@/assets/star_monument.jpg";
-import sheikhChilliImg from "@/assets/sheikh_chilli_tomb.jpg";
+import brahmaSarovarImg from "@/assets/brahma_sarovar_v2.jpg";
+import starMonumentImg from "@/assets/star_monument_v2.jpg";
+import sheikhChilliImg from "@/assets/sheikh_chilli_tomb_v2.jpeg";
 
 // Nature & Gardens
-import gardensImg from "@/assets/yadavindra_gardens.jpg";
-import sultanpurImg from "@/assets/sultanpur_bird.jpg";
-import morniImg from "@/assets/morni_hills.jpg";
+import gardensImg from "@/assets/yadavindra_v2.jpg";
+import sultanpurImg from "@/assets/sultanpur_bird_v2.jpg";
+import morniImg from "@/assets/morni_hills_v2.jpg";
 
 // Modern Attractions
-import kingdomImg from "@/assets/kingdom_of_dreams.jpg";
-import cyberHubImg from "@/assets/cyber_hub.jpg";
-import ambienceImg from "@/assets/ambience_mall.jpg";
+import kingdomImg from "@/assets/kingdom_of_dreams_v2.jpg";
+import cyberHubImg from "@/assets/cyber_hub_v2.jpg";
+import ambienceImg from "@/assets/ambience_mall_v2.jpg";
 
 // Resort & Food
-import resortImg from "@/assets/westin_sohna.jpg";
-import vegImg from "@/assets/bajra_khichdi.jpg";
-import nonVegImg from "@/assets/chicken_tikka.jpg";
-import picnicImg from "@/assets/damdama_lake.jpg";
+import resortImg from "@/assets/hari-res.jpg";
+import vegImg from "@/assets/hari-veg.jpg";
+import nonVegImg from "@/assets/hari-non.jpg";
+import picnicImg from "@/assets/pic-hari.jpg";
 
 // ==========================================
 // 2. COMPONENTS

@@ -6,25 +6,25 @@ import { useNavigate } from 'react-router-dom';
 import ladakhHero from "@/assets/Zanskar-Valley.jpg";
 
 // Using real assets where available, proxies otherwise
-import khardungLa from "@/assets/Zanskar-Valley.jpg"; // Proxy
-import changLa from "@/assets/Pangong-Tso.jpg"; // Proxy
+import khardungLa from "@/assets/khardung la.jpg"; // Proxy
+import changLa from "@/assets/changla-pass.jpg"; // Proxy
 import pangongTso from "@/assets/Pangong-Tso.jpg"; // Real
 
 // Historical Sites
-import lehPalace from "@/assets/alila_fort.png"; // Proxy
-import thikseyMonastery from "@/assets/temple_drums_bg.png"; // Proxy
-import hemisMonastery from "@/assets/temple_drums_bg.png"; // Proxy
+import lehPalace from "@/assets/leh palace.jpg"; // Proxy
+import thikseyMonastery from "@/assets/thiksey-monastery.jpg"; // Proxy
+import hemisMonastery from "@/assets/hemis monastery.jpg"; // Proxy
 
 // Famous Spots
 import nubraValley from "@/assets/Nubra-Valley.jpg"; // Real
-import magneticHill from "@/assets/Zanskar-Valley.jpg"; // Proxy
+import magneticHill from "@/assets/magnetic hill.jpeg"; // Proxy
 import zanskarValley from "@/assets/Zanskar-Valley.jpg"; // Real
 
 // Resorts & Food - using generic placeholders
-import ladakhResort from "@/assets/wildflower_hall.jpg"; // Proxy
-import ladakhVeg from "@/assets/manali_food.png"; // Proxy
-import ladakhNonVeg from "@/assets/kashmirfood.png"; // Proxy
-import ladakhPicnic from "@/assets/manali_food_screenshot.png"; // Proxy
+import ladakhResort from "@/assets/lak resort.jpg"; // Proxy
+import ladakhVeg from "@/assets/lak veg.jpg"; // Proxy
+import ladakhNonVeg from "@/assets/lak non veg.jpg"; // Proxy
+import ladakhPicnic from "@/assets/lak pic.jpg"; // Proxy
 
 const PlaceCard = ({ image, title, desc, icon: Icon }: { image: string, title: string, desc: string, icon: any }) => (
     <div className="relative group overflow-hidden rounded-3xl h-[400px] shadow-2xl cursor-pointer border border-white/10 hover:border-cyan-500/50 transition-all duration-500">
@@ -183,57 +183,87 @@ const LadakhExplorer = () => {
                 </section>
 
                 {/* Resort & Food Section */}
-                <section className="relative rounded-[3rem] overflow-hidden bg-white/5 border border-white/10 p-12">
-                    <SectionTitle title="Mountain Stays & Cuisine" subtitle="Curated Experiences" />
+                <section className="relative rounded-[3rem] overflow-hidden border border-white/5 shadow-2xl bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+                    {/* Background Accents */}
+                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-900/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[600px]">
-                        {/* Resort */}
-                        <div className="lg:col-span-8 relative group overflow-hidden rounded-3xl h-full cursor-pointer">
-                            <img src={ladakhResort} alt="Luxury Resort" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80 flex flex-col justify-end p-8">
-                                <h3 className="text-4xl font-bold text-white font-serif mb-2">Mountain Retreats</h3>
-                                <p className="text-gray-300 text-lg">Experience luxury amidst the Himalayas with breathtaking views.</p>
-                            </div>
+                    <div className="relative z-10 p-16">
+                        <div className="text-center mb-20">
+                            <h2 className="text-6xl font-serif font-bold text-white mb-4">Mountain Stays & Cuisine</h2>
+                            <p className="text-xl text-gray-400 font-light tracking-wide">Curated experiences in the Himalayas</p>
                         </div>
 
-                        {/* Food Grid */}
-                        <div className="lg:col-span-4 flex flex-col gap-6 h-full">
-                            {/* Veg */}
-                            <div className="relative flex-1 group overflow-hidden rounded-3xl cursor-pointer">
-                                <img src={ladakhVeg} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Veg Food" />
-                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                                    <div className="text-center p-4">
-                                        <div className="w-7 h-7 rounded-full border-2 border-green-500 flex items-center justify-center mx-auto mb-2 bg-black/50 backdrop-blur-sm">
-                                            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
+
+                            {/* Resorts */}
+                            <div className="group space-y-8 cursor-pointer">
+                                <div className="relative h-[500px] rounded-[2rem] overflow-hidden shadow-2xl border border-white/10">
+                                    <img src={ladakhResort} alt="Luxury Resort" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
+                                    <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/90 to-transparent">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <Star className="text-cyan-400 fill-cyan-400" size={24} />
+                                            <Star className="text-cyan-400 fill-cyan-400" size={24} />
+                                            <Star className="text-cyan-400 fill-cyan-400" size={24} />
+                                            <Star className="text-cyan-400 fill-cyan-400" size={24} />
+                                            <Star className="text-cyan-400 fill-cyan-400" size={24} />
                                         </div>
-                                        <h3 className="text-2xl font-bold text-white font-serif">Thukpa</h3>
+                                        <h3 className="text-4xl text-white font-serif font-bold mb-2">Mountain Retreats</h3>
+                                        <p className="text-gray-300">Experience luxury amidst the Himalayas with breathtaking views.</p>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Non-Veg */}
-                            <div className="relative flex-1 group overflow-hidden rounded-3xl cursor-pointer">
-                                <img src={ladakhNonVeg} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Non Veg Food" />
-                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                                    <div className="text-center p-4">
-                                        <div className="w-7 h-7 rounded-full border-2 border-red-500 flex items-center justify-center mx-auto mb-2 bg-black/50 backdrop-blur-sm">
-                                            <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                                        </div>
-                                        <h3 className="text-2xl font-bold text-white font-serif">Skyu</h3>
-                                    </div>
-                                </div>
-                            </div>
+                            {/* Food Menu */}
+                            <div className="space-y-8 flex flex-col justify-center">
+                                <div className="space-y-6">
 
-                            {/* Own Food / Picnic */}
-                            <div className="relative flex-1 group overflow-hidden rounded-3xl cursor-pointer">
-                                <img src={ladakhPicnic} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Own Food" />
-                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                                    <div className="text-center p-4">
-                                        <div className="w-7 h-7 rounded-full border-2 border-blue-500 flex items-center justify-center mx-auto mb-2 bg-black/50 backdrop-blur-sm">
-                                            <Umbrella className="text-cyan-500 w-6 h-6" />
+                                    {/* Veg */}
+                                    <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl flex items-center gap-8 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group">
+                                        <div className="h-32 w-32 rounded-2xl overflow-hidden shadow-lg border border-white/10">
+                                            <img src={ladakhVeg} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Veg Food" />
                                         </div>
-                                        <h3 className="text-2xl font-bold text-white font-serif">Mountain Picnic</h3>
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className="w-3 h-3 rounded-full bg-green-500" />
+                                                <span className="text-green-400 text-sm font-bold tracking-widest uppercase">Pure Veg</span>
+                                            </div>
+                                            <h4 className="text-3xl font-serif font-bold text-white mb-2">Thukpa</h4>
+                                            <p className="text-gray-400">Hot noodle soup perfect for high altitude chill.</p>
+                                        </div>
                                     </div>
+
+                                    {/* Non-Veg */}
+                                    <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl flex items-center gap-8 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group">
+                                        <div className="h-32 w-32 rounded-2xl overflow-hidden shadow-lg border border-white/10">
+                                            <img src={ladakhNonVeg} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Non Veg Food" />
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className="w-3 h-3 rounded-full bg-red-500" />
+                                                <span className="text-red-400 text-sm font-bold tracking-widest uppercase">Local Delicacy</span>
+                                            </div>
+                                            <h4 className="text-3xl font-serif font-bold text-white mb-2">Skyu</h4>
+                                            <p className="text-gray-400">Traditional Ladakhi pasta stew with meat and vegetables.</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Own Food / Picnic */}
+                                    <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl flex items-center gap-8 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group">
+                                        <div className="h-32 w-32 rounded-2xl overflow-hidden shadow-lg border border-white/10">
+                                            <img src={ladakhPicnic} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Picnic" />
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className="w-3 h-3 rounded-full bg-blue-500" />
+                                                <span className="text-blue-400 text-sm font-bold tracking-widest uppercase">Picnic</span>
+                                            </div>
+                                            <h4 className="text-3xl font-serif font-bold text-white mb-2">Pangong Lake View</h4>
+                                            <p className="text-gray-400">Enjoy a serene picnic by the changing colors of the lake.</p>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>

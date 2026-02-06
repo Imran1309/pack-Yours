@@ -8,25 +8,25 @@ import { useNavigate } from "react-router-dom";
 import chhattisgarhHero from "@/assets/chhattisgarh_hero.jpg";
 
 // Waterfalls & Hills
-import chitrakoteImg from "@/assets/chitrakote_falls.jpg";
-import tirathgarhImg from "@/assets/tirathgarh_falls.jpg";
-import mainpatImg from "@/assets/mainpat_hill.jpg";
+import chitrakoteImg from "@/assets/chitrakote_falls_real.jpg";
+import tirathgarhImg from "@/assets/tirathgarh_falls_real.jpg";
+import mainpatImg from "@/assets/mainpat_hill_real.jpg";
 
 // Historical & Cultural
-import bhoramdeoImg from "@/assets/bhoramdeo_temple.jpg";
-import sirpurImg from "@/assets/sirpur_ruins.jpg";
-import rajimImg from "@/assets/rajim_temple.jpg";
+import bhoramdeoImg from "@/assets/bhoramdeo_temple_real.jpg";
+import sirpurImg from "@/assets/sirpur_ruins_real.jpg";
+import rajimImg from "@/assets/rajim_temple_real.jpg";
 
 // Party Spots
-import magnetoImg from "@/assets/magneto_mall.jpg";
-import cabanaImg from "@/assets/club_cabana.jpg";
-import skyLoungeImg from "@/assets/sky_lounge.jpg";
+import magnetoImg from "@/assets/magneto_mall_real.jpg";
+import cabanaImg from "@/assets/club_cabana_real.jpg";
+import skyLoungeImg from "@/assets/sky_lounge_real.jpg";
 
 // Resort & Food
-import resortImg from "@/assets/courtyard_marriott.jpg";
-import vegImg from "@/assets/chila.jpg";
-import nonVegImg from "@/assets/bafauri.jpg";
-import picnicImg from "@/assets/kanger_valley.jpg";
+import resortImg from "@/assets/courtyard_marriott_real.jpg";
+import vegImg from "@/assets/ch-veg.jpg";
+import nonVegImg from "@/assets/ch-non.jpg";
+import picnicImg from "@/assets/wb_picnic_real.jpg";
 
 // ==========================================
 // 2. COMPONENTS

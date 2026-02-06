@@ -8,25 +8,26 @@ import { useNavigate } from "react-router-dom";
 import nagalandHero from "@/assets/nagaland_hero.jpg";
 
 // Culture
-import kisamaImg from "@/assets/kisama_village.jpg";
-import cemeteryImg from "@/assets/kohima_cemetery.jpg";
-import khonomaImg from "@/assets/khonoma_village.jpg";
+import kisamaImg from "@/assets/kisama village,.jpg";
+import cemeteryImg from "@/assets/war cemetery,.jpg";
+import khonomaImg from "@/assets/Khonoma.jpg";
 
 // Nature
-import dzukouImg from "@/assets/dzukou_valley.jpg";
-import japfuImg from "@/assets/japfu_peak.jpg";
-import shilloiImg from "@/assets/shilloi_lake.jpg";
+import dzukouImg from "@/assets/dzukou-valley-kohima.jpg";
+import japfuImg from "@/assets/japfu peak,.jpg";
+import shilloiImg from "@/assets/shilloi lake,.jpeg";
 
 // Party/Vibe Spots
-import hornbillImg from "@/assets/hornbill_concert.jpg";
-import cloud9Img from "@/assets/cloud9_cafe.jpg";
-import musingsImg from "@/assets/musings_cafe.jpg";
+import hornbillImg from "@/assets/hornbill concert.jpg";
+import cloud9Img from "@/assets/cloud 9.jpg";
+import musingsImg from "@/assets/musings cafe.jpg";
 
 // Resort & Food
-import resortImg from "@/assets/niathu_resort.jpg";
-import vegImg from "@/assets/hinkejvu.jpg";
-import nonVegImg from "@/assets/smoked_pork.jpg";
-import picnicImg from "@/assets/triple_falls.jpg";
+import resortImg from "@/assets/niathu-resort,.jpg";
+import vegImg from "@/assets/nage hinkejvu.jpg";
+import nonVegImg from "@/assets/smoked.jpg";
+import picnicImg from "@/assets/as_picnic.jpg";
+import bambooShootsImg from "@/assets/bamboo shoots.jpg";
 
 // ==========================================
 // 2. COMPONENTS
@@ -256,6 +257,21 @@ const NagalandExplorer = () => {
                                         </div>
                                         <h4 className="text-4xl font-serif font-bold text-white mb-2">Triple Falls</h4>
                                         <p className="text-gray-400 font-light text-lg">A stunning three-tiered waterfall, perfect for a secluded picnic.</p>
+                                    </div>
+                                </div>
+
+                                {/* Bamboo Shoots */}
+                                <div className="group bg-white/5 backdrop-blur-md p-6 rounded-3xl flex flex-col md:flex-row items-center gap-8 border border-white/5 hover:bg-white/10 transition-all duration-500 hover:border-yellow-500/30 hover:scale-[1.02] cursor-pointer">
+                                    <div className="h-40 w-40 rounded-2xl overflow-hidden shadow-2xl border border-white/10 shrink-0">
+                                        <img src={bambooShootsImg} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Bamboo Shoots" />
+                                    </div>
+                                    <div className="flex-1 text-center md:text-left">
+                                        <div className="flex items-center justify-center md:justify-start gap-3 mb-3">
+                                            <div className="w-3 h-3 rounded-full bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.6)]" />
+                                            <span className="text-yellow-400 text-sm font-bold tracking-[0.2em] uppercase">Essential</span>
+                                        </div>
+                                        <h4 className="text-4xl font-serif font-bold text-white mb-2">Bamboo Shoots</h4>
+                                        <p className="text-gray-400 font-light text-lg">Fermented or fresh, it is the soul of Naga cooking, defining the region's distinct flavor profile.</p>
                                     </div>
                                 </div>
                             </div>

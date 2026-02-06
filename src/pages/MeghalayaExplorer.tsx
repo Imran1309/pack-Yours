@@ -5,27 +5,27 @@ import { useNavigate } from "react-router-dom";
 // ==========================================
 // 1. IMAGE IMPORTS
 // ==========================================
-import meghalayaHero from "@/assets/meghalaya_hero.jpg";
+import meghalayaHero from "@/assets/mg hero.jpg";
 
 // Scotland of East
-import umiamImg from "@/assets/umiam.jpg";
-import shillongPeakImg from "@/assets/shillong_peak.jpg";
-import wardsLakeImg from "@/assets/wards_lake.jpg";
+import umiamImg from "@/assets/umaim lake.jpg";
+import shillongPeakImg from "@/assets/shillong-peak.jpg";
+import wardsLakeImg from "@/assets/wards-lake.jpg";
 
 // Cherrapunji
-import nohkalikaiImg from "@/assets/nohkalikai.jpg";
-import rootBridgeImg from "@/assets/root_bridge.jpg";
-import mawsmaiImg from "@/assets/mawsmai_cave.jpg";
+import nohkalikaiImg from "@/assets/Nohkalikai-Falls.jpg";
+import rootBridgeImg from "@/assets/living root bridge.jpg";
+import mawsmaiImg from "@/assets/mawsmai cave.jpg";
 
 // Party Spots
-import cafeShillongImg from "@/assets/cafe_shillong.jpg";
-import eveningClubImg from "@/assets/evening_club.jpg";
-import ml05Img from "@/assets/ml05_cafe.jpg";
+import cafeShillongImg from "@/assets/dylan-s-cafe.jpg";
+import eveningClubImg from "@/assets/evening club.jpg";
+import ml05Img from "@/assets/ml 05.jpg";
 
 // Resort & Food
-import resortImg from "@/assets/ri_kynjai.jpg";
-import vegImg from "@/assets/bamboo_curry.jpg";
-import nonVegImg from "@/assets/jadoh.jpg";
+import resortImg from "@/assets/ri kynjai.jpg";
+import vegImg from "@/assets/bamboo shoots.jpg";
+import nonVegImg from "@/assets/jadoh - Copy.jpg";
 import picnicImg from "@/assets/dawki_picnic.jpg";
 
 // ==========================================

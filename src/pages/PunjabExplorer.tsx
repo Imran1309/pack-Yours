@@ -8,30 +8,28 @@ import { useNavigate } from "react-router-dom";
 // ==========================================
 // 1. IMAGE IMPORTS
 // ==========================================
-import punjabHero from "@/assets/punjab_hero.jpg"; // Reusing hero if exists, or proxy:
-// If punjab_hero.jpg doesn't exist, we can use a fallback?
-// I'll leave it as is if I believe it exists.
+import punjabHero from "@/assets/pj-hero.jpg";
 
 // Sacred Shrines
-import goldenTempleImg from "@/assets/golden_temple.jpg";
-import durgianaImg from "@/assets/durgiana_temple.jpg";
-import anandpurImg from "@/assets/anandpur_sahib.jpg";
+import goldenTempleImg from "@/assets/golden_temple_real.jpg";
+import durgianaImg from "@/assets/durgiana_temple_real.jpg";
+import anandpurImg from "@/assets/anandpur_sahib_real.jpg";
 
 // Nature & Geography
-import harikeImg from "@/assets/harike_wetland.jpg";
-import roparImg from "@/assets/ropar_wetland.jpg";
-import kandiImg from "@/assets/kandi_region.jpg";
+import harikeImg from "@/assets/harike_wetland_real.jpg";
+import roparImg from "@/assets/ropar_wetland_real.jpg";
+import kandiImg from "@/assets/kandi_region_real.jpg";
 
 // Party Spots
-import elginImg from "@/assets/elgin_road.jpg";
-import breweryImg from "@/assets/brewery_26.jpg";
-import peddlersImg from "@/assets/peddlers.jpg";
+import elginImg from "@/assets/elgin_road_real.jpg";
+import breweryImg from "@/assets/brewery_26_real.jpg";
+import peddlersImg from "@/assets/peddlers_real.jpg";
 
 // Resort & Food
-import resortImg from "@/assets/taj_chandigarh.jpg";
-import vegImg from "@/assets/punjabfood.png"; // Proxy
-import nonVegImg from "@/assets/butter_chicken.jpg"; // Corrected extension
-import picnicImg from "@/assets/sukhna_lake.jpg";
+import resortImg from "@/assets/taj_chandigarh_real.jpg";
+import vegImg from "@/assets/pj-veg.jpg";
+import nonVegImg from "@/assets/pj-non.jpg";
+import picnicImg from "@/assets/pj-pic.jpg";
 
 // ==========================================
 // 2. COMPONENTS

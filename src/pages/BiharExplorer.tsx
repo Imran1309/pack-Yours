@@ -2,17 +2,17 @@ import { ArrowLeft, Landmark, Building2, Trees, Star, Sun, Umbrella, Waves, Glas
 import { useNavigate } from 'react-router-dom';
 
 // Image Imports
-import biharHero from "@/assets/bihar.jpg";
+import biharHero from "@/assets/bihar hero.jpg";
 import mahabodhiImg from "@/assets/br_mahabodhi.jpg";
 import vishnupadImg from "@/assets/br_vishnupad.jpg";
 import mahavirMandirImg from "@/assets/br_mahavir.jpg";
 import nalandaImg from "@/assets/br_nalanda.jpg";
 import sherShahTombImg from "@/assets/br_shershah.jpg";
 import vikramshilaImg from "@/assets/br_vikramshila.jpg";
-import funtasiaImg from "@/assets/br_ecopark.jpg"; // Fallback to Eco Park if download failed
+import funtasiaImg from "@/assets/funtasia-island.jpg";
 import ecoParkImg from "@/assets/br_ecopark.jpg";
-import revolvingRestImg from "@/assets/br_maurya.jpg"; // Fallback to Maurya if download failed
-import resortImg from "@/assets/br_maurya.jpg";
+import revolvingRestImg from "@/assets/revolution.jpg";
+import resortImg from "@/assets/hotel bihar.jpg";
 import vegImg from "@/assets/br_litti.jpg";
 import nonVegImg from "@/assets/br_champaran.jpg";
 import picnicImg from "@/assets/br_ecopark.jpg";

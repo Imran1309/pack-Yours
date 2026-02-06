@@ -83,6 +83,7 @@ import HaryanaExplorer from "./pages/HaryanaExplorer";
 import HimachalExplorer from "./pages/HimachalExplorer";
 import JammuKashmirExplorer from "./pages/JammuKashmirExplorer";
 import JharkhandExplorer from "./pages/JharkhandExplorer";
+
 import KarnatakaExplorer from "./pages/KarnatakaExplorer";
 import KeralaExplorer from "./pages/KeralaExplorer";
 import LadakhExplorer from "./pages/LadakhExplorer";
@@ -185,6 +186,7 @@ const App = () => (
           <Route path="/destinations/himachal" element={<HimachalExplorer />} />
           <Route path="/destinations/jammu-kashmir" element={<JammuKashmirExplorer />} />
           <Route path="/destinations/jharkhand" element={<JharkhandExplorer />} />
+
           <Route path="/destinations/karnataka-explorer" element={<KarnatakaExplorer />} />
           <Route path="/destinations/kerala-explorer" element={<KeralaExplorer />} />
           <Route path="/destinations/ladakh" element={<LadakhExplorer />} />

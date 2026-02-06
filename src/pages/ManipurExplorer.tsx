@@ -5,28 +5,28 @@ import { useNavigate } from "react-router-dom";
 // ==========================================
 // 1. IMAGE IMPORTS
 // ==========================================
-import manipurHero from "@/assets/manipur_hero.jpg";
+import manipurHero from "@/assets/manipur hero.jpg";
 
 // Historical & Cultural
-import kanglaImg from "@/assets/kangla_fort.jpg";
-import imaImg from "@/assets/ima_keithel.jpg";
-import inaImg from "@/assets/ina_memorial.jpg";
+import kanglaImg from "@/assets/kangla-fort1.jpeg";
+import imaImg from "@/assets/ima keithel,.jpg";
+import inaImg from "@/assets/ina memorial.jpg";
 
 // Nature & Wildlife
-import sangaiImg from "@/assets/keibul_lamjao.jpg";
-import loktakImg from "@/assets/loktak_phumdis.jpg";
-import shiruiLilyImg from "@/assets/shirui_lily.jpg";
+import sangaiImg from "@/assets/keibul lamjao,.jpg";
+import loktakImg from "@/assets/loktak phumdis..jpg";
+import shiruiLilyImg from "@/assets/shirui lily ,.jpg";
 
 // Hills & Valleys
-import shiruiPeakImg from "@/assets/shirui_peak.jpg";
-import cheiraoImg from "@/assets/cheiraoching.jpg";
-import khoupumImg from "@/assets/khoupum_valley.jpg";
+import shiruiPeakImg from "@/assets/shirui peak,.jpg";
+import cheiraoImg from "@/assets/cheirao ching,.jpg";
+import khoupumImg from "@/assets/khoupum valley,.jpg";
 
 // Resort & Food
-import resortImg from "@/assets/classic_grande.jpg";
-import vegImg from "@/assets/kangshoi.jpg";
-import nonVegImg from "@/assets/nga_thongba.jpg";
-import picnicImg from "@/assets/singda_dam.jpg";
+import resortImg from "@/assets/mani res.jpg";
+import vegImg from "@/assets/mani veg.jpg";
+import nonVegImg from "@/assets/mani non.jpg";
+import picnicImg from "@/assets/rj picnic.jpg";
 
 // ==========================================
 // 2. COMPONENTS

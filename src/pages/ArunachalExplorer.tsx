@@ -8,25 +8,25 @@ import { useNavigate } from "react-router-dom";
 import arunachalHero from "@/assets/arunachal_hero.jpg";
 
 // Mountains
-import kangtoImg from "@/assets/kangto.jpg";
-import gorichenImg from "@/assets/gorichen.jpg";
-import nyegiImg from "@/assets/nyegi_kangsang.jpg";
+import kangtoImg from "@/assets/kangto peak.jpg";
+import gorichenImg from "@/assets/Gorichen-Peak.jpg";
+import nyegiImg from "@/assets/Katoie_gyang.jpg";
 
 // Scenic Spots
-import tawangImg from "@/assets/tawang_monastery.jpg";
-import ziroImg from "@/assets/ziro_valley.jpg";
-import selaImg from "@/assets/sela_pass.jpg";
+import tawangImg from "@/assets/Tawang_Monastery - Copy.jpg";
+import ziroImg from "@/assets/ziro valley.jpg";
+import selaImg from "@/assets/sela-pass,.jpg";
 
 // Party/Vibe Spots
-import ziroFestImg from "@/assets/ziro_festival.jpg";
-import cafeSuburbiaImg from "@/assets/cafe_suburbia.jpg";
-import tawangMarketImg from "@/assets/tawang_market.jpg";
+import ziroFestImg from "@/assets/ziro fest.jpg";
+import cafeSuburbiaImg from "@/assets/cafe suburbia.jpg";
+import tawangMarketImg from "@/assets/tawang nights.jpg";
 
 // Resort & Food
-import resortImg from "@/assets/donyi_polo_resort.jpg";
-import vegImg from "@/assets/pika_pila.jpg";
-import nonVegImg from "@/assets/lukter.jpg";
-import picnicImg from "@/assets/sangti_picnic.jpg";
+import resortImg from "@/assets/ap res.jpg";
+import vegImg from "@/assets/ap veg.jpg";
+import nonVegImg from "@/assets/ap non.jpg";
+import picnicImg from "@/assets/ap_picnic_real.jpg";
 
 // ==========================================
 // 2. COMPONENTS

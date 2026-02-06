@@ -4,23 +4,26 @@ import { useNavigate } from 'react-router-dom';
 // Image Imports
 import andamanHero from "@/assets/An.jpg";
 
-// Authenticated Direct Image URLs (Wikimedia Commons & High-Quality Sources)
-const radhanagar = "https://upload.wikimedia.org/wikipedia/commons/2/21/Radhanagar_Beach%2C_Havelock_Island%2C_Andaman.jpg";
-const elephant = "https://upload.wikimedia.org/wikipedia/commons/2/22/Elephant_beach%2C_Havelock_Island.jpg";
-const rossSmith = "https://upload.wikimedia.org/wikipedia/commons/2/29/Ross_and_Smith_island%2C_Andaman_Nicobar_island.jpg";
+// Beaches - Using local assets and proxies
+import radhanagar from "@/assets/andaman_wedding_beach.png"; // Proxy for Radhanagar
+import elephant from "@/assets/Bheemili_beach.jpg"; // Proxy for Elephant Beach
+import rossSmith from "@/assets/calangute-beach.jpg"; // Proxy for Ross & Smith
 
-const portBlair = "https://upload.wikimedia.org/wikipedia/commons/e/ec/The_cellular_jail_at_Port_Blair.jpg";
-const havelock = "https://upload.wikimedia.org/wikipedia/commons/5/59/Havelock_Island_distant_view.jpg";
-const neil = "https://upload.wikimedia.org/wikipedia/commons/e/ed/Natural_Bridge%2C_Neil_Island%2C_Andaman%2C_India.JPG";
+// Major Hubs - Using generic proxies
+import portBlair from "@/assets/taj_exotica_resort.jpg"; // Proxy for Port Blair
+import havelock from "@/assets/alleppey_resort.png"; // Proxy for Havelock
+import neil from "@/assets/mahe_beach.png"; // Proxy for Neil Island
 
-const scuba = "https://upload.wikimedia.org/wikipedia/commons/4/4e/Scuba_diving_Andaman.jpg";
-const seaWalk = "https://upload.wikimedia.org/wikipedia/commons/1/1d/Seawalk_Andaman.jpg";
-const kayaking = "https://upload.wikimedia.org/wikipedia/commons/1/1e/Mangroves_in_Andaman.jpg";
+// Adventure Sports - Using generic proxies
+import scuba from "@/assets/goa_beach_party_night_1765976164714.png"; // Proxy for Scuba
+import seaWalk from "@/assets/puri_beach.jpg"; // Proxy for Sea Walk
+import kayaking from "@/assets/gopalpur_beach.jpg"; // Proxy for Kayaking
 
-const resort = "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80";
-const andamanVeg = "https://upload.wikimedia.org/wikipedia/commons/e/ee/Chicken_Coconut_Curry.jpg";
-const andamanNonVeg = "https://upload.wikimedia.org/wikipedia/commons/d/d0/Seafood_platter_2.jpg";
-const andamanPicnic = "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&q=80";
+// Resorts & Food - Using Andaman-specific images
+import resort from "@/assets/andaman_resort_room.png";
+import andamanVeg from "@/assets/kerala_luxury_resort_pool_1765903822627.png"; // Proxy for veg
+import andamanNonVeg from "@/assets/andaman_seafood.png";
+import andamanPicnic from "@/assets/dawki_picnic.jpg"; // Proxy for beach picnic
 
 const PlaceCard = ({ image, title, desc, icon: Icon }: { image: string, title: string, desc: string, icon: any }) => (
     <div className="relative group overflow-hidden rounded-3xl h-[400px] shadow-2xl cursor-pointer border border-white/10 hover:border-cyan-500/50 transition-all duration-500">

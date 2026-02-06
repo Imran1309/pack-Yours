@@ -6,19 +6,19 @@ import { useNavigate } from "react-router-dom";
 import telanganaHero from "@/assets/telangana.jpg";
 
 // Temples
-import yadadri from "@/assets/telangana.jpg"; // Proxy: General Telangana image
-import ramappa from "@/assets/bg-city.jpg"; // Proxy: Historic site
-import bhadrachalam from "@/assets/temple_drums_bg.png"; // Proxy: Temple vibe
+import yadadri from "@/assets/yadadri.jpg"; // Corrected asset
+import ramappa from "@/assets/ramappa.jpg"; // Corrected asset
+import bhadrachalam from "@/assets/bhadrachalam.jpg"; // Corrected asset
 
 // Hills & Nature
-import ananthagiri from "@/assets/coorg_coffee_hills.png"; // Proxy: Hills
-import bhongir from "@/assets/tn_mountain.png"; // Proxy: Fort/Hill
-import kuntala from "@/assets/bg-falls.jpg"; // Proxy: Falls
+import ananthagiri from "@/assets/Anantagiri-Hills-Viewpoint.jpg"; // Corrected asset
+import bhongir from "@/assets/Bhongir.jpg"; // Corrected asset
+import kuntala from "@/assets/kuntala-waterfall.jpg"; // Corrected asset
 
 // Historical Places
 import charminar from "@/assets/hyderabad_charminar_iconic_1765973529606.png"; // Corrected asset
-import golconda from "@/assets/hyderabad_charminar_iconic_1765973529606.png"; // Reuse charminar or find better? Reuse for now as "Hyderabad Heritage"
-import warangal from "@/assets/bg-city.jpg"; // Proxy
+import golconda from "@/assets/golconda-fort.jpg"; // Reuse charminar or find better? Reuse for now as "Hyderabad Heritage"
+import warangal from "@/assets/warangal.jpg"; // Proxy
 
 // Food
 import vegFood from "@/assets/mumbai_pav_bhaji_1765971112475.png";

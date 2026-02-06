@@ -6,25 +6,25 @@ import gjPlacesHero from "@/assets/gujarath.jpg";
 
 
 // Cultural & Spiritual
-const gjSomnathReal = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Somnath_Temple%2C_Gujarat.jpg/1200px-Somnath_Temple%2C_Gujarat.jpg";
-const gjDwarkaReal = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Dwarkadhish_Temple%2C_Dwarka%2C_Gujarat.JPG/1200px-Dwarkadhish_Temple%2C_Dwarka%2C_Gujarat.JPG";
-const gjRaniKiVavReal = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Rani_ki_vav_02.jpg/1200px-Rani_ki_vav_02.jpg";
+import gjSomnathReal from "@/assets/gj_somnath_real.png";
+import gjDwarkaReal from "@/assets/gj_dwarka_real.png";
+import gjRaniKiVavReal from "@/assets/gj_ranikivav_real.png";
 
 // Natural & Wildlife
-const gjGirReal = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Asiatic_Lions_in_Gir_National_Park.jpg/1200px-Asiatic_Lions_in_Gir_National_Park.jpg";
-const gjRannReal = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Great_Rann_of_Kutch_Salt_Flats.jpg/1200px-Great_Rann_of_Kutch_Salt_Flats.jpg";
-const gjSaputaraReal = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Lake_Saputara.jpg/1200px-Lake_Saputara.jpg";
+import gjGirReal from "@/assets/gj_gir.jpg";
+import gjRannReal from "@/assets/gj_rann_real.png";
+import gjSaputaraReal from "@/assets/gj_saputara.jpg";
 
 // Modern Marvels
-const gjStatueReal = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Statue_Of_Unity_2020.jpg/1200px-Statue_Of_Unity_2020.jpg";
-const gjRiverfrontReal = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Sabarmati_Riverfront%2C_Ahmedabad.jpg/1200px-Sabarmati_Riverfront%2C_Ahmedabad.jpg";
-const gjScienceReal = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Gujarat_science_city5.jpg/1200px-Gujarat_science_city5.jpg";
+import gjStatueReal from "@/assets/gj_statue.jpg";
+import gjRiverfrontReal from "@/assets/gj_riverfront.jpg";
+import gjScienceReal from "@/assets/gj_science.jpg";
 
 // Resorts & Food
-const gjResortReal = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Kutch_White_Rann_Tents_%288335851293%29.jpg/1200px-Kutch_White_Rann_Tents_%288335851293%29.jpg";
-const gjVegReal = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Dhokla_thali.jpg/1200px-Dhokla_thali.jpg";
-const gjNonVegReal = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Lal_Maas.jpg/1200px-Lal_Maas.jpg";
-const gjOwnReal = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Sabarmati_Riverfront%2C_Ahmedabad.jpg/1200px-Sabarmati_Riverfront%2C_Ahmedabad.jpg";
+import gjResortReal from "@/assets/gj_resort_real.png";
+import gjVegReal from "@/assets/gj_veg_real.png";
+import gjNonVegReal from "@/assets/gj_nonveg_real.png";
+import gjOwnReal from "@/assets/gj_riverfront.jpg"; // Reusing Riverfront for generic/picnic
 
 const PlaceCard = ({ image, title, desc, icon: Icon }: { image: string, title: string, desc: string, icon: any }) => (
     <div className="relative group overflow-hidden rounded-3xl h-[400px] shadow-2xl cursor-pointer border border-white/10 hover:border-orange-500/50 transition-all duration-500">

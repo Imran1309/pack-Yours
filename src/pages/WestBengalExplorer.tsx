@@ -8,28 +8,31 @@ import { useNavigate } from "react-router-dom";
 // ==========================================
 // 1. IMAGE IMPORTS
 // ==========================================
-import wbHero from "@/assets/west_bengal_hero.jpg";
+import wbHero from "@/assets/wb-hero.jpg";
 
 // Misty Hills
-import tigerHillImg from "@/assets/tiger_hill.jpg";
-import deoloImg from "@/assets/deolo_hill.jpg";
-import dowHillImg from "@/assets/dow_hill.jpg";
+import tigerHillImg from "@/assets/tiger_hill_real.jpg";
+import deoloImg from "@/assets/deolo_hill_real.jpg";
+import dowHillImg from "@/assets/dow_hill_real.jpg";
 
 // Culture & Spiritual
-import victoriaImg from "@/assets/victoria_memorial.jpg";
-import dakshineswarImg from "@/assets/dakshineswar_temple.jpg";
-import shantiniketanImg from "@/assets/shantiniketan.jpg";
+import victoriaImg from "@/assets/victoria_memorial_real.jpg";
+import dakshineswarImg from "@/assets/dakshineswar_real.jpg";
+import shantiniketanImg from "@/assets/shantiniketan_real.webp";
 
 // Party Spots
-import parkStreetImg from "@/assets/park_street.jpg";
-import someplaceImg from "@/assets/someplace_else.jpg";
-import olypubImg from "@/assets/olypub.jpg";
+import parkStreetImg from "@/assets/park_street_real.jpg";
+import someplaceImg from "@/assets/some_place_real.jpg";
+import olypubImg from "@/assets/olupub_real.jpg";
 
 // Resort & Food
-import resortImg from "@/assets/glenburn_tea_estate.jpg";
-import vegImg from "@/assets/aloo_posto.jpg";
-import nonVegImg from "@/assets/kosha_mangsho.jpg";
-import picnicImg from "@/assets/maidan_picnic.jpg";
+import resortImg from "@/assets/wb-res.jpg";
+import vegImg from "@/assets/wb-veg.jpg";
+import nonVegImg from "@/assets/wb-non.jpg";
+import picnicImg from "@/assets/wb_picnic_real.jpg";
+
+// ==========================================
+// ==========================================
 
 // ==========================================
 // 2. COMPONENTS
@@ -266,6 +269,8 @@ const WestBengalExplorer = () => {
                         </div>
                     </div>
                 </section>
+
+
 
             </div>
         </div>

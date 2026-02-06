@@ -5,28 +5,28 @@ import { useNavigate } from "react-router-dom";
 // ==========================================
 // 1. IMAGE IMPORTS
 // ==========================================
-import odishaHero from "@/assets/odisha_hero.jpg";
+import odishaHero from "@/assets/odi-hero.jpg";
 
 // Golden Beaches
-import puriImg from "@/assets/puri_beach.jpg";
-import chandrabhagaImg from "@/assets/chandrabhaga_beach.jpg";
-import gopalpurImg from "@/assets/gopalpur_beach.jpg";
+import puriImg from "@/assets/puri_beach_real.jpg";
+import chandrabhagaImg from "@/assets/chandrabhaga_real.jpg";
+import gopalpurImg from "@/assets/gopalpur_real.jpg";
 
 // Sacred Temples
-import konarkImg from "@/assets/konark_temple.jpg";
-import jagannathImg from "@/assets/jagannath_temple.jpg";
-import lingarajImg from "@/assets/lingaraj_temple.jpg";
+import konarkImg from "@/assets/konark_temple_real.jpg";
+import jagannathImg from "@/assets/jagannath_temple_real.jpg";
+import lingarajImg from "@/assets/lingaraj_temple_real.jpg";
 
 // Party Spots
-import esplanadeImg from "@/assets/esplanade_bbsr.jpg";
-import club29Img from "@/assets/club_29.jpg";
-import aquaImg from "@/assets/aqua_lounge.jpg";
+import esplanadeImg from "@/assets/esplanade_real.jpg";
+import club29Img from "@/assets/club_29_real.jpg";
+import aquaImg from "@/assets/aqua_lounge_real.jpg";
 
 // Resort & Food
-import resortImg from "@/assets/mayfair_heritage.jpg";
-import vegImg from "@/assets/dalma.jpg";
-import nonVegImg from "@/assets/chingudi_jhola.jpg";
-import picnicImg from "@/assets/chilika_lake.jpg";
+import resortImg from "@/assets/mayfair_heritage_real.jpg";
+import vegImg from "@/assets/odi-veg.jpg";
+import nonVegImg from "@/assets/odi-non.jpg";
+import picnicImg from "@/assets/ap_picnic_real.jpg";
 
 // ==========================================
 // 2. COMPONENTS

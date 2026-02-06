@@ -24,7 +24,7 @@ import manas from "@/assets/Manas national park.jpg";
 import assamResort from "@/assets/as resorts.jpg";
 import assamVeg from "@/assets/as veg.jpg";
 import assamNonVeg from "@/assets/as non veg.jpg";
-import assamPicnic from "@/assets/as picnic.jpg";
+import assamPicnic from "@/assets/as_picnic.jpg";
 
 const PlaceCard = ({ image, title, desc, icon: Icon }: { image: string, title: string, desc: string, icon: any }) => (
     <div className="relative group overflow-hidden rounded-3xl h-[400px] shadow-2xl cursor-pointer border border-white/10 hover:border-teal-500/50 transition-all duration-500">
@@ -183,57 +183,87 @@ const AssamExplorer = () => {
                 </section>
 
                 {/* Resort & Food Section */}
-                <section className="relative rounded-[3rem] overflow-hidden bg-white/5 border border-white/10 p-12">
-                    <SectionTitle title="Tea Estate Stays & Cuisine" subtitle="Authentic Experiences" />
+                <section className="relative rounded-[3rem] overflow-hidden border border-white/5 shadow-2xl bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+                    {/* Background Accents */}
+                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-900/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-900/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[600px]">
-                        {/* Resort */}
-                        <div className="lg:col-span-8 relative group overflow-hidden rounded-3xl h-full cursor-pointer">
-                            <img src={assamResort} alt="Tea Estate Resort" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80 flex flex-col justify-end p-8">
-                                <h3 className="text-4xl font-bold text-white font-serif mb-2">Tea Estate Resorts</h3>
-                                <p className="text-gray-300 text-lg">Experience tranquility amidst sprawling tea gardens and colonial-era bungalows.</p>
-                            </div>
+                    <div className="relative z-10 p-16">
+                        <div className="text-center mb-20">
+                            <h2 className="text-6xl font-serif font-bold text-white mb-4">Tea Estate Stays & Cuisine</h2>
+                            <p className="text-xl text-gray-400 font-light tracking-wide">Authentic experiences in the Land of Red River</p>
                         </div>
 
-                        {/* Food Grid */}
-                        <div className="lg:col-span-4 flex flex-col gap-6 h-full">
-                            {/* Veg */}
-                            <div className="relative flex-1 group overflow-hidden rounded-3xl cursor-pointer">
-                                <img src={assamVeg} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Veg Food" />
-                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                                    <div className="text-center p-4">
-                                        <div className="w-7 h-7 rounded-full border-2 border-green-500 flex items-center justify-center mx-auto mb-2 bg-black/50 backdrop-blur-sm">
-                                            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
+
+                            {/* Resorts */}
+                            <div className="group space-y-8 cursor-pointer">
+                                <div className="relative h-[500px] rounded-[2rem] overflow-hidden shadow-2xl border border-white/10">
+                                    <img src={assamResort} alt="Tea Estate Resort" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
+                                    <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/90 to-transparent">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <Star className="text-teal-400 fill-teal-400" size={24} />
+                                            <Star className="text-teal-400 fill-teal-400" size={24} />
+                                            <Star className="text-teal-400 fill-teal-400" size={24} />
+                                            <Star className="text-teal-400 fill-teal-400" size={24} />
+                                            <Star className="text-teal-400 fill-teal-400" size={24} />
                                         </div>
-                                        <h3 className="text-2xl font-bold text-white font-serif">Assamese Thali</h3>
+                                        <h3 className="text-4xl text-white font-serif font-bold mb-2">Tea Estate Resorts</h3>
+                                        <p className="text-gray-300">Experience tranquility amidst sprawling tea gardens and colonial-era bungalows.</p>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Non-Veg */}
-                            <div className="relative flex-1 group overflow-hidden rounded-3xl cursor-pointer">
-                                <img src={assamNonVeg} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Non Veg Food" />
-                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                                    <div className="text-center p-4">
-                                        <div className="w-7 h-7 rounded-full border-2 border-red-500 flex items-center justify-center mx-auto mb-2 bg-black/50 backdrop-blur-sm">
-                                            <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                                        </div>
-                                        <h3 className="text-2xl font-bold text-white font-serif">Masor Tenga</h3>
-                                    </div>
-                                </div>
-                            </div>
+                            {/* Food Menu */}
+                            <div className="space-y-8 flex flex-col justify-center">
+                                <div className="space-y-6">
 
-                            {/* Own Food / Picnic */}
-                            <div className="relative flex-1 group overflow-hidden rounded-3xl cursor-pointer">
-                                <img src={assamPicnic} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Own Food" />
-                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                                    <div className="text-center p-4">
-                                        <div className="w-7 h-7 rounded-full border-2 border-teal-500 flex items-center justify-center mx-auto mb-2 bg-black/50 backdrop-blur-sm">
-                                            <Umbrella className="text-teal-500 w-6 h-6" />
+                                    {/* Veg */}
+                                    <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl flex items-center gap-8 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group">
+                                        <div className="h-32 w-32 rounded-2xl overflow-hidden shadow-lg border border-white/10">
+                                            <img src={assamVeg} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Veg Food" />
                                         </div>
-                                        <h3 className="text-2xl font-bold text-white font-serif">Tea Garden Picnic</h3>
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className="w-3 h-3 rounded-full bg-green-500" />
+                                                <span className="text-green-400 text-sm font-bold tracking-widest uppercase">Pure Veg</span>
+                                            </div>
+                                            <h4 className="text-3xl font-serif font-bold text-white mb-2">Assamese Thali</h4>
+                                            <p className="text-gray-400">Traditional platter with khar, pitika, and seasonal greens.</p>
+                                        </div>
                                     </div>
+
+                                    {/* Non-Veg */}
+                                    <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl flex items-center gap-8 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group">
+                                        <div className="h-32 w-32 rounded-2xl overflow-hidden shadow-lg border border-white/10">
+                                            <img src={assamNonVeg} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Non Veg Food" />
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className="w-3 h-3 rounded-full bg-red-500" />
+                                                <span className="text-red-400 text-sm font-bold tracking-widest uppercase">Local Delicacy</span>
+                                            </div>
+                                            <h4 className="text-3xl font-serif font-bold text-white mb-2">Masor Tenga</h4>
+                                            <p className="text-gray-400">Tangy fish curry with tomatoes and elephant apple.</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Own Food / Picnic */}
+                                    <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl flex items-center gap-8 border border-white/5 hover:bg-white/10 transition-all cursor-pointer group">
+                                        <div className="h-32 w-32 rounded-2xl overflow-hidden shadow-lg border border-white/10">
+                                            <img src={assamPicnic} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Picnic" />
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <div className="w-3 h-3 rounded-full bg-blue-500" />
+                                                <span className="text-blue-400 text-sm font-bold tracking-widest uppercase">Picnic</span>
+                                            </div>
+                                            <h4 className="text-3xl font-serif font-bold text-white mb-2">Tea Garden Picnic</h4>
+                                            <p className="text-gray-400">Relax amidst lush tea estates with scenic valley views.</p>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>

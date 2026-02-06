@@ -8,26 +8,27 @@ import { useNavigate } from "react-router-dom";
 import himachalHero from "@/assets/himachal_hero.jpg";
 
 // Majestic Peaks
-import kinnaurImg from "@/assets/kinnaur_kailash.jpg";
-import deoTibbaImg from "@/assets/deo_tibba.jpg";
-import triundImg from "@/assets/triund.jpg";
+import kinnaurImg from "@/assets/kinnaur.jpg";
+import deoTibbaImg from "@/assets/deo tibba.jpg";
+import triundImg from "@/assets/triund - Copy.jpg";
 
 // Adventure Hubs
-import birImg from "@/assets/bir_billing.jpg";
-import solangImg from "@/assets/solang_valley.jpg";
-import spitiImg from "@/assets/spiti_valley.jpg";
+import birImg from "@/assets/bir billing.jpg";
+import solangImg from "@/assets/solang valley,.jpg";
+import spitiImg from "@/assets/spiti valley,.jpg";
 
 // Colonial Towns
-import shimlaImg from "@/assets/shimla_ridge.jpg";
-import dalhousieImg from "@/assets/dalhousie.jpg";
-import kasauliImg from "@/assets/kasauli.jpg";
+import shimlaImg from "@/assets/shimla,.jpg";
+import dalhousieImg from "@/assets/dalhousie,.jpg";
+import kasauliImg from "@/assets/kasauli,.jpg";
 
 // Resort & Food
-import resortImg from "@/assets/wildflower_hall.jpg";
-import vegImg from "@/assets/siddu.jpg";
-import nonVegImg from "@/assets/chha_gosht.jpg";
-import picnicImg from "@/assets/beas_river.jpg";
+import resortImg from "@/assets/wildflower-hall-exterior.jpg";
+import vegImg from "@/assets/veg-hp.jpg";
+import nonVegImg from "@/assets/non-hp.jpg";
+import picnicImg from "@/assets/rj picnic.jpg";
 
+// ==========================================
 // ==========================================
 // 2. COMPONENTS
 // ==========================================
@@ -263,6 +264,8 @@ const HimachalExplorer = () => {
                         </div>
                     </div>
                 </section>
+
+
 
             </div>
         </div>
