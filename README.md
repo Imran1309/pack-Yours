@@ -7,3 +7,5 @@ The website is designed to help users book stays and rooms, making their trip un
 
 ## Live Demo
 Check out the live application here: [https://pack-yours-holiday-app.web.app](https://pack-yours-holiday-app.web.app)
+
+*(Last deployed on February 24, 2026)*
