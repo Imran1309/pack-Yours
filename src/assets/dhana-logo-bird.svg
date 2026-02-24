@@ -1,0 +1,35 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="birdGrad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF416C" /> <!-- Cherry -->
+      <stop offset="100%" stop-color="#FF4B2B" /> <!-- Orange -->
+    </linearGradient>
+    <linearGradient id="bubbleGrad" x1="0" y1="100" x2="100" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#8E2DE2" /> <!-- Deep Purple -->
+      <stop offset="100%" stop-color="#4A00E0" /> <!-- Violet -->
+    </linearGradient>
+    <filter id="dropshadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feOffset dx="1" dy="2" result="offsetBlur"/>
+      <feComposite in="SourceGraphic" in2="offsetBlur" operator="over"/>
+    </filter>
+  </defs>
+  
+  <!-- Glossy Bubble Background -->
+  <circle cx="50" cy="50" r="48" fill="url(#bubbleGrad)" />
+  <ellipse cx="35" cy="30" rx="15" ry="8" fill="white" fill-opacity="0.2" transform="rotate(-45 35 30)"/>
+  
+  <!-- Stylized Hummingbird/Swift -->
+  <g transform="translate(5, 5)">
+    <path d="M30 60 C 20 65 20 75 30 75 C 40 75 55 65 65 50" fill="white" fill-opacity="0.9"/>
+    <!-- Wing -->
+    <path d="M30 60 C 30 30 60 20 80 20 C 70 40 60 50 45 60" fill="white"/>
+    <!-- Head -->
+    <circle cx="75" cy="35" r="8" fill="white"/>
+    <path d="M80 35 L 90 38 L 80 40 Z" fill="white"/>
+  </g>
+  
+  <!-- Motion Lines -->
+  <path d="M15 50 Q 10 50 15 45" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <path d="M20 70 Q 15 75 20 80" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+</svg>

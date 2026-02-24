@@ -1,0 +1,51 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Complex Gradient to match the 3D glossy look -->
+    <linearGradient id="exactGrad" x1="10" y1="90" x2="90" y2="10" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#be185d" /> <!-- Deep Pink/Magenta -->
+      <stop offset="40%" stop-color="#a855f7" /> <!-- Purple -->
+      <stop offset="100%" stop-color="#06b6d4" /> <!-- Cyan/Teal -->
+    </linearGradient>
+    
+    <!-- Inner Glow for 3D effect -->
+    <radialGradient id="shine" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(70 30) rotate(90) scale(40)">
+      <stop stop-color="white" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Main Bubble Shape -->
+  <!-- A circle with a tail at the bottom left -->
+  <path d="M50 5 C25 5 5 25 5 50 C5 65 15 80 30 88 L 25 98 L 45 92 C 55 94 65 92 95 50 C 95 25 75 5 50 5 Z" fill="url(#exactGrad)"/>
+  
+  <!-- Glossy Overlay -->
+  <circle cx="50" cy="50" r="45" fill="url(#shine)" />
+
+  <!-- The "Exact" Icon Outline in White -->
+  <g stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    
+    <!-- Square-ish Head with Rounded Corners -->
+    <!-- Mstart_x,start_y horizontal_line vertical_line etc -->
+    <path d="M28 35 A 8 8 0 0 1 36 27 H 64 A 8 8 0 0 1 72 27 V 55 A 8 8 0 0 1 64 63 H 40" stroke-width="4"/>
+    
+    <!-- Ears / Headphones bumps -->
+    <path d="M28 40 V 50" stroke-width="4"/>
+    <path d="M72 40 V 50" stroke-width="4"/>
+
+    <!-- Curly Antenna -->
+    <path d="M50 27 V 22 Q 50 15 56 18" stroke-width="3"/>
+    <circle cx="56" cy="18" r="2.5" fill="white" stroke="none"/>
+
+    <!-- Happy Eyes (Arches) -->
+    <path d="M38 42 Q 43 38 48 42" stroke-width="3.5"/>
+    <path d="M56 42 Q 61 38 66 42" stroke-width="3.5"/>
+
+    <!-- The Signature "Smile into Plane" path -->
+    <!-- Starts as smile, swooshes up to right -->
+    <path d="M42 55 Q 50 62 65 52 L 78 42" stroke-width="3.5"/>
+    
+    <!-- The Plane Silhouette (filled) -->
+    <path d="M78 42 L 72 46 L 75 49 L 85 44 L 78 42 Z" fill="white" stroke="none"/>
+    <path d="M76 46 L 74 52 L 78 48" fill="white" stroke="none"/>
+  </g>
+</svg>

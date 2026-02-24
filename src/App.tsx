@@ -103,6 +103,7 @@ import TripuraExplorer from "./pages/TripuraExplorer";
 import UttarPradeshExplorer from "./pages/UttarPradeshExplorer";
 import WestBengalExplorer from "./pages/WestBengalExplorer";
 import AndamanExplorer from "./pages/AndamanExplorer";
+import ChatWidget from "@/components/ChatWidget";
 
 const queryClient = new QueryClient();
 
@@ -111,6 +112,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <ChatWidget />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />

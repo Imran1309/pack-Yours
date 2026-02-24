@@ -1,0 +1,16 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="pinGrad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f43f5e" /> <!-- Rose -->
+      <stop offset="100%" stop-color="#8b5cf6" /> <!-- Violet -->
+    </linearGradient>
+  </defs>
+  
+  <!-- Map Pin Body -->
+  <path d="M50 5 C25 5 5 25 5 50 C5 65 20 85 50 95 C80 85 95 65 95 50 C95 25 75 5 50 5 Z" fill="url(#pinGrad)"/>
+  
+  <!-- "Face" Cutout -->
+  <circle cx="35" cy="40" r="5" fill="white"/>
+  <circle cx="65" cy="40" r="5" fill="white"/>
+  <path d="M35 55 Q 50 70 65 55" stroke="white" stroke-width="4" stroke-linecap="round"/>
+</svg>

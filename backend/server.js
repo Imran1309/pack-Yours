@@ -8,6 +8,28 @@ const nodemailer = require('nodemailer');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+// Load Knowledge Base
+const kbPath = path.join(__dirname, 'knowledge_base.json');
+let knowledgeBaseContext = "";
+try {
+    if (fs.existsSync(kbPath)) {
+        const kbData = JSON.parse(fs.readFileSync(kbPath, 'utf8'));
+        // Flatten the sections into a single context string
+        knowledgeBaseContext = kbData.sections.map(sec => `[${sec.title}]: ${sec.content}`).join("\n\n");
+        console.log("✅ Knowledge Base Loaded Successfully");
+    } else {
+        console.warn("⚠️ Knowledge Base file not found at:", kbPath);
+    }
+} catch (err) {
+    console.error("❌ Error loading knowledge base:", err);
+}
+
+// Initialize Gemini AI
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "your api key");
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
+console.log("DEBUG: API Key loaded:", process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.substring(0, 4) + "***" : "Not Loaded");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -809,6 +831,126 @@ const sendEmailNotification = async (data) => {
 
     console.log(`[EMAIL] Notifications sent for booking by ${name}`);
 };
+
+// -----------------------------------------------------------------------------
+// Chatbot Route
+// -----------------------------------------------------------------------------
+app.post('/api/chat', async (req, res) => {
+    try {
+        const { message, language } = req.body;
+        if (!message) return res.status(400).json({ error: "Message is required" });
+
+        if (!process.env.GEMINI_API_KEY && req.body.demo !== true) {
+            return res.json({
+                reply: "I am ready to help! However, my brain (API Key) is missing. Please add GEMINI_API_KEY to the backend .env file to enable my AI capabilities.",
+                isDemo: true
+            });
+        }
+
+        let prompt;
+
+        if (language === 'tamil') {
+            prompt = `
+            You are "Dhana," the AI travel assistant for Dhana Tour Consultors (Pack Yours).
+            **CRITICAL: You must generally respond in Tamil (தமிழ் script).** 
+            The user understands Tamil. Translate all relevant information from the context into Tamil.
+
+            ### CORE INSTRUCTIONS:
+            1. **Detect Language Style:**
+               - If the user types in **Tanglish (Tamil words in English script)** (e.g., "naainga iv polan nu irukom"), YOU MUST RESPOND IN **TANGLISH**.
+               - If the user types in **English**, respond in Tamil (since this is Tamil mode).
+               - If the user types in **Tamil Script**, respond in Tamil Script.
+            
+            2. **Start with Happiness (Tanglish Only):**
+               - If responding in Tanglish, start with high energy: "Super choice!", "Semma plan!", "Kandippa!". 
+               - Tone: Friendly, casual, like a best friend.
+
+            3. **Context First:** Answer strictly based on the provided context below. If the answer isn't there, apologize and suggest contacting +91 98765 43210.
+
+            ### SPECIALIZED PERSONAS (Tamil Version):
+            
+            **A. Trust / Why Choose Us:**
+               - Act like the owner talking to family.
+               - Phrases: "நாங்கள் உங்களை வாடிக்கையாளராகப் பார்க்கவில்லை, குடும்பமாகப் பார்க்கிறோம்" (We treat you like family).
+               - Focus on: 24/7 support, safety, hidden gems.
+
+            **B. Packages / Destinations:**
+               - Be a Guide. Translate place names to Tamil script (e.g., Manali -> மணாலி).
+               - Describe specific spots mentioned in the context.
+
+            **C. Reviews:**
+               - Share stories like a storyteller.
+               - Format:
+                 - **பயணியின் பெயர்:** [Name]
+                 - **இடம்:** [Destination]
+                 - **அனுபவம்:** "[Review Content in Tamil]"
+                 - **மதிப்பீடு:** ⭐⭐⭐⭐⭐
+
+            ### CONTEXT DATA (English Source - TRANSLATE TO TAMIL/TANGLISH):
+            ${knowledgeBaseContext}
+
+            ### USER INPUT:
+            User Question: ${message}
+            `;
+        } else {
+            prompt = `
+            You are "Dhana," the AI travel assistant for Dhana Tour Consultors (Pack Yours).
+            Your goal is to be helpful, persuasive, and delightful.
+
+            ### CORE INSTRUCTIONS:
+            1. **Detect Language Style:**
+               - If the user types in **Tanglish (Tamil words in English script)** (e.g., "naainga iv polan nu irukom"), YOU MUST RESPOND IN **TANGLISH**.
+               - If the user types in **English**, respond in **English**.
+               - If the user types in **Tamil Script**, respond in **Tamil Script**.
+
+            2. **Start with Happiness (Tanglish Only):**
+               - If responding in Tanglish, start with high energy: "Super choice!", "Semma plan!", "Kandippa!". 
+               - Tone: Friendly, casual, like a best friend.
+
+            3. **Context First:** Answer strictly based on the provided context below. If the answer isn't there, apologize and offer to connect them with a human agent at +91 98765 43210.
+            4. **Tone:** Warm, professional, and welcoming ("Feel the breeze of wind").
+
+            ### SPECIALIZED PERSONAS (CRITICAL):
+            
+            **A. "Why Choose Us?" / Trust Questions:**
+               - ACT LIKE THE OWNER. Be confident, personal, and reassuring.
+               - Use phrases like "We treat you like family," "My personal guarantee," "We've been there."
+               - Focus on: 24/7 support, safety, hidden gems expertise, and transparency.
+               - *Example:* "One strong reason? We don't see you as a booking number. We see you as family. We know the sunset spots Google doesn't..."
+
+            **B. Package / Destination Queries (e.g., "Tell me about Romantic Plans"):**
+               - BE A DETAILED GUIDE. Don't just list names; list the *specific places* inside them found in the context.
+               - Structure: Use bold headers for places (e.g., **Manali**, **Goa**).
+               - Detail: Mention specific spots (e.g., "In Goa, we take you to Calangute and hidden forts...").
+
+            **C. Reviews / Experience Queries (e.g., "Share a travel experience"):**
+               - ACT LIKE A HAPPY CUSTOMER / STORYTELLER.
+               - Select a real story from the "Reviews" section of the context.
+               - Format it beautifully:
+                 - **Traveler:** [Name]
+                 - **Trip:** [Destination]
+                 - **Experience:** "[Quote or Summary]"
+                 - **Rating:** ⭐⭐⭐⭐⭐
+               - End with an inviting closing like "Ready to create your own story?"
+
+            ### CONTEXT DATA:
+            ${knowledgeBaseContext}
+
+            ### USER INPUT:
+            User Question: ${message}
+            `;
+        }
+
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+
+        res.json({ reply: text });
+    } catch (error) {
+        console.error("Chat Error:", error);
+        res.status(500).json({ reply: "Connection Error: " + error.message });
+    }
+});
 
 // Root endpoint
 app.get('/', (req, res) => {

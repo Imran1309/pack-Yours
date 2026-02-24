@@ -1,0 +1,31 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cleanGrad" x1="0" y1="100" x2="100" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7c3aed" /> <!-- Violet -->
+      <stop offset="100%" stop-color="#22d3ee" /> <!-- Cyan -->
+    </linearGradient>
+  </defs>
+  
+  <!-- Background Circle containing the logo -->
+  <circle cx="50" cy="50" r="48" fill="url(#cleanGrad)" />
+  
+  <!-- Robot Head Silhouette -->
+  <path d="M30 40 A 20 20 0 0 1 70 40 V 60 A 20 20 0 0 1 30 60 Z" fill="white" fill-opacity="0.2"/>
+  
+  <!-- Strong White Lines -->
+  <g stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Eyes -->
+    <line x1="40" y1="45" x2="40" y2="48" />
+    <line x1="60" y1="45" x2="60" y2="48" />
+    
+    <!-- Smile turning into Plane Path -->
+    <path d="M35 65 Q 50 75 85 40" />
+  </g>
+  
+  <!-- The Plane -->
+  <path d="M85 40 L 75 42 L 82 48 Z" fill="white" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+  
+  <!-- Antenna -->
+  <path d="M50 20 V 10" stroke="white" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="50" cy="10" r="4" fill="white"/>
+</svg>

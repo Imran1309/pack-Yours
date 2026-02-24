@@ -1,0 +1,18 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="infGrad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f093fb" /> <!-- Pink -->
+      <stop offset="100%" stop-color="#f5576c" /> <!-- Red -->
+    </linearGradient>
+  </defs>
+  
+  <!-- Infinity Loop -->
+  <path d="M20 50 Q 20 20 50 50 Q 80 80 80 50 Q 80 20 50 50 Q 20 80 20 50 Z" stroke="url(#infGrad)" stroke-width="8" stroke-linecap="round" fill="none"/>
+  
+  <!-- Plane integrated into loop -->
+  <path d="M75 45 L 85 35 L 80 48 L 88 52 L 80 50 Z" fill="#f5576c"/>
+  
+  <!-- Speed lines -->
+  <path d="M10 50 H 5" stroke="#f093fb" stroke-width="3" stroke-linecap="round"/>
+  <path d="M90 50 H 95" stroke="#f5576c" stroke-width="3" stroke-linecap="round"/>
+</svg>

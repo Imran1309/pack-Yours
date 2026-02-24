@@ -1,0 +1,15 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="origamiGrad" x1="0" y1="100" x2="100" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f97316" /> <!-- Orange -->
+      <stop offset="100%" stop-color="#db2777" /> <!-- Pink -->
+    </linearGradient>
+  </defs>
+  
+  <rect width="100" height="100" rx="20" fill="url(#origamiGrad)"/>
+  
+  <!-- Origami Bird -->
+  <path d="M20 60 L 50 30 L 80 60 L 50 50 Z" fill="white" fill-opacity="0.9"/>
+  <path d="M50 50 L 80 60 L 50 80 L 50 50 Z" fill="white" fill-opacity="0.7"/>
+  <path d="M20 60 L 50 80 L 50 50 Z" fill="white" fill-opacity="0.5"/>
+</svg>
