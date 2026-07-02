@@ -99,7 +99,7 @@ const Navbar = () => {
 
           {/* Logo + Title */}
           <div className="flex items-center gap-4 md:gap-8 animate-slide-in cursor-pointer" onClick={() => navigate('/')}>
-            <img src={logo} alt="Dhana Tour Consultors Logo" className="h-12 w-auto md:h-16 lg:h-20" />
+            <img src={logo} alt="Dhana Tour Travels Logo" className="h-12 w-auto md:h-16 lg:h-20" />
 
             <div className="flex flex-col">
               <h1
@@ -114,7 +114,7 @@ const Navbar = () => {
                   filter: "drop-shadow(2px 2px 4px rgba(0,0,0,0.3))" // Alternative for shadow
                 }}
               >
-                Dhana Tour Consultors
+                Dhana Tour Travels
               </h1>
 
               <p
