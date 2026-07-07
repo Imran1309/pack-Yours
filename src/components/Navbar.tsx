@@ -158,14 +158,16 @@ const Navbar = () => {
               <Button
                 variant="hero"
                 size="lg"
-                className="animate-fade-in bg-cyan-400 text-black hover:bg-cyan-300 ml-4 hover:opacity-90 transition-all duration-300 transform hover:scale-105 shadow-[0_0_15px_rgba(34,211,238,0.5)] border-2 border-cyan-300 rounded-xl text-xl tracking-wider"
+                className="animate-fade-in bg-gradient-to-b from-yellow-400 to-yellow-600 text-black hover:from-yellow-300 hover:to-yellow-500 ml-4 hover:opacity-100 transition-all duration-300 transform hover:scale-105 shadow-[0_0_15px_rgba(250,204,21,0.6)] border border-yellow-300 rounded-xl text-xl tracking-wider relative overflow-hidden group"
                 style={{
                   fontFamily: "'Titan One', cursive",
                   textShadow: "none"
                 }}
                 onClick={() => navigate("/booking")}
               >
-                Book
+                <div className="absolute top-0 left-0 w-full h-1/2 bg-white/30 pointer-events-none rounded-t-xl"></div>
+                <div className="absolute top-0 left-0 w-[50%] h-[3px] bg-white shadow-[0_0_10px_3px_rgba(255,255,255,0.9)] animate-ambient-slide pointer-events-none"></div>
+                <span className="relative z-10 font-bold">Book</span>
               </Button>
             )}
           </div>
@@ -204,7 +206,7 @@ const Navbar = () => {
               <Button
                 variant="hero"
                 size="lg"
-                className="w-full mt-6 bg-cyan-400 text-black hover:bg-cyan-300 hover:opacity-90 shadow-[0_0_15px_rgba(34,211,238,0.5)] border-2 border-cyan-300 rounded-xl text-xl tracking-wider"
+                className="w-full mt-6 bg-gradient-to-b from-yellow-400 to-yellow-600 text-black hover:from-yellow-300 hover:to-yellow-500 hover:opacity-100 shadow-[0_0_15px_rgba(250,204,21,0.6)] border border-yellow-300 rounded-xl text-xl tracking-wider relative overflow-hidden group transition-all duration-300"
                 style={{
                   fontFamily: "'Titan One', cursive",
                   textShadow: "none",
@@ -214,7 +216,9 @@ const Navbar = () => {
                   setMobileMenuOpen(false);
                 }}
               >
-                Book Now
+                <div className="absolute top-0 left-0 w-full h-1/2 bg-white/30 pointer-events-none rounded-t-xl"></div>
+                <div className="absolute top-0 left-0 w-[50%] h-[3px] bg-white shadow-[0_0_10px_3px_rgba(255,255,255,0.9)] animate-ambient-slide pointer-events-none"></div>
+                <span className="relative z-10 font-bold">Book Now</span>
               </Button>
             )}
           </div>

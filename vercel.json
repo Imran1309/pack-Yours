@@ -1,0 +1,17 @@
+{
+  "services": {
+    "pack-yours-backend": {
+      "root": "backend",
+      "entrypoint": "server.js"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": {
+        "type": "service",
+        "service": "pack-yours-backend"
+      }
+    }
+  ]
+}

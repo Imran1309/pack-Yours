@@ -7,7 +7,8 @@ import falls3 from "@/assets/bg-city.jpg";
 import go3 from "@/assets/bg-falls.jpg";
 import promoB3 from "@/assets/night_life.jpg";
 import chakra from "@/assets/chakra.jpg";
-import heroVideo from "@/assets/heroVideo.mp4";
+import heroVideo from "@/assets/view1.mp4";
+import maldives from "@/assets/maldives.jpg";
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const Hero = () => {
     { type: "image", src: falls3 },
     { type: "image", src: go3 },
     { type: "image", src: promoB3 },
+    { type: "image", src: maldives },
   ];
 
   const taglines = [
@@ -24,6 +26,7 @@ const Hero = () => {
     "Light Cities",
     "Green Dreams Begin",
     "Night Life",
+    "Romantic vibes",
   ];
 
   const [currentBg, setCurrentBg] = useState(0);
@@ -67,13 +70,13 @@ const Hero = () => {
           <div className="mb-4 md:mb-6 animate-fade-in">
             <span
               key={taglines[currentBg]}
-              className="text-4xl sm:text-5xl md:text-6xl font-[Great_Vibes] italic underline decoration-yellow-400 transition-all duration-700"
+              className="text-4xl sm:text-5xl md:text-6xl font-[Great_Vibes] italic underline decoration-red-500 transition-all duration-700"
               style={{
-                color: "#FF1295",
+                color: "#ffffff",
                 textDecorationThickness: "3px",
                 textUnderlineOffset: "12px",
-                mixBlendMode: "difference",
-                fontFamily: "'Great Vibes', 'Fraktur', cursive",
+                fontFamily: "'Great Vibes', cursive",
+                textShadow: "0 0 5px #fff, 0 0 10px #fff, 0 0 20px #FF1295, 0 0 40px #FF0000, 0 0 80px #FF1295, 0 0 90px #FF0000, 0 0 100px #FF1295",
               }}
             >
               {taglines[currentBg]}
@@ -140,11 +143,12 @@ const Hero = () => {
             <Button
               variant="default"
               size="xl"
-              className="text-white font-bold hover:opacity-90 transition-opacity text-lg md:text-xl px-8 py-6"
+              className="text-black font-bold hover:opacity-100 transition-all text-lg md:text-xl px-8 py-6 border border-yellow-500/50 animate-rgb-edge hover:scale-105"
               style={{
-                backgroundColor: "#870b41ff",
+                background: "linear-gradient(135deg, rgba(255, 223, 0, 0.85) 0%, rgba(218, 165, 32, 0.75) 100%)",
+                backdropFilter: "blur(8px)",
                 fontFamily: "'Cinzel Decorative', cursive",
-                letterSpacing: "1px" // Added for decorative effect
+                letterSpacing: "1px"
               }}
               onClick={() => navigate("/booking")}
             >
@@ -156,14 +160,14 @@ const Hero = () => {
             <Button
               variant="outline"
               size="xl"
-              className="bg-black/40 border-white text-white hover:bg-black/60 font-bold text-lg md:text-xl px-8 py-6"
+              className="bg-black/40 border-cyan-400 text-white hover:bg-black/60 font-bold text-lg md:text-xl px-8 py-6 shadow-[0_0_15px_rgba(34,211,238,0.5)] hover:shadow-[0_0_25px_rgba(34,211,238,0.8)] transition-all duration-300 hover:scale-105"
               style={{
                 fontFamily: "'Cinzel Decorative', cursive",
                 letterSpacing: "1px"
               }}
               onClick={() => navigate("/destination")}
             >
-              <MapPin className="mr-2 h-5 w-5" />
+              <MapPin className="mr-2 h-5 w-5 text-cyan-400" />
               Explore Destinations
             </Button>
           </div>

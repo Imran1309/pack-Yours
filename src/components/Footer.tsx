@@ -5,13 +5,13 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gradient-to-br from-[#1a0505] via-[#450a0a] to-[#2b0707] text-white pt-16 pb-24 font-sans relative border-t-4 border-[#FFD700]">
+    <footer className="bg-black text-white pt-16 pb-24 font-sans relative border-t-4 border-[#FFD700]">
 
       {/* Background Container for clipping blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#FFD700] rounded-full mix-blend-overlay filter blur-[128px] opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-red-600 rounded-full mix-blend-overlay filter blur-[128px] opacity-20 animate-pulse delay-1000"></div>
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#FFD700] rounded-full mix-blend-overlay filter blur-[128px] opacity-10 animate-pulse"></div>
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#DAA520] rounded-full mix-blend-overlay filter blur-[128px] opacity-10 animate-pulse delay-1000"></div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -19,11 +19,13 @@ const Footer = () => {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Company Info */}
           <div className="space-y-6">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 relative inline-block">
+              {/* Glowing Backlight for Logo */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-16 bg-[#FFF8DC] rounded-[100%] filter blur-[35px] opacity-40 z-0"></div>
               <img
                 src={logo}
                 alt="Dhana Tour Consultors Logo"
-                className="w-48 h-auto object-contain drop-shadow-lg filter brightness-110"
+                className="relative z-10 w-48 h-auto object-contain drop-shadow-[0_0_15px_rgba(255,215,0,0.5)] filter brightness-110"
               />
             </div>
             <p className="text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] via-[#FDB931] to-[#E6C200] font-bold italic tracking-wider leading-relaxed drop-shadow-md font-serif">
@@ -103,32 +105,42 @@ const Footer = () => {
                 <div className="bg-white/10 p-3 rounded-xl group-hover:bg-[#FFD700] group-hover:text-[#7F1D1D] transition-all transform group-hover:scale-110">
                   <Mail className="h-6 w-6 flex-shrink-0" />
                 </div>
-                <a href="mailto:dhanatoursconsultors2020@gmail.com" className="text-white/90 text-lg font-semibold break-words group-hover:text-[#FFD700] transition-colors">dhanatoursconsultors2020@gmail.com</a>
+                <a href="mailto:dhanatoursconsultors2020@gmail.com" className="text-white/90 text-base sm:text-lg font-semibold break-all group-hover:text-[#FFD700] transition-colors">
+                  dhanatoursconsultors2020@gmail.com
+                </a>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Centered Large Social Icons */}
-        <div className="flex justify-center items-center gap-8 mb-12 flex-wrap">
-          {[
-            { icon: Facebook, label: "Facebook", color: "hover:bg-blue-600", href: "https://www.facebook.com/share/1MAEhtEFQG/" },
-            { icon: Twitter, label: "Twitter", color: "hover:bg-sky-500", href: "https://x.com/Dhanatour2020" },
-            { icon: MessageCircle, label: "WhatsApp", color: "hover:bg-green-500", href: "https://wa.me/+918883511103" },
-            { icon: Instagram, label: "Instagram", color: "hover:bg-pink-600", href: "https://www.instagram.com/dhanatourconsultors/?utm_source=ig_web_button_share_sheet" },
-            { icon: Youtube, label: "YouTube", color: "hover:bg-red-600", href: "http://www.youtube.com/@dhanatourconsultors2020" },
-          ].map((social, idx) => (
-            <a
-              key={idx}
-              href={social.href}
-              target={social.href !== "#" ? "_blank" : "_self"}
-              rel={social.href !== "#" ? "noopener noreferrer" : ""}
-              aria-label={social.label}
-              className={`bg-white/10 p-4 rounded-full ${social.color} hover:scale-125 transition-all duration-300 text-white shadow-lg border border-white/10 group`}
-            >
-              <social.icon className="h-8 w-8" />
-            </a>
-          ))}
+        {/* Centered Large Social Icons in Rectangle Container with Ambient Line */}
+        <div className="flex justify-center mb-12">
+          <div className="relative overflow-hidden group bg-black/40 border border-[#FFD700]/30 rounded-2xl p-6 sm:px-12 sm:py-8 shadow-[0_0_25px_rgba(255,215,0,0.15)]">
+            {/* Ambient Line Effects */}
+            <div className="absolute top-0 left-0 w-full h-1/2 bg-[#FFD700]/10 pointer-events-none rounded-t-2xl"></div>
+            <div className="absolute top-0 left-0 w-[50%] h-[3px] bg-[#FFD700] shadow-[0_0_15px_4px_rgba(255,215,0,0.8)] animate-ambient-slide pointer-events-none"></div>
+
+            <div className="flex justify-center items-center gap-6 sm:gap-10 flex-wrap relative z-10">
+              {[
+                { icon: Facebook, label: "Facebook", color: "hover:bg-blue-600", href: "https://www.facebook.com/share/1MAEhtEFQG/" },
+                { icon: Twitter, label: "Twitter", color: "hover:bg-sky-500", href: "https://x.com/Dhanatour2020" },
+                { icon: MessageCircle, label: "WhatsApp", color: "hover:bg-green-500", href: "https://wa.me/+918883511103" },
+                { icon: Instagram, label: "Instagram", color: "hover:bg-pink-600", href: "https://www.instagram.com/dhanatourconsultors/?utm_source=ig_web_button_share_sheet" },
+                { icon: Youtube, label: "YouTube", color: "hover:bg-red-600", href: "http://www.youtube.com/@dhanatourconsultors2020" },
+              ].map((social, idx) => (
+                <a
+                  key={idx}
+                  href={social.href}
+                  target={social.href !== "#" ? "_blank" : "_self"}
+                  rel={social.href !== "#" ? "noopener noreferrer" : ""}
+                  aria-label={social.label}
+                  className={`relative flex items-center justify-center p-4 rounded-full bg-[#1a1a1a] ${social.color} hover:-translate-y-2 hover:scale-110 active:translate-y-0 transition-all duration-300 text-white shadow-[inset_2px_2px_4px_rgba(255,215,0,0.3),inset_-2px_-2px_4px_rgba(0,0,0,0.9),6px_6px_12px_rgba(0,0,0,0.9),-2px_-2px_4px_rgba(255,255,255,0.05)] active:shadow-[inset_4px_4px_8px_rgba(0,0,0,0.9)] border border-[#FFD700]/20 group`}
+                >
+                  <social.icon className="h-7 w-7 sm:h-8 sm:w-8" />
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Bottom Bar */}
