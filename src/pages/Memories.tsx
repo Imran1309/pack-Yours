@@ -494,33 +494,33 @@ const Memories = () => {
   useEffect(() => {
     // Set body background color to match the page theme to prevent white bars on scroll/bounce
     const originalStyle = document.body.style.backgroundColor;
-    document.body.style.backgroundColor = "#28494B"; // Match the dark teal theme
+    document.body.style.backgroundColor = "#000000"; // Match the dark teal theme
     return () => {
       document.body.style.backgroundColor = originalStyle;
     };
   }, []);
 
   return (
-    <div className={`min-h-[100dvh] relative text-white font-sans selection:bg-[#F2C94C] selection:text-black overflow-hidden transition-colors duration-500 ${activeTab === 'reels' ? 'bg-black' : 'bg-gradient-to-br from-[#4b6cb7] to-[#182848] md:from-[#5F8D8B] md:to-[#28494B]'}`}>
+    <div className={`min-h-[100dvh] relative text-white font-sans selection:bg-[#FFD700] selection:text-black overflow-hidden transition-colors duration-500 bg-black`}>
       {/* Decorative Background Elements */}
-      <div className="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-white/10 to-transparent pointer-events-none mix-blend-overlay"></div>
-      <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-[#F2C94C] rounded-full mix-blend-screen filter blur-[128px] opacity-20 animate-pulse-slow"></div>
-      <div className="absolute top-20 right-0 w-72 h-72 bg-[#5effee] rounded-full mix-blend-overlay filter blur-[96px] opacity-20"></div>
+      <div className="absolute inset-x-0 top-0 h-96 bg-gradient-to-b from-[#FFD700]/10 to-transparent pointer-events-none mix-blend-overlay"></div>
+      <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-[#FFD700] rounded-full mix-blend-screen filter blur-[128px] opacity-10 animate-pulse-slow"></div>
+      <div className="absolute top-20 right-0 w-72 h-72 bg-[#FFD700] rounded-full mix-blend-screen filter blur-[128px] opacity-10"></div>
 
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-center justify-between p-6 bg-white/5 backdrop-blur-md sticky top-0 z-50 shadow-sm border-b border-white/10">
+      <div className="flex flex-col md:flex-row items-center justify-between p-6 bg-black/40 backdrop-blur-md sticky top-0 z-50 shadow-sm border-b border-[#FFD700]/20">
         <div className="flex items-center gap-4 w-full md:w-auto">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="text-white/70 hover:text-white transition-colors hover:bg-white/10 p-2 rounded-full border border-transparent hover:border-white/20"
+            className="text-[#FFD700]/70 hover:text-[#FFD700] transition-colors hover:bg-[#FFD700]/10 p-2 rounded-full border border-transparent hover:border-[#FFD700]/30"
             aria-label="Go back"
             title="Go back"
           >
             <ArrowLeft size={24} />
           </button>
           <h1
-            className="text-4xl md:text-5xl text-[#E91E63] mb-0 drop-shadow-sm py-2 leading-normal"
+            className="text-4xl md:text-5xl text-[#FFD700] mb-0 drop-shadow-[0_0_8px_rgba(255,215,0,0.5)] py-2 leading-normal"
             style={{
               fontFamily: "'Great Vibes', 'Dancing Script', cursive",
               fontWeight: 800,
@@ -532,10 +532,10 @@ const Memories = () => {
         </div>
 
         {/* Tabs - Glass Pill */}
-        <div className="flex bg-black/20 p-1 rounded-full border border-white/10 backdrop-blur-sm mt-4 md:mt-0">
+        <div className="flex bg-black/40 p-1 rounded-full border border-[#FFD700]/30 backdrop-blur-sm mt-4 md:mt-0">
           <button
             onClick={() => setActiveTab('review')}
-            className={`flex items-center px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-500 ease-out ${activeTab === 'review' ? 'bg-white text-[#28494B] shadow-lg' : 'text-white/60 hover:text-white'
+            className={`flex items-center px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-500 ease-out ${activeTab === 'review' ? 'bg-[#FFD700] text-black shadow-[0_0_10px_rgba(255,215,0,0.5)]' : 'text-[#FFD700]/60 hover:text-[#FFD700]'
               }`}
           >
             <Globe className="w-3 h-3 mr-2" />
@@ -543,7 +543,7 @@ const Memories = () => {
           </button>
           <button
             onClick={() => setActiveTab('memory')}
-            className={`flex items-center px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-500 ease-out ${activeTab === 'memory' ? 'bg-white text-[#28494B] shadow-lg' : 'text-white/60 hover:text-white'
+            className={`flex items-center px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-500 ease-out ${activeTab === 'memory' ? 'bg-[#FFD700] text-black shadow-[0_0_10px_rgba(255,215,0,0.5)]' : 'text-[#FFD700]/60 hover:text-[#FFD700]'
               }`}
           >
             <Globe className="w-3 h-3 mr-2" />
@@ -551,7 +551,7 @@ const Memories = () => {
           </button>
           <button
             onClick={() => setActiveTab('reels')}
-            className={`flex items-center px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-500 ease-out ${activeTab === 'reels' ? 'bg-white text-[#28494B] shadow-lg' : 'text-white/60 hover:text-white'
+            className={`flex items-center px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-500 ease-out ${activeTab === 'reels' ? 'bg-[#FFD700] text-black shadow-[0_0_10px_rgba(255,215,0,0.5)]' : 'text-[#FFD700]/60 hover:text-[#FFD700]'
               }`}
           >
             <Video className="w-3 h-3 mr-2" />
@@ -564,7 +564,7 @@ const Memories = () => {
             variant="secondary"
             size="sm"
             onClick={() => setAuthDialogOpen(true)}
-            className="flex bg-transparent hover:bg-white/10 text-white border border-white/30 backdrop-blur-md transition-all"
+            className="flex bg-transparent hover:bg-[#FFD700]/10 text-[#FFD700] border border-[#FFD700]/30 backdrop-blur-md transition-all"
           >
             <User className="h-4 w-4 mr-2" />
             {isAuthenticated ? "Account" : "Login"}
@@ -590,7 +590,7 @@ const Memories = () => {
                   setUploadDialogOpen(true);
                 }
               }}
-              className="bg-[#F2C94C] hover:bg-[#d4af37] text-[#1a2d2f] rounded-full px-8 py-6 shadow-xl transform hover:scale-105 transition-all text-xs font-black tracking-widest uppercase border border-yellow-300/50"
+              className="bg-gradient-to-r from-[#FFD700] to-[#F2C94C] hover:brightness-110 text-black rounded-full px-8 py-6 shadow-[0_0_15px_rgba(255,215,0,0.5)] transform hover:scale-105 transition-all text-xs font-black tracking-widest uppercase border border-[#FFD700]/50"
             >
               <Plus className="mr-2 h-4 w-4" />
               {activeTab === 'review' ? "Write Review" : activeTab === 'memory' ? "Add Photos" : "Add Video"}

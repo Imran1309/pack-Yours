@@ -103,32 +103,32 @@ const Navbar = () => {
 
             <div className="flex flex-col">
               <h1
-                className="text-xs sm:text-base md:text-lg lg:text-2xl font-bold translate-y-1 whitespace-nowrap"
+                className="font-bold translate-y-1 whitespace-nowrap animate-glass-shine"
                 style={{
                   fontFamily: "'Cinzel Decorative', cursive",
-                  background: "linear-gradient(to right, #FFD700, #FF4500, #800080)",
+                  background: "linear-gradient(110deg, #FFD700 35%, #ffffff 50%, #FFD700 65%)",
+                  backgroundSize: "200% auto",
+                  animationDuration: "5s",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
-                  textShadow: "none", // Text shadow doesn't work well with transparent text fill
-                  lineHeight: "1.2",
-                  filter: "drop-shadow(2px 2px 4px rgba(0,0,0,0.3))" // Alternative for shadow
+                  color: "transparent",
+                  lineHeight: "1.2"
                 }}
               >
-                Dhana Tour Travels
+                <span className="text-3xl sm:text-4xl md:text-5xl">DT<span style={{ verticalAlign: 'super', fontSize: '0.6em' }}>2</span></span>
+                <span className="text-xs sm:text-sm md:text-base ml-2">(Dhana Tours and Travels)</span>
               </h1>
 
               <p
                 className="text-[10px] sm:text-xs md:text-sm lg:text-lg block whitespace-nowrap"
                 style={{
                   fontFamily: "'Cinzel Decorative', cursive",
-                  background: "linear-gradient(to right, #FFD700, #FF4500, #800080)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  marginTop: "0px",
+                  color: "#FFD700",
+                  marginTop: "4px",
                   fontWeight: "700"
                 }}
               >
-                Since 2020
+                Smart way to travel
               </p>
 
 
@@ -223,6 +223,11 @@ const Navbar = () => {
             )}
           </div>
         )}
+      </div>
+
+      {/* Animated Bottom Line */}
+      <div className="absolute bottom-0 left-0 w-full h-[2px] overflow-hidden pointer-events-none">
+        <div className="w-1/2 h-full bg-gradient-to-r from-transparent via-[#FFD700] to-transparent animate-running-line shadow-[0_0_10px_#FFD700]"></div>
       </div>
     </nav>
   );

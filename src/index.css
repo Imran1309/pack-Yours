@@ -191,4 +191,17 @@ All colors MUST be HSL.
   .animate-ambient-slide {
     animation: ambient-slide 2s linear infinite;
   }
+
+  @keyframes running-line {
+    0%, 100% {
+      transform: translateX(-50%);
+    }
+    50% {
+      transform: translateX(150%);
+    }
+  }
+
+  .animate-running-line {
+    animation: running-line 4s ease-in-out infinite;
+  }
 }

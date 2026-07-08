@@ -90,21 +90,45 @@ const States = () => {
   const currentStates = statesData.slice(indexOfFirst, indexOfLast);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-600 via-red-300 to-cyan-300 py-24 px-10">
-      <div className="max-w-10xl mx-auto px-10">
+    <div className="min-h-screen bg-black py-24 px-10 relative overflow-hidden">
+      {/* Decorative Gold India Maps in Rounds */}
+      <div className="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full border-2 border-[#FFD700]/20 bg-[#FFD700]/5 flex items-center justify-center p-10 shadow-[0_0_50px_rgba(255,215,0,0.1)] pointer-events-none z-0">
+        <div 
+          className="w-full h-full bg-[#FFD700] opacity-30"
+          style={{
+            WebkitMaskImage: "url(https://upload.wikimedia.org/wikipedia/commons/4/41/India_Map_Silhouette.svg)",
+            WebkitMaskSize: "contain",
+            WebkitMaskRepeat: "no-repeat",
+            WebkitMaskPosition: "center"
+          }}
+        ></div>
+      </div>
+      <div className="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full border-2 border-[#FFD700]/20 bg-[#FFD700]/5 flex items-center justify-center p-10 shadow-[0_0_50px_rgba(255,215,0,0.1)] pointer-events-none z-0">
+        <div 
+          className="w-full h-full bg-[#FFD700] opacity-20"
+          style={{
+            WebkitMaskImage: "url(https://upload.wikimedia.org/wikipedia/commons/4/41/India_Map_Silhouette.svg)",
+            WebkitMaskSize: "contain",
+            WebkitMaskRepeat: "no-repeat",
+            WebkitMaskPosition: "center",
+          }}
+        ></div>
+      </div>
+
+      <div className="max-w-10xl mx-auto px-10 relative z-10">
 
         {/* BACK BUTTON */}
         <div className="flex items-center justify-start mb-10">
           <div
-            className="bg-yellow-500 p-3 rounded-2xl shadow-lg cursor-pointer hover:bg-red-600 transition-all"
+            className="bg-[#FFD700]/10 p-3 rounded-2xl shadow-[0_0_10px_rgba(255,215,0,0.3)] border border-[#FFD700]/30 cursor-pointer hover:bg-[#FFD700]/20 transition-all backdrop-blur-md"
             onClick={() => navigate("/")}
           >
-            <ArrowLeft size={60} className="text-red-900" />
+            <ArrowLeft size={40} className="text-[#FFD700]" />
           </div>
         </div>
 
         {/* TITLE */}
-        <h1 className="text-6xl font-extrabold text-red-900 text-center drop-shadow-2xl">
+        <h1 className="text-6xl font-extrabold text-[#FFD700] text-center drop-shadow-[0_0_15px_rgba(255,215,0,0.4)]" style={{ fontFamily: "'Cinzel Decorative', cursive" }}>
           Indian States
         </h1>
 
@@ -187,22 +211,22 @@ const States = () => {
               }}
               className="flex flex-col items-center cursor-pointer group hover:scale-105 transition-transform"
             >
-              <div className="w-full h-56 rounded-2xl shadow-2xl overflow-hidden relative">
+              <div className="w-full h-56 rounded-2xl shadow-[0_0_15px_rgba(255,215,0,0.6)] border-2 border-[#FFD700] overflow-hidden relative bg-black group-hover:shadow-[0_0_25px_rgba(255,215,0,0.9)] transition-shadow duration-300">
                 <img
                   src={state.image}
                   alt={state.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-all"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-all opacity-80 group-hover:opacity-100"
                 />
-                <p className="mt-4 text-2xl font-bold text-pink-400 underline"
+                <p className="mt-4 text-2xl font-bold text-[#FFD700]"
                   style={{
-                    fontFamily: "cursive",
-                    textShadow: "2px 2px 4px black"
+                    fontFamily: "'Cinzel Decorative', cursive",
+                    textShadow: "0 0 10px rgba(255,215,0,0.5), 2px 2px 4px black"
                   }}>
                   {state.name}
                 </p>
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center">
-                  <p className="text-2xl text-yellow-300 font-bold">Explore</p>
-                  <p className="text-xl text-yellow-300 underline mt-3">
+                  <p className="text-2xl text-[#FFD700] font-bold">Explore</p>
+                  <p className="text-xl text-[#FFD700] mt-3" style={{ fontFamily: "'Cinzel Decorative', cursive" }}>
                     {state.name}
                   </p>
                 </div>
@@ -219,10 +243,10 @@ const States = () => {
                 <PaginationLink
                   onClick={() => setCurrentPage(page)}
                   isActive={currentPage === page}
-                  className={`cursor-pointer text-black font-bold w-12 h-12 flex items-center justify-center rounded-2xl text-lg transition-all
+                  className={`cursor-pointer font-bold w-12 h-12 flex items-center justify-center rounded-2xl text-lg transition-all border
                     ${currentPage === page
-                      ? "bg-yellow-500 hover:bg-red-700"
-                      : "bg-yellow-600 hover:bg-red-700"
+                      ? "bg-[#FFD700] text-black border-[#FFD700] shadow-[0_0_15px_rgba(255,215,0,0.5)]"
+                      : "bg-transparent text-[#FFD700] border-[#FFD700]/50 hover:bg-[#FFD700]/20"
                     }`}
                 >
                   {page}

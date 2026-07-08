@@ -70,13 +70,13 @@ const Hero = () => {
           <div className="mb-4 md:mb-6 animate-fade-in">
             <span
               key={taglines[currentBg]}
-              className="text-4xl sm:text-5xl md:text-6xl font-[Great_Vibes] italic underline decoration-red-500 transition-all duration-700"
+              className="text-4xl sm:text-5xl md:text-6xl font-[Great_Vibes] italic underline decoration-[#ff0055] transition-all duration-700"
               style={{
-                color: "#ffffff",
+                color: "#ff4d6d", // A beautiful mix of pink and red
                 textDecorationThickness: "3px",
                 textUnderlineOffset: "12px",
                 fontFamily: "'Great Vibes', cursive",
-                textShadow: "0 0 5px #fff, 0 0 10px #fff, 0 0 20px #FF1295, 0 0 40px #FF0000, 0 0 80px #FF1295, 0 0 90px #FF0000, 0 0 100px #FF1295",
+                textShadow: "0 0 8px rgba(255,255,255,0.9), 0 0 20px rgba(255,255,255,0.7), 0 0 35px rgba(255,255,255,0.5)",
               }}
             >
               {taglines[currentBg]}
