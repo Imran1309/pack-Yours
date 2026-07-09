@@ -76,7 +76,7 @@ const Hero = () => {
                 textDecorationThickness: "3px",
                 textUnderlineOffset: "12px",
                 fontFamily: "'Great Vibes', cursive",
-                textShadow: "0 0 8px rgba(255,255,255,0.9), 0 0 20px rgba(255,255,255,0.7), 0 0 35px rgba(255,255,255,0.5)",
+                textShadow: "2px 2px 4px rgba(0,0,0,0.8)",
               }}
             >
               {taglines[currentBg]}
@@ -102,10 +102,8 @@ const Hero = () => {
             style={{
               animationDelay: "0.2s",
               fontFamily: "'Cinzel Decorative', cursive",
-              background: "linear-gradient(to right, #FFD700, #000000ff, #FFD700)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              filter: "drop-shadow(0px 1px 0px rgba(0, 0, 0, 0.4))"
+              color: "#FFD700",
+              textShadow: "2px 2px 4px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.8)",
             }}
           >
             Where every click brings a little wonder
@@ -116,8 +114,8 @@ const Hero = () => {
             style={{
               animationDelay: "0.4s",
               fontFamily: "'Great Vibes', cursive",
-              color: "#000000",
-              textShadow: "0px 0px 10px rgba(255,255,255,0.9)", // Strong white glow to make black text visible on dark bg
+              color: "#ffffff",
+              textShadow: "2px 2px 4px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.8)", 
               paddingBottom: "10px"
             }}
           >

@@ -99,11 +99,11 @@ const Navbar = () => {
 
           {/* Logo + Title */}
           <div className="flex items-center gap-4 md:gap-8 animate-slide-in cursor-pointer" onClick={() => navigate('/')}>
-            <img src={logo} alt="Dhana Tour Travels Logo" className="h-12 w-auto md:h-16 lg:h-20" />
+            <img src={logo} alt="Dhana Tour Travels Logo" className="h-10 w-auto md:h-12 lg:h-14" />
 
             <div className="flex flex-col">
               <h1
-                className="font-bold translate-y-1 whitespace-nowrap animate-glass-shine"
+                className="font-bold translate-y-1 whitespace-nowrap animate-glass-shine flex flex-col"
                 style={{
                   fontFamily: "'Cinzel Decorative', cursive",
                   background: "linear-gradient(110deg, #FFD700 35%, #ffffff 50%, #FFD700 65%)",
@@ -115,16 +115,16 @@ const Navbar = () => {
                   lineHeight: "1.2"
                 }}
               >
-                <span className="text-3xl sm:text-4xl md:text-5xl">DT<span style={{ verticalAlign: 'super', fontSize: '0.6em' }}>2</span></span>
-                <span className="text-xs sm:text-sm md:text-base ml-2">(Dhana Tours and Travels)</span>
+                <span className="text-xl sm:text-2xl md:text-3xl">DT<span style={{ verticalAlign: 'super', fontSize: '0.6em' }}>2</span></span>
+                <span className="text-[10px] sm:text-xs md:text-sm mt-0.5">(Dhana Tours and Travels)</span>
               </h1>
 
               <p
-                className="text-[10px] sm:text-xs md:text-sm lg:text-lg block whitespace-nowrap"
+                className="text-[8px] sm:text-[10px] md:text-xs block whitespace-nowrap"
                 style={{
                   fontFamily: "'Cinzel Decorative', cursive",
                   color: "#FFD700",
-                  marginTop: "4px",
+                  marginTop: "2px",
                   fontWeight: "700"
                 }}
               >

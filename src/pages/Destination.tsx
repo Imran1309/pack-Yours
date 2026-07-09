@@ -89,6 +89,8 @@ const States = () => {
   const indexOfFirst = indexOfLast - itemsPerPage;
   const currentStates = statesData.slice(indexOfFirst, indexOfLast);
 
+  const [activeTab, setActiveTab] = useState<"domestic" | "international">("domestic");
+
   return (
     <div className="min-h-screen bg-black py-24 px-10 relative overflow-hidden">
       {/* Decorative Gold India Maps in Rounds */}
@@ -118,7 +120,7 @@ const States = () => {
       <div className="max-w-10xl mx-auto px-10 relative z-10">
 
         {/* BACK BUTTON */}
-        <div className="flex items-center justify-start mb-10">
+        <div className="flex items-center justify-start mb-6">
           <div
             className="bg-[#FFD700]/10 p-3 rounded-2xl shadow-[0_0_10px_rgba(255,215,0,0.3)] border border-[#FFD700]/30 cursor-pointer hover:bg-[#FFD700]/20 transition-all backdrop-blur-md"
             onClick={() => navigate("/")}
@@ -127,10 +129,41 @@ const States = () => {
           </div>
         </div>
 
+        {/* TABS FOR DOMESTIC AND INTERNATIONAL */}
+        <div className="flex justify-center mb-10">
+          <div className="flex space-x-4 bg-[#FFD700]/10 p-2 rounded-full border border-[#FFD700]/30 shadow-[0_0_15px_rgba(255,215,0,0.2)]">
+            <button
+              onClick={() => setActiveTab("domestic")}
+              className={`px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 ${
+                activeTab === "domestic"
+                  ? "bg-[#FFD700] text-black shadow-[0_0_15px_rgba(255,215,0,0.6)]"
+                  : "text-[#FFD700] hover:bg-[#FFD700]/20"
+              }`}
+              style={{ fontFamily: "'Cinzel Decorative', cursive" }}
+            >
+              Domestic
+            </button>
+            <button
+              onClick={() => setActiveTab("international")}
+              className={`px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 ${
+                activeTab === "international"
+                  ? "bg-[#FFD700] text-black shadow-[0_0_15px_rgba(255,215,0,0.6)]"
+                  : "text-[#FFD700] hover:bg-[#FFD700]/20"
+              }`}
+              style={{ fontFamily: "'Cinzel Decorative', cursive" }}
+            >
+              International
+            </button>
+          </div>
+        </div>
+
         {/* TITLE */}
         <h1 className="text-6xl font-extrabold text-[#FFD700] text-center drop-shadow-[0_0_15px_rgba(255,215,0,0.4)]" style={{ fontFamily: "'Cinzel Decorative', cursive" }}>
-          Indian States
+          {activeTab === "domestic" ? "Indian States" : "International Destinations"}
         </h1>
+
+        {activeTab === "domestic" ? (
+          <>
 
         {/* GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
@@ -255,6 +288,13 @@ const States = () => {
             ))}
           </PaginationContent>
         </Pagination>
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center mt-20 h-64 border-2 border-dashed border-[#FFD700]/30 rounded-3xl bg-[#FFD700]/5">
+            <h2 className="text-3xl font-bold text-[#FFD700] mb-4" style={{ fontFamily: "'Cinzel Decorative', cursive" }}>Coming Soon</h2>
+            <p className="text-[#FFD700]/80 text-xl">Our International Destinations are being curated for you.</p>
+          </div>
+        )}
       </div>
     </div >
   );
