@@ -290,9 +290,37 @@ const States = () => {
         </Pagination>
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center mt-20 h-64 border-2 border-dashed border-[#FFD700]/30 rounded-3xl bg-[#FFD700]/5">
-            <h2 className="text-3xl font-bold text-[#FFD700] mb-4" style={{ fontFamily: "'Cinzel Decorative', cursive" }}>Coming Soon</h2>
-            <p className="text-[#FFD700]/80 text-xl">Our International Destinations are being curated for you.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
+          {[
+            "Sri Lanka", "Kazakhstan", "Uzbekistan", "Switzerland", "Maldives", 
+            "Thailand", "Indonesia", "Malaysia", "Vietnam", "Laos", 
+            "Cambodia", "Dubai", "Africa", "Europe", "Nepal"
+          ].map((country, idx) => (
+            <div
+              key={idx}
+              onClick={() => alert(`Detailed explorer page for ${country} is coming soon!`)}
+              className="flex flex-col items-center cursor-pointer group hover:scale-105 transition-transform"
+            >
+              <div className="w-full h-56 rounded-2xl shadow-[0_0_15px_rgba(255,215,0,0.6)] border-2 border-[#FFD700] overflow-hidden relative bg-black group-hover:shadow-[0_0_25px_rgba(255,215,0,0.9)] transition-shadow duration-300">
+                <div className="w-full h-full bg-[#FFD700]/10 flex items-center justify-center group-hover:scale-110 transition-all">
+                  <p className="text-4xl text-[#FFD700]/20 font-bold">✈️</p>
+                </div>
+                <p className="absolute bottom-4 left-0 w-full text-center text-2xl font-bold text-[#FFD700]"
+                  style={{
+                    fontFamily: "'Cinzel Decorative', cursive",
+                    textShadow: "0 0 10px rgba(255,215,0,0.5), 2px 2px 4px black"
+                  }}>
+                  {country}
+                </p>
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center">
+                  <p className="text-2xl text-[#FFD700] font-bold">Explore</p>
+                  <p className="text-xl text-[#FFD700] mt-3 text-center px-2" style={{ fontFamily: "'Cinzel Decorative', cursive" }}>
+                    {country}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
           </div>
         )}
       </div>
